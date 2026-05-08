@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>จับคู่พี่รหัส × น้องรหัส</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070d18;
+    --bg-1:#0e1a2f;
+    --bg-2:#172a48;
+    --line:#243a5e;
+    --gold:#c9a961;
+    --gold-bright:#e6c97a;
+    --text:#e8eef5;
+    --muted:#8b9bb0;
+    --danger:#e74c3c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100vh;min-height:100dvh}
+  body{
+    font-family:'Sarabun',sans-serif;
+    color:var(--text);
+    background:var(--bg);
+    overflow-x:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ── Animated space background ──────────── */
+  #bg{
+    position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;
+    background:
+      radial-gradient(1400px 900px at 20% 0%,#16263f 0%,transparent 60%),
+      radial-gradient(1200px 800px at 90% 100%,#0e1a2f 0%,transparent 70%),
+      radial-gradient(circle at 70% 90%,#0c1830 0%,#040810 90%),
+      var(--bg);
+  }
+  .nebula{position:absolute;width:55vw;height:55vw;max-width:900px;max-height:900px;border-radius:50%;filter:blur(60px);opacity:.25;mix-blend-mode:screen;animation:nebula-float 32s ease-in-out infinite alternate}
+  .nebula.purple{background:radial-gradient(circle,rgba(140,80,200,.55) 0%,transparent 65%);top:-10%;left:-10%;animation-duration:36s}
+  .nebula.gold{background:radial-gradient(circle,rgba(201,169,97,.5) 0%,transparent 60%);bottom:-15%;right:-10%;animation-duration:28s;animation-delay:-12s}
+  .nebula.cyan{background:radial-gradient(circle,rgba(70,140,210,.55) 0%,transparent 65%);top:35%;left:30%;animation-duration:42s;animation-delay:-18s}
+  @keyframes nebula-float{0%{transform:translate(0,0) scale(1) rotate(0deg);opacity:.18}50%{transform:translate(4%,-3%) scale(1.12) rotate(8deg);opacity:.32}100%{transform:translate(-3%,4%) scale(1.05) rotate(-6deg);opacity:.22}}
+  .starfield{position:absolute;inset:-25%;width:150%;height:150%;transform-origin:50% 50%}
+  .starfield.far{animation:spin-cw 720s linear infinite}
+  .starfield.mid{animation:spin-ccw 460s linear infinite}
+  .starfield.near{animation:spin-cw 280s linear infinite}
+  @keyframes spin-cw{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  @keyframes spin-ccw{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
+  .star{position:absolute;background:#fff;border-radius:50%;width:var(--s,2px);height:var(--s,2px);opacity:var(--o,.7);animation:twinkle var(--t,4s) ease-in-out infinite;animation-delay:var(--d,0s);box-shadow:0 0 var(--g,4px) rgba(255,255,255,.55);will-change:opacity,transform}
+  .star.blue{background:#cfe1ff;box-shadow:0 0 var(--g,6px) rgba(184,212,255,.75)}
+  .star.gold{background:var(--gold-bright);box-shadow:0 0 var(--g,6px) rgba(230,201,122,.75)}
+  .star.red{background:#ffb47a;box-shadow:0 0 var(--g,6px) rgba(255,180,122,.7)}
+  .star.pulse{animation:pulse var(--t,3s) ease-in-out infinite}
+  @keyframes twinkle{0%,100%{opacity:var(--o,.7);transform:scale(1)}50%{opacity:.1;transform:scale(.5)}}
+  @keyframes pulse{0%,100%{opacity:var(--o,.6);transform:scale(1)}50%{opacity:1;transform:scale(1.7)}}
+  .star.bright::before,.star.bright::after{content:'';position:absolute;background:rgba(255,255,255,.55);border-radius:1px;pointer-events:none}
+  .star.bright::before{width:200%;height:1px;left:-50%;top:50%;transform:translateY(-50%)}
+  .star.bright::after{width:1px;height:200%;top:-50%;left:50%;transform:translateX(-50%)}
+  .dust{position:absolute;width:1px;height:1px;background:rgba(255,255,255,.5);border-radius:50%;pointer-events:none;animation:dust-drift var(--t,40s) linear infinite;animation-delay:var(--d,0s)}
+  @keyframes dust-drift{0%{transform:translate(0,0);opacity:0}10%{opacity:.5}90%{opacity:.5}100%{transform:translate(var(--dx,-200px),var(--dy,80px));opacity:0}}
+  .shooting-star{position:absolute;width:140px;height:1px;background:linear-gradient(to left,transparent,rgba(255,255,255,1),rgba(230,201,122,.7),transparent);border-radius:1px;pointer-events:none;transform-origin:left center;box-shadow:0 0 6px rgba(255,236,180,.6);animation:shoot 1.6s cubic-bezier(.55,.1,.85,.4) forwards}
+  @keyframes shoot{0%{opacity:0;transform:translate(0,0) rotate(-22deg) scaleX(.2)}10%{opacity:1}100%{opacity:0;transform:translate(-360px,160px) rotate(-22deg) scaleX(1)}}
+  .comet{position:absolute;width:280px;height:2px;background:linear-gradient(to left,transparent 0%,rgba(255,255,255,1) 20%,rgba(230,201,122,.85) 50%,rgba(140,180,240,.5) 80%,transparent 100%);border-radius:2px;pointer-events:none;transform-origin:left center;box-shadow:0 0 10px rgba(255,236,180,.8),0 0 22px rgba(201,169,97,.4);animation:comet 3.2s cubic-bezier(.45,.1,.7,.35) forwards}
+  @keyframes comet{0%{opacity:0;transform:translate(0,0) rotate(-20deg) scaleX(.15)}8%{opacity:1}100%{opacity:0;transform:translate(-820px,300px) rotate(-20deg) scaleX(1)}}
+
+  /* ── Layout ──────────────────────────────── */
+  .app{max-width:1040px;margin:0 auto;width:100%;padding:28px 16px 96px;flex:1;display:flex;flex-direction:column;position:relative}
+  header.site{text-align:center;margin-bottom:24px;width:100%}
+  header.site h1{font-family:'Mali',cursive;font-size:clamp(2rem,5vw,3.2rem);color:var(--gold);line-height:1.1;text-shadow:0 2px 16px rgba(201,169,97,.35);letter-spacing:.5px}
+  header.site .subtitle{color:var(--muted);margin-top:8px;font-size:1rem;letter-spacing:1px}
+
+  .hero{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:32px 0;animation:rise .6s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  .panel{background:linear-gradient(180deg,var(--bg-1) 0%,#0b1424 100%);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 8px 28px rgba(0,0,0,.45);animation:rise .5s ease both;width:100%}
+  .glass-panel{background:rgba(14,26,47,.55);-webkit-backdrop-filter:blur(14px) saturate(120%);backdrop-filter:blur(14px) saturate(120%);border:1px solid rgba(201,169,97,.25);border-radius:24px;padding:30px 26px 26px;box-shadow:0 28px 60px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.04);width:100%;max-width:560px;animation:rise .5s ease both}
+
+  .input-group{margin-bottom:14px}
+  .input-group label{display:block;font-weight:700;margin-bottom:6px;color:var(--gold);font-size:.95rem;letter-spacing:.5px}
+  input[type="text"],input[type="password"],textarea{
+    width:100%;padding:13px 16px;
+    border:1px solid var(--line);border-radius:12px;
+    font-family:inherit;font-size:1rem;
+    background:rgba(10,19,34,.7);color:var(--text);
+    outline:none;transition:border-color .2s,box-shadow .2s;
+  }
+  input[type="text"]{font-size:1.1rem;font-family:'Mali',cursive}
+  input[type="password"]{font-family:monospace;font-size:.95rem}
+  textarea{min-height:130px;resize:vertical}
+  input[type="text"]::placeholder,input[type="password"]::placeholder,textarea::placeholder{color:#4a5a73}
+  input[type="text"]:focus,input[type="password"]:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,169,97,.18)}
+
+  .role-picker{display:flex;gap:10px;margin-bottom:6px}
+  .role-picker label{flex:1;cursor:pointer}
+  .role-picker input{display:none}
+  .role-picker input:checked + .role-card{border-color:var(--gold);background:linear-gradient(180deg,rgba(201,169,97,.18),rgba(201,169,97,.05));box-shadow:0 0 0 2px rgba(201,169,97,.4)}
+  .role-card{display:block;padding:14px 12px;border:1px solid var(--line);border-radius:14px;text-align:center;font-family:'Mali',cursive;font-size:1.1rem;background:rgba(10,19,34,.5);transition:border-color .15s,background .15s,box-shadow .15s,transform .15s}
+  .role-card:hover{border-color:rgba(201,169,97,.5);transform:translateY(-2px)}
+  .role-card .icon{font-size:1.6rem;display:block;margin-bottom:4px}
+
+  .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+  button{
+    font-family:'Mali',cursive;font-size:1.05rem;padding:11px 26px;
+    border:1px solid var(--gold);border-radius:999px;
+    background:linear-gradient(135deg,var(--gold) 0%,#a88947 100%);
+    color:#1a1208;cursor:pointer;
+    box-shadow:0 4px 14px rgba(201,169,97,.28);
+    transition:transform .15s,box-shadow .15s,opacity .15s;
+    font-weight:700;letter-spacing:.3px;
+  }
+  button:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 22px rgba(201,169,97,.45)}
+  button:active:not(:disabled){transform:translateY(0)}
+  button:disabled{opacity:.4;cursor:not-allowed}
+  button.cta{font-size:1.2rem;padding:14px 36px}
+  button.ghost{background:transparent;color:var(--gold);border-color:var(--line);box-shadow:none}
+  button.ghost:hover:not(:disabled){border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,169,97,.1)}
+  button.danger{background:transparent;color:#ffb4ad;border-color:#5a2c2c}
+  button.danger:hover:not(:disabled){background:rgba(231,76,60,.08);border-color:var(--danger)}
+
+  .warning{text-align:center;background:rgba(201,169,97,.08);border:1px solid rgba(201,169,97,.3);color:var(--gold-bright);padding:10px 14px;border-radius:12px;margin:14px 0 0;font-size:.95rem}
+  .warning.error{background:rgba(231,76,60,.1);border-color:rgba(231,76,60,.4);color:#ffb4ad}
+
+  .status-banner{text-align:center;margin-bottom:20px;padding:8px 16px;background:rgba(14,26,47,.4);border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:.9rem;letter-spacing:.5px;display:inline-block;align-self:center}
+  .status-banner.live{color:var(--gold-bright);border-color:rgba(201,169,97,.4)}
+  .status-banner .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-right:8px;box-shadow:0 0 8px var(--gold);animation:pulse-dot 2s ease-in-out infinite}
+  @keyframes pulse-dot{0%,100%{opacity:.5}50%{opacity:1}}
+
+  .panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+  .panel-head h2{font-family:'Mali',cursive;font-size:1.4rem;color:var(--gold)}
+  .panel-meta{color:var(--muted);font-size:.95rem}
+
+  .user-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .user-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(201,169,97,.08);border:1px solid rgba(201,169,97,.25);border-radius:999px;padding:6px 14px;font-family:'Mali',cursive;font-size:1rem}
+  .user-chip .role{font-family:'Sarabun',sans-serif;font-weight:700;font-size:.7rem;color:var(--gold);letter-spacing:1.5px;padding:2px 8px;background:rgba(201,169,97,.2);border-radius:999px}
+  .user-chip .x{cursor:pointer;color:var(--muted);font-size:.95rem;padding:2px 4px;line-height:1}
+  .user-chip .x:hover{color:#ffb4ad}
+  .user-list-empty{color:var(--muted);font-style:italic;padding:14px;text-align:center}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+  .stat{background:rgba(10,19,34,.5);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+  .stat .num{font-family:'Mali',cursive;font-size:1.6rem;color:var(--gold)}
+  .stat .label{color:var(--muted);font-size:.85rem;letter-spacing:.5px}
+
+  /* Reveal stage with light beam scan */
+  .reveal-stage{position:relative;width:100%;max-width:520px;margin:14px auto;min-height:240px;border-radius:18px;overflow:hidden;background:radial-gradient(circle at 50% 50%,#1f3a64 0%,#0a1322 75%);border:2px solid var(--gold);box-shadow:inset 0 0 32px rgba(201,169,97,.12),0 8px 24px rgba(0,0,0,.4);padding:28px 24px}
+  .reveal-stage .content{position:relative;clip-path:inset(0 calc(100% - var(--scan,0%)) 0 0);-webkit-clip-path:inset(0 calc(100% - var(--scan,0%)) 0 0)}
+  .reveal-stage .partner-name{font-family:'Mali',cursive;font-size:clamp(1.6rem,5vw,2.4rem);color:var(--gold-bright);text-align:center;margin-bottom:14px;line-height:1.15;text-shadow:0 0 18px rgba(230,201,122,.5)}
+  .reveal-stage .partner-message{background:rgba(201,169,97,.1);border-left:3px solid var(--gold);border-radius:10px;padding:14px 16px;color:var(--text);font-family:'Mali',cursive;font-size:1.05rem;line-height:1.55;white-space:pre-wrap;word-break:break-word;text-align:left}
+  .reveal-stage .partner-message.empty{color:var(--muted);font-style:italic;border-left-color:var(--line);background:rgba(36,58,94,.18)}
+  .reveal-stage .from-tag{font-family:'Sarabun',sans-serif;font-weight:700;font-size:.78rem;color:var(--muted);margin-bottom:6px;letter-spacing:.8px;text-transform:uppercase}
+  .reveal-stage .beam{position:absolute;top:-6px;bottom:-6px;left:var(--scan,0%);width:5px;background:linear-gradient(to right,transparent,var(--gold-bright),transparent);filter:blur(2px);transform:translateX(-50%);box-shadow:0 0 24px var(--gold-bright),0 0 48px var(--gold),0 0 96px rgba(201,169,97,.5);pointer-events:none;transition:opacity .4s}
+  .reveal-stage.no-partner{background:radial-gradient(circle at 50% 50%,#2a1a1a 0%,#0a0508 75%);border-color:#5a2c2c}
+  .reveal-stage .no-partner-msg{text-align:center;color:#ffb4ad;font-family:'Mali',cursive;font-size:1.3rem;padding:30px}
+  .reveal-stage.done .beam{opacity:0}
+
+  .modal-bg{position:fixed;inset:0;background:rgba(2,5,12,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:50;animation:fadeIn .25s ease both;padding:20px}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .modal{background:linear-gradient(180deg,var(--bg-1) 0%,#0a1322 100%);border:1px solid var(--gold);border-radius:22px;padding:30px 26px;max-width:460px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.7),0 0 0 1px rgba(201,169,97,.3);animation:popIn .28s cubic-bezier(.34,1.56,.64,1) both}
+  .modal.wide{max-width:560px}
+  @keyframes popIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+  .modal h2{font-family:'Mali',cursive;color:var(--gold);margin-bottom:8px;font-size:1.4rem}
+  .modal p{color:var(--muted);font-size:.95rem;margin-bottom:14px}
+  .modal .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+  .modal .input-group{text-align:left}
+
+  .admin-link{position:fixed;bottom:14px;right:14px;background:rgba(14,26,47,.7);border:1px solid var(--line);color:var(--muted);padding:8px 14px;border-radius:999px;font-family:'Sarabun',sans-serif;font-size:.85rem;cursor:pointer;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all .15s;z-index:5}
+  .admin-link:hover{color:var(--gold);border-color:var(--gold);background:rgba(14,26,47,.9)}
+
+  /* Sync indicator */
+  .sync-pill{
+    position:fixed;top:14px;right:14px;
+    display:flex;align-items:center;gap:8px;
+    background:rgba(14,26,47,.7);
+    border:1px solid var(--line);
+    color:var(--muted);
+    padding:6px 12px;border-radius:999px;
+    font-family:'Sarabun',sans-serif;font-size:.8rem;
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    z-index:5;
+    transition:opacity .25s,color .15s,border-color .15s;
+  }
+  .sync-pill .spinner{
+    width:12px;height:12px;
+    border-radius:50%;
+    border:2px solid var(--line);
+    border-top-color:var(--gold);
+    animation:spin .9s linear infinite;
+    display:none;
+  }
+  .sync-pill.busy{color:var(--gold);border-color:var(--gold)}
+  .sync-pill.busy .spinner{display:inline-block}
+  .sync-pill.error{color:#ffb4ad;border-color:#5a2c2c}
+  .sync-pill.idle .spinner{display:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .refresh-btn{
+    background:transparent;color:var(--muted);
+    border:1px solid var(--line);box-shadow:none;
+    padding:8px 16px;font-size:.9rem;
+  }
+  .refresh-btn:hover:not(:disabled){color:var(--gold);border-color:var(--gold);box-shadow:none}
+
+  /* Setup screen extras */
+  .setup-tip{
+    background:rgba(14,26,47,.6);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:14px 16px;
+    margin-bottom:18px;
+    color:var(--muted);
+    font-size:.9rem;
+    line-height:1.6;
+  }
+  .setup-tip ol{padding-left:18px;margin-top:6px}
+  .setup-tip a{color:var(--gold);text-decoration:none;border-bottom:1px dotted var(--gold)}
+  .setup-tip a:hover{color:var(--gold-bright)}
+  .setup-tip code{background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px;font-size:.85rem;color:var(--gold-bright)}
+
+  .copy-row{display:flex;gap:8px;align-items:stretch}
+  .copy-row input{flex:1}
+
+  .hidden{display:none !important}
+
+  @media(max-width:640px){
+    .role-picker{flex-direction:column}
+    .stats{grid-template-columns:1fr 1fr}
+    .reveal-stage{padding:22px 18px;min-height:200px}
+    .sync-pill{top:8px;right:8px;font-size:.75rem}
+    .admin-link{bottom:8px;right:8px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .nebula,.star,.starfield,.dust{animation:none}
+  }
+</style>
+</head>
+<body>
+  <div id="bg">
+    <div class="nebula purple"></div>
+    <div class="nebula cyan"></div>
+    <div class="nebula gold"></div>
+    <div class="starfield far"  id="layer-far"></div>
+    <div class="starfield mid"  id="layer-mid"></div>
+    <div class="starfield near" id="layer-near"></div>
+  </div>
+
+  <div class="sync-pill idle" id="sync-pill" title="สถานะการ sync">
+    <span class="spinner"></span>
+    <span id="sync-text">ออนไลน์</span>
+  </div>
+
+  <div class="app">
+    <!-- ── Setup ────────────────────── -->
+    <section id="screen-setup" class="hero hidden">
+      <header class="site">
+        <h1>ตั้งค่าครั้งแรก</h1>
+        <p class="subtitle">เชื่อมต่อ JSONbin (สำหรับ sync ข้ามเครื่อง)</p>
+      </header>
+      <div class="glass-panel">
+        <div class="setup-tip">
+          <strong style="color:var(--gold)">วิธีรับค่า Bin ID และ Master Key:</strong>
+          <ol>
+            <li>ไปที่ <a href="https://jsonbin.io" target="_blank">jsonbin.io</a> สมัครฟรี</li>
+            <li>คลิก "Create" → "Bin" → paste <code>{"users":[],"matches":{},"randomizedAt":null}</code> → Save → copy <strong>Bin ID</strong></li>
+            <li>มุมขวาบน → "API Keys" → copy <strong>X-Master-Key</strong></li>
+          </ol>
+        </div>
+        <div class="input-group">
+          <label for="setup-bin">Bin ID</label>
+          <input type="text" id="setup-bin" placeholder="เช่น 67c1234567890abcdef" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label for="setup-key">Master Key</label>
+          <input type="password" id="setup-key" placeholder="$2a$10$..." autocomplete="off">
+        </div>
+        <div class="actions">
+          <button id="setup-test" class="ghost">ทดสอบเชื่อมต่อ</button>
+          <button id="setup-save" class="cta">บันทึก & เริ่ม</button>
+        </div>
+        <div id="setup-warn" class="warning hidden"></div>
+      </div>
+    </section>
+
+    <!-- ── Home ──────────────────── -->
+    <section id="screen-home" class="hero hidden">
+      <header class="site">
+        <h1>จับคู่พี่รหัส × น้องรหัส</h1>
+        <p class="subtitle">ม.5/1</p>
+      </header>
+
+      <div id="status-banner" class="status-banner">
+        <span class="dot"></span><span id="status-text">กำลังโหลด...</span>
+      </div>
+
+      <div class="glass-panel" style="margin-top:16px">
+        <div class="input-group">
+          <label for="home-name">ใส่ชื่อของคุณ</label>
+          <input type="text" id="home-name" placeholder="ชื่อเล่น เช่น เอ บี ซี" autocomplete="off">
+        </div>
+        <div class="actions">
+          <button id="home-go" class="cta">ดำเนินการ</button>
+          <button id="home-refresh" class="refresh-btn">↻ Refresh</button>
+        </div>
+        <div id="home-warn" class="warning hidden"></div>
+        <p style="text-align:center;color:var(--muted);font-size:.85rem;margin-top:18px;line-height:1.6">
+          ครั้งแรกจะให้ลงทะเบียน · มาแล้วก็แก้ไข/ดูคู่ได้
+        </p>
+      </div>
+    </section>
+
+    <!-- ── Register ─────────────── -->
+    <section id="screen-register" class="hero hidden">
+      <header class="site">
+        <h1>ลงทะเบียน</h1>
+        <p class="subtitle">ครั้งแรกของคุณ</p>
+      </header>
+      <div class="glass-panel">
+        <div class="input-group">
+          <label>คุณคือ?</label>
+          <div class="role-picker">
+            <label>
+              <input type="radio" name="reg-role" value="senior" checked>
+              <span class="role-card"><span class="icon">★</span>พี่รหัส</span>
+            </label>
+            <label>
+              <input type="radio" name="reg-role" value="junior">
+              <span class="role-card"><span class="icon">☆</span>น้องรหัส</span>
+            </label>
+          </div>
+        </div>
+        <div class="input-group">
+          <label for="reg-name">ชื่อ</label>
+          <input type="text" id="reg-name" placeholder="ชื่อของคุณ" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label for="reg-msg">ข้อความถึง "คู่ในอนาคต"</label>
+          <textarea id="reg-msg" placeholder="สวัสดีค่ะ ยินดีที่ได้รู้จัก..."></textarea>
+        </div>
+        <div class="actions">
+          <button id="reg-save" class="cta">บันทึก</button>
+          <button id="reg-cancel" class="ghost">ยกเลิก</button>
+        </div>
+        <div id="reg-warn" class="warning hidden"></div>
+      </div>
+    </section>
+
+    <!-- ── Edit ─────────────────── -->
+    <section id="screen-edit" class="hero hidden">
+      <header class="site">
+        <h1>ข้อมูลของฉัน</h1>
+        <p class="subtitle" id="edit-role-label">—</p>
+      </header>
+      <div class="glass-panel">
+        <div class="input-group">
+          <label for="edit-name">ชื่อ</label>
+          <input type="text" id="edit-name" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label for="edit-msg">ข้อความถึงคู่</label>
+          <textarea id="edit-msg"></textarea>
+        </div>
+        <div class="actions">
+          <button id="edit-save" class="cta">บันทึก</button>
+          <button id="edit-back" class="ghost">กลับ</button>
+          <button id="edit-delete" class="danger">ลบบัญชี</button>
+        </div>
+        <div id="edit-warn" class="warning hidden"></div>
+      </div>
+    </section>
+
+    <!-- ── Reveal ──────────────── -->
+    <section id="screen-reveal" class="hero hidden">
+      <header class="site">
+        <h1 id="reveal-title">คู่ของคุณ</h1>
+        <p class="subtitle" id="reveal-self-label">—</p>
+      </header>
+      <div class="reveal-stage" id="reveal-stage"></div>
+      <p class="status-banner" id="reveal-hint" style="margin-top:8px">กำลังสแกน...</p>
+      <div class="actions">
+        <button id="reveal-back" class="cta">กลับ</button>
+      </div>
+    </section>
+
+    <!-- ── Admin ───────────────── -->
+    <section id="screen-admin" class="panel hidden" style="max-width:880px;margin:24px auto 0">
+      <div class="panel-head">
+        <h2>Admin Panel</h2>
+        <span class="panel-meta" id="admin-status">—</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="num" id="stat-seniors">0</div><div class="label">พี่</div></div>
+        <div class="stat"><div class="num" id="stat-juniors">0</div><div class="label">น้อง</div></div>
+        <div class="stat"><div class="num" id="stat-pairs">0</div><div class="label">คู่</div></div>
+      </div>
+
+      <h3 style="font-family:'Mali',cursive;color:var(--gold);margin:8px 0 10px;font-size:1.05rem">รายชื่อ</h3>
+      <div id="admin-users" class="user-list"></div>
+
+      <div class="actions" style="justify-content:flex-start;margin-bottom:14px">
+        <button id="admin-randomize" class="cta">สุ่มจับคู่</button>
+        <button id="admin-reset-matches" class="ghost">ล้างผลสุ่ม</button>
+        <button id="admin-reset-all" class="danger">ล้างข้อมูลทั้งหมด</button>
+      </div>
+
+      <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+
+      <h3 style="font-family:'Mali',cursive;color:var(--gold);margin:8px 0 10px;font-size:1.05rem">เครื่องมือ</h3>
+      <div class="actions" style="justify-content:flex-start">
+        <button id="admin-share" class="ghost">📋 Copy URL ส่งให้เพื่อน</button>
+        <button id="admin-refresh" class="refresh-btn">↻ Refresh</button>
+        <button id="admin-config" class="ghost">⚙ เปลี่ยน Bin/Key</button>
+        <button id="admin-back" class="ghost">กลับ</button>
+      </div>
+    </section>
+  </div>
+
+  <button class="admin-link hidden" id="admin-link">⚙ Admin</button>
+
+  <div id="confirm-modal" class="modal-bg hidden">
+    <div class="modal">
+      <h2 id="confirm-title">ยืนยัน</h2>
+      <p id="confirm-text">—</p>
+      <div class="row">
+        <button id="confirm-yes">ยืนยัน</button>
+        <button class="ghost" id="confirm-no">ยกเลิก</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  /* ── Background ── */
+  const bg = $('bg');
+  const layerFar = $('layer-far'), layerMid = $('layer-mid'), layerNear = $('layer-near');
+  const colorRoll = () => { const r = Math.random(); return r < 0.66 ? '' : r < 0.84 ? ' blue' : r < 0.95 ? ' gold' : ' red'; };
+  const layerSpec = [
+    { el: layerFar,  count: 220, sMin: 0.5, sMax: 1.3, oMin: 0.25, oMax: 0.7,  tMin: 4, tMax: 9, brightChance: 0,    pulseChance: 0.02 },
+    { el: layerMid,  count: 130, sMin: 1.0, sMax: 2.0, oMin: 0.4,  oMax: 0.85, tMin: 3, tMax: 7, brightChance: 0.04, pulseChance: 0.06 },
+    { el: layerNear, count: 55,  sMin: 1.6, sMax: 3.4, oMin: 0.55, oMax: 1.0,  tMin: 2.5, tMax: 6, brightChance: 0.3, pulseChance: 0.18 },
+  ];
+  for (const L of layerSpec) {
+    for (let i = 0; i < L.count; i++) {
+      const s = document.createElement('div');
+      let cls = 'star' + colorRoll();
+      if (Math.random() < L.pulseChance) cls += ' pulse';
+      if (Math.random() < L.brightChance) cls += ' bright';
+      s.className = cls;
+      const size = L.sMin + Math.random() * (L.sMax - L.sMin);
+      s.style.setProperty('--s', size.toFixed(2) + 'px');
+      s.style.setProperty('--g', (size * 3).toFixed(1) + 'px');
+      s.style.left = (Math.random() * 100).toFixed(2) + '%';
+      s.style.top = (Math.random() * 100).toFixed(2) + '%';
+      s.style.setProperty('--o', (L.oMin + Math.random() * (L.oMax - L.oMin)).toFixed(2));
+      s.style.setProperty('--t', (L.tMin + Math.random() * (L.tMax - L.tMin)).toFixed(2) + 's');
+      s.style.setProperty('--d', (Math.random() * 6).toFixed(2) + 's');
+      L.el.appendChild(s);
+    }
+  }
+  for (let i = 0; i < 30; i++) {
+    const d = document.createElement('div');
+    d.className = 'dust';
+    d.style.left = (Math.random() * 100).toFixed(2) + '%';
+    d.style.top = (Math.random() * 100).toFixed(2) + '%';
+    d.style.setProperty('--dx', (-150 - Math.random() * 250).toFixed(0) + 'px');
+    d.style.setProperty('--dy', (40 + Math.random() * 120).toFixed(0) + 'px');
+    d.style.setProperty('--t', (35 + Math.random() * 40).toFixed(0) + 's');
+    d.style.setProperty('--d', (-Math.random() * 50).toFixed(1) + 's');
+    bg.appendChild(d);
+  }
+  function spawnShootingStar() {
+    const s = document.createElement('div');
+    s.className = 'shooting-star';
+    s.style.top = (Math.random() * 60).toFixed(1) + '%';
+    s.style.left = (55 + Math.random() * 35).toFixed(1) + '%';
+    bg.appendChild(s);
+    setTimeout(() => s.remove(), 1800);
+  }
+  (function loop1(){ setTimeout(()=>{ spawnShootingStar(); loop1(); }, 2500 + Math.random()*4500); })();
+  function spawnComet() {
+    const c = document.createElement('div');
+    c.className = 'comet';
+    c.style.top = (Math.random() * 50).toFixed(1) + '%';
+    c.style.left = (70 + Math.random() * 25).toFixed(1) + '%';
+    bg.appendChild(c);
+    setTimeout(() => c.remove(), 3400);
+  }
+  (function loop2(){ setTimeout(()=>{ spawnComet(); loop2(); }, 22000 + Math.random()*28000); })();
+
+  /* ── Config (Bin ID + Master Key) ── */
+  const CONFIG_KEY = 'rahut-match-config-v1';
+  let config = null;
+
+  const loadConfigFromStorage = () => {
+    try { return JSON.parse(localStorage.getItem(CONFIG_KEY) || 'null'); }
+    catch { return null; }
+  };
+  const saveConfigToStorage = c => localStorage.setItem(CONFIG_KEY, JSON.stringify(c));
+
+  const initConfig = () => {
+    // Hash params override and persist
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      const p = new URLSearchParams(hash);
+      if (p.has('bin')) {
+        config = {
+          binId: (p.get('bin') || '').trim(),
+          apiKey: (p.get('key') || '').trim(),
+        };
+        saveConfigToStorage(config);
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+        return;
+      }
+    }
+    config = loadConfigFromStorage();
+  };
+
+  /* ── JSONbin API ── */
+  const BIN_BASE = 'https://api.jsonbin.io/v3/b';
+  async function apiFetch(binId, key) {
+    const r = await fetch(`${BIN_BASE}/${binId}/latest`, {
+      headers: { 'X-Master-Key': key, 'X-Bin-Meta': 'false' },
+      cache: 'no-store',
+    });
+    if (!r.ok) {
+      let m = `HTTP ${r.status}`;
+      try { const e = await r.json(); m = e.message || m; } catch {}
+      throw new Error(m);
+    }
+    const j = await r.json();
+    return j.record !== undefined ? j.record : j;
+  }
+  async function apiPush(binId, key, record) {
+    const r = await fetch(`${BIN_BASE}/${binId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': key,
+      },
+      body: JSON.stringify(record),
+    });
+    if (!r.ok) {
+      let m = `HTTP ${r.status}`;
+      try { const e = await r.json(); m = e.message || m; } catch {}
+      throw new Error(m);
+    }
+    return r.json();
+  }
+
+  /* ── Sync layer ── */
+  const defaultData = () => ({ users: [], matches: {}, randomizedAt: null });
+  let data = defaultData();
+  const syncPill = $('sync-pill');
+  const syncText = $('sync-text');
+
+  const setSync = (state, msg) => {
+    syncPill.classList.remove('idle','busy','error');
+    syncPill.classList.add(state);
+    syncText.textContent = msg || (state === 'busy' ? 'กำลัง sync...' : state === 'error' ? 'ขัดข้อง' : 'ออนไลน์');
+  };
+
+  async function pull() {
+    setSync('busy', 'โหลด...');
+    try {
+      const r = await apiFetch(config.binId, config.apiKey);
+      data = Object.assign(defaultData(), r || {});
+      setSync('idle');
+      return data;
+    } catch (e) {
+      setSync('error', 'โหลดล้มเหลว');
+      throw e;
+    }
+  }
+
+  async function push() {
+    setSync('busy', 'บันทึก...');
+    try {
+      await apiPush(config.binId, config.apiKey, data);
+      setSync('idle');
+    } catch (e) {
+      setSync('error', 'บันทึกล้มเหลว');
+      throw e;
+    }
+  }
+
+  /* ── Helpers ── */
+  const shuffle = arr => {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+  const findUserByName = name => {
+    const n = name.trim().toLowerCase();
+    return data.users.find(u => u.name.toLowerCase() === n);
+  };
+  const findUserById = id => data.users.find(u => u.id === id);
+  const newId = () => 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  const roleLabel = r => r === 'senior' ? 'พี่' : 'น้อง';
+  const isRandomized = () => !!data.randomizedAt;
+  const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  /* ── Screens ── */
+  const screens = {
+    setup: $('screen-setup'),
+    home: $('screen-home'),
+    register: $('screen-register'),
+    edit: $('screen-edit'),
+    reveal: $('screen-reveal'),
+    admin: $('screen-admin'),
+  };
+  const adminLink = $('admin-link');
+  let currentUserId = null;
+
+  const setScreen = name => {
+    Object.entries(screens).forEach(([k, el]) => el.classList.toggle('hidden', k !== name));
+    adminLink.classList.toggle('hidden', name === 'setup');
+    if (name === 'home') updateHomeStatus();
+    if (name === 'admin') renderAdmin();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const showWarn = (el, msg, isError = false) => {
+    if (!msg) { el.classList.add('hidden'); return; }
+    el.textContent = msg;
+    el.className = 'warning' + (isError ? ' error' : '');
+  };
+
+  /* ── Setup ── */
+  const setupBin = $('setup-bin');
+  const setupKey = $('setup-key');
+  const setupTest = $('setup-test');
+  const setupSave = $('setup-save');
+  const setupWarn = $('setup-warn');
+
+  setupTest.addEventListener('click', async () => {
+    const binId = setupBin.value.trim();
+    const apiKey = setupKey.value.trim();
+    if (!binId || !apiKey) { showWarn(setupWarn, 'กรอกทั้ง Bin ID และ Master Key', true); return; }
+    showWarn(setupWarn, 'กำลังทดสอบ...');
+    try {
+      await apiFetch(binId, apiKey);
+      showWarn(setupWarn, 'เชื่อมต่อสำเร็จ — กดบันทึกได้เลย');
+    } catch (e) {
+      showWarn(setupWarn, 'เชื่อมต่อล้มเหลว: ' + e.message, true);
+    }
+  });
+
+  setupSave.addEventListener('click', async () => {
+    const binId = setupBin.value.trim();
+    const apiKey = setupKey.value.trim();
+    if (!binId || !apiKey) { showWarn(setupWarn, 'กรอกทั้ง Bin ID และ Master Key', true); return; }
+    showWarn(setupWarn, 'กำลังตรวจ...');
+    try {
+      await apiFetch(binId, apiKey);
+    } catch (e) {
+      showWarn(setupWarn, 'ตรวจไม่ผ่าน: ' + e.message, true);
+      return;
+    }
+    config = { binId, apiKey };
+    saveConfigToStorage(config);
+    try {
+      await pull();
+      setScreen('home');
+    } catch (e) {
+      showWarn(setupWarn, 'โหลดข้อมูลล้มเหลว: ' + e.message, true);
+    }
+  });
+
+  /* ── Home ── */
+  const homeName = $('home-name');
+  const homeGo = $('home-go');
+  const homeRefresh = $('home-refresh');
+  const homeWarn = $('home-warn');
+  const statusText = $('status-text');
+  const statusBanner = $('status-banner');
+
+  const updateHomeStatus = () => {
+    if (isRandomized()) {
+      statusText.textContent = 'สุ่มแล้ว — ใส่ชื่อเพื่อดูคู่';
+      statusBanner.classList.add('live');
+    } else {
+      statusText.textContent = `ยังไม่สุ่ม — ${data.users.length} คนลงทะเบียน`;
+      statusBanner.classList.remove('live');
+    }
+  };
+
+  const handleHomeGo = () => {
+    const name = homeName.value.trim();
+    if (!name) { showWarn(homeWarn, 'กรอกชื่อก่อน', true); return; }
+    showWarn(homeWarn, '');
+
+    const u = findUserByName(name);
+    if (u) {
+      currentUserId = u.id;
+      if (isRandomized()) openReveal(u);
+      else openEdit(u);
+    } else {
+      if (isRandomized()) {
+        showWarn(homeWarn, 'ลงทะเบียนหลังสุ่มไม่ได้ ติดต่อผู้จัด', true);
+        return;
+      }
+      $('reg-name').value = name;
+      openRegister();
+    }
+  };
+
+  homeGo.addEventListener('click', handleHomeGo);
+  homeName.addEventListener('keydown', e => { if (e.key === 'Enter') handleHomeGo(); });
+
+  homeRefresh.addEventListener('click', async () => {
+    try { await pull(); updateHomeStatus(); flash('โหลดข้อมูลใหม่แล้ว'); }
+    catch (e) { flash('โหลดล้มเหลว: ' + e.message, true); }
+  });
+
+  /* ── Register ── */
+  const regName = $('reg-name');
+  const regMsg = $('reg-msg');
+  const regSave = $('reg-save');
+  const regCancel = $('reg-cancel');
+  const regWarn = $('reg-warn');
+
+  const openRegister = () => {
+    showWarn(regWarn, '');
+    document.querySelector('input[name="reg-role"][value="senior"]').checked = true;
+    regMsg.value = '';
+    setScreen('register');
+    setTimeout(() => regName.focus(), 80);
+  };
+
+  regSave.addEventListener('click', async () => {
+    const name = regName.value.trim();
+    const role = document.querySelector('input[name="reg-role"]:checked').value;
+    const message = regMsg.value.trim();
+    if (!name) { showWarn(regWarn, 'กรอกชื่อก่อน', true); return; }
+
+    // Pull-first to ensure latest state, then check
+    showWarn(regWarn, 'กำลังบันทึก...');
+    try {
+      await pull();
+      if (findUserByName(name)) { showWarn(regWarn, 'มีชื่อนี้ลงทะเบียนแล้ว', true); return; }
+      if (isRandomized()) { showWarn(regWarn, 'สุ่มแล้ว ลงทะเบียนไม่ได้', true); return; }
+      const user = { id: newId(), name, role, message, createdAt: Date.now() };
+      data.users.push(user);
+      await push();
+      currentUserId = user.id;
+      homeName.value = '';
+      setScreen('home');
+      flash(`ลงทะเบียน ${roleLabel(role)}${name} แล้ว`);
+    } catch (e) {
+      showWarn(regWarn, 'บันทึกล้มเหลว: ' + e.message, true);
+    }
+  });
+
+  regCancel.addEventListener('click', () => {
+    homeName.value = '';
+    setScreen('home');
+  });
+
+  /* ── Edit ── */
+  const editName = $('edit-name');
+  const editMsg = $('edit-msg');
+  const editRoleLabel = $('edit-role-label');
+  const editSave = $('edit-save');
+  const editBack = $('edit-back');
+  const editDelete = $('edit-delete');
+  const editWarn = $('edit-warn');
+
+  const openEdit = (u) => {
+    currentUserId = u.id;
+    showWarn(editWarn, '');
+    editRoleLabel.textContent = `${roleLabel(u.role)}${u.name}`;
+    editName.value = u.name;
+    editMsg.value = u.message || '';
+    setScreen('edit');
+  };
+
+  editSave.addEventListener('click', async () => {
+    showWarn(editWarn, 'กำลังบันทึก...');
+    try {
+      await pull();
+      const u = findUserById(currentUserId);
+      if (!u) { showWarn(editWarn, 'ไม่พบบัญชี อาจถูกลบไปแล้ว', true); return; }
+      if (isRandomized()) { showWarn(editWarn, 'สุ่มแล้ว แก้ไม่ได้', true); return; }
+      const name = editName.value.trim();
+      if (!name) { showWarn(editWarn, 'กรอกชื่อก่อน', true); return; }
+      const dup = findUserByName(name);
+      if (dup && dup.id !== u.id) { showWarn(editWarn, 'มีชื่อนี้ลงทะเบียนแล้ว', true); return; }
+      u.name = name;
+      u.message = editMsg.value.trim();
+      await push();
+      homeName.value = '';
+      setScreen('home');
+      flash('บันทึกแล้ว');
+    } catch (e) {
+      showWarn(editWarn, 'บันทึกล้มเหลว: ' + e.message, true);
+    }
+  });
+
+  editBack.addEventListener('click', () => { homeName.value = ''; setScreen('home'); });
+
+  editDelete.addEventListener('click', () => {
+    const u = findUserById(currentUserId);
+    if (!u) return;
+    confirmModal(`ลบบัญชี "${u.name}"?`, 'ข้อมูลจะถูกล้าง', async () => {
+      try {
+        await pull();
+        data.users = data.users.filter(x => x.id !== currentUserId);
+        delete data.matches[currentUserId];
+        await push();
+        currentUserId = null;
+        homeName.value = '';
+        setScreen('home');
+        flash('ลบแล้ว');
+      } catch (e) { flash('ลบล้มเหลว: ' + e.message, true); }
+    });
+  });
+
+  /* ── Reveal (light beam scan) ── */
+  const revealStage = $('reveal-stage');
+  const revealTitle = $('reveal-title');
+  const revealSelfLabel = $('reveal-self-label');
+  const revealHint = $('reveal-hint');
+  const revealBack = $('reveal-back');
+  let scanRaf = null;
+
+  const openReveal = (u) => {
+    currentUserId = u.id;
+    revealSelfLabel.textContent = `${roleLabel(u.role)}${u.name}`;
+
+    const partnerId = data.matches[u.id];
+    const partner = partnerId ? findUserById(partnerId) : null;
+
+    revealStage.classList.remove('done', 'no-partner');
+    revealStage.style.removeProperty('--scan');
+    revealHint.textContent = 'กำลังสแกน...';
+
+    if (!partner) {
+      revealTitle.textContent = 'ผลลัพธ์';
+      revealStage.classList.add('no-partner');
+      revealStage.innerHTML = `<div class="no-partner-msg">รอบนี้ไม่ได้คู่<br><span style="font-size:.95rem;color:var(--muted);font-style:italic">(จำนวนพี่กับน้องไม่เท่ากัน)</span></div>`;
+      revealHint.textContent = '';
+      setScreen('reveal');
+      return;
+    }
+
+    const fromTag = `<div class="from-tag">ข้อความจาก${roleLabel(partner.role)}</div>`;
+    const msgClass = partner.message ? '' : ' empty';
+    const msgText = partner.message || '(ไม่ได้เขียนข้อความ)';
+    let html = '<div class="content">';
+    if (u.role === 'senior') {
+      revealTitle.textContent = 'น้องของคุณคือ';
+      html += `<div class="partner-name">${escapeHtml(partner.name)}</div>`;
+      html += fromTag + `<div class="partner-message${msgClass}">${escapeHtml(msgText)}</div>`;
+    } else {
+      revealTitle.textContent = 'ข้อความจากพี่ลึกลับ';
+      html += `<div class="partner-name" style="color:var(--muted);font-size:1.4rem;font-style:italic">??? พี่ลึกลับของคุณ</div>`;
+      html += fromTag + `<div class="partner-message${msgClass}">${escapeHtml(msgText)}</div>`;
+    }
+    html += '</div><div class="beam"></div>';
+    revealStage.innerHTML = html;
+
+    setScreen('reveal');
+    runScan();
+  };
+
+  const runScan = () => {
+    if (scanRaf) cancelAnimationFrame(scanRaf);
+    const t0 = performance.now();
+    const DUR = 1800;
+    const tick = (now) => {
+      const t = Math.min(1, (now - t0) / DUR);
+      const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      revealStage.style.setProperty('--scan', (eased * 100).toFixed(2) + '%');
+      if (t < 1) scanRaf = requestAnimationFrame(tick);
+      else { revealStage.classList.add('done'); revealHint.textContent = 'จดจำชื่อ/ข้อความนี้ไว้'; scanRaf = null; }
+    };
+    scanRaf = requestAnimationFrame(tick);
+  };
+
+  revealBack.addEventListener('click', () => {
+    if (scanRaf) cancelAnimationFrame(scanRaf);
+    homeName.value = '';
+    setScreen('home');
+  });
+
+  /* ── Admin ── */
+  const adminStatus = $('admin-status');
+  const adminUsers = $('admin-users');
+  const statSeniors = $('stat-seniors');
+  const statJuniors = $('stat-juniors');
+  const statPairs = $('stat-pairs');
+  const adminRandomize = $('admin-randomize');
+  const adminResetMatches = $('admin-reset-matches');
+  const adminResetAll = $('admin-reset-all');
+  const adminBack = $('admin-back');
+  const adminShare = $('admin-share');
+  const adminRefresh = $('admin-refresh');
+  const adminConfig = $('admin-config');
+
+  adminLink.addEventListener('click', async () => {
+    try { await pull(); } catch (e) { flash('โหลดล้มเหลว: ' + e.message, true); return; }
+    setScreen('admin');
+  });
+  adminBack.addEventListener('click', () => setScreen('home'));
+
+  const renderAdmin = () => {
+    const seniors = data.users.filter(u => u.role === 'senior');
+    const juniors = data.users.filter(u => u.role === 'junior');
+    statSeniors.textContent = seniors.length;
+    statJuniors.textContent = juniors.length;
+    statPairs.textContent = Object.keys(data.matches).length / 2;
+
+    adminStatus.textContent = isRandomized()
+      ? `สุ่มเมื่อ ${new Date(data.randomizedAt).toLocaleString('th-TH')}`
+      : 'ยังไม่สุ่ม';
+
+    adminUsers.innerHTML = '';
+    if (data.users.length === 0) {
+      adminUsers.innerHTML = '<div class="user-list-empty">ยังไม่มีคนลงทะเบียน</div>';
+    } else {
+      data.users.forEach(u => {
+        const chip = document.createElement('span');
+        chip.className = 'user-chip';
+        chip.innerHTML = `<span class="role">${roleLabel(u.role)}</span><span>${escapeHtml(u.name)}</span><span class="x" title="ลบ">✕</span>`;
+        chip.querySelector('.x').addEventListener('click', () => {
+          confirmModal(`ลบ "${u.name}"?`, 'จะลบบัญชีและข้อความ', async () => {
+            try {
+              await pull();
+              data.users = data.users.filter(x => x.id !== u.id);
+              delete data.matches[u.id];
+              for (const k of Object.keys(data.matches)) {
+                if (data.matches[k] === u.id) delete data.matches[k];
+              }
+              await push();
+              renderAdmin();
+            } catch (e) { flash('ลบล้มเหลว: ' + e.message, true); }
+          });
+        });
+        adminUsers.appendChild(chip);
+      });
+    }
+
+    adminRandomize.textContent = isRandomized() ? 'สุ่มใหม่' : 'สุ่มจับคู่';
+  };
+
+  adminRandomize.addEventListener('click', () => {
+    const seniors = data.users.filter(u => u.role === 'senior');
+    const juniors = data.users.filter(u => u.role === 'junior');
+    if (seniors.length === 0 || juniors.length === 0) { flash('ต้องมีทั้งพี่และน้องอย่างน้อย 1 คน', true); return; }
+    const action = isRandomized() ? 'สุ่มใหม่' : 'สุ่มจับคู่';
+    let warn = '';
+    if (seniors.length !== juniors.length) {
+      warn = `\n(พี่ ${seniors.length} vs น้อง ${juniors.length} — จะมีคนไม่ได้คู่)`;
+    }
+    confirmModal(`${action}?`, `จะสุ่ม ${Math.min(seniors.length, juniors.length)} คู่${warn}`, async () => {
+      try {
+        await pull();
+        const sr = data.users.filter(u => u.role === 'senior');
+        const jr = shuffle(data.users.filter(u => u.role === 'junior'));
+        data.matches = {};
+        sr.forEach((s, i) => {
+          const j = jr[i];
+          if (j) {
+            data.matches[s.id] = j.id;
+            data.matches[j.id] = s.id;
+          }
+        });
+        data.randomizedAt = Date.now();
+        await push();
+        renderAdmin();
+        flash('สุ่มเสร็จแล้ว — แจ้งให้ทุกคนกลับมาดูคู่');
+      } catch (e) { flash('สุ่มล้มเหลว: ' + e.message, true); }
+    });
+  });
+
+  adminResetMatches.addEventListener('click', () => {
+    if (!isRandomized()) { flash('ยังไม่ได้สุ่ม', true); return; }
+    confirmModal('ล้างผลสุ่ม?', 'คนที่ลงทะเบียนยังอยู่', async () => {
+      try {
+        await pull();
+        data.matches = {};
+        data.randomizedAt = null;
+        await push();
+        renderAdmin();
+        flash('ล้างผลสุ่มแล้ว');
+      } catch (e) { flash('ล้มเหลว: ' + e.message, true); }
+    });
+  });
+
+  adminResetAll.addEventListener('click', () => {
+    confirmModal('ล้างทุกอย่าง?', 'ลบรายชื่อ ข้อความ และผลสุ่มทั้งหมดบน server', async () => {
+      try {
+        data = defaultData();
+        await push();
+        renderAdmin();
+        flash('ล้างข้อมูลแล้ว');
+      } catch (e) { flash('ล้มเหลว: ' + e.message, true); }
+    });
+  });
+
+  adminRefresh.addEventListener('click', async () => {
+    try { await pull(); renderAdmin(); flash('โหลดข้อมูลใหม่แล้ว'); }
+    catch (e) { flash('โหลดล้มเหลว: ' + e.message, true); }
+  });
+
+  adminShare.addEventListener('click', async () => {
+    const url = `${location.origin}${location.pathname}#bin=${encodeURIComponent(config.binId)}&key=${encodeURIComponent(config.apiKey)}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      flash('Copy URL แล้ว ส่งให้เพื่อนได้เลย');
+    } catch {
+      prompt('Copy URL นี้ส่งให้เพื่อน:', url);
+    }
+  });
+
+  adminConfig.addEventListener('click', () => {
+    confirmModal('เปลี่ยน Bin/Key?', 'จะกลับไปหน้า Setup (config ปัจจุบันจะถูกล้าง)', () => {
+      localStorage.removeItem(CONFIG_KEY);
+      config = null;
+      setupBin.value = '';
+      setupKey.value = '';
+      showWarn(setupWarn, '');
+      setScreen('setup');
+    });
+  });
+
+  /* ── Confirm modal ── */
+  const confirmModalEl = $('confirm-modal');
+  const confirmTitle = $('confirm-title');
+  const confirmText = $('confirm-text');
+  const confirmYes = $('confirm-yes');
+  const confirmNo = $('confirm-no');
+  let confirmCb = null;
+
+  const confirmModal = (title, text, cb) => {
+    confirmTitle.textContent = title;
+    confirmText.textContent = text;
+    confirmCb = cb;
+    confirmModalEl.classList.remove('hidden');
+  };
+  confirmYes.addEventListener('click', () => {
+    confirmModalEl.classList.add('hidden');
+    if (confirmCb) confirmCb();
+    confirmCb = null;
+  });
+  confirmNo.addEventListener('click', () => {
+    confirmModalEl.classList.add('hidden');
+    confirmCb = null;
+  });
+
+  /* ── Flash toast ── */
+  let flashTimer = null;
+  const flash = (msg, isError = false) => {
+    let el = document.getElementById('flash-toast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'flash-toast';
+      el.style.cssText = `
+        position:fixed;left:50%;bottom:80px;transform:translateX(-50%);
+        background:rgba(14,26,47,.95);border:1px solid var(--gold);
+        color:var(--gold-bright);padding:10px 22px;border-radius:999px;
+        font-family:Mali,cursive;z-index:60;
+        box-shadow:0 8px 24px rgba(0,0,0,.5);
+        backdrop-filter:blur(8px);transition:opacity .25s,transform .25s;
+        opacity:0;
+      `;
+      document.body.appendChild(el);
+    }
+    if (isError) {
+      el.style.borderColor = 'var(--danger)';
+      el.style.color = '#ffb4ad';
+    } else {
+      el.style.borderColor = 'var(--gold)';
+      el.style.color = 'var(--gold-bright)';
+    }
+    el.textContent = msg;
+    requestAnimationFrame(() => {
+      el.style.opacity = '1';
+      el.style.transform = 'translate(-50%, -8px)';
+    });
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(() => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateX(-50%)';
+    }, 2400);
+  };
+
+  /* ── Init ── */
+  (async () => {
+    initConfig();
+    if (!config || !config.binId || !config.apiKey) {
+      setScreen('setup');
+      return;
+    }
+    try {
+      await pull();
+      setScreen('home');
+    } catch (e) {
+      // Config exists but fetch failed — likely bad credentials
+      showWarn(setupWarn, 'เชื่อมต่อด้วย config เดิมไม่ได้: ' + e.message + ' กรุณาตรวจสอบ Bin/Key', true);
+      setupBin.value = config.binId || '';
+      setupKey.value = config.apiKey || '';
+      setScreen('setup');
+    }
+  })();
+})();
+</script>
+</body>
+</html>
