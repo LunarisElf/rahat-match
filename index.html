@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>จับคู่พี่รหัส × น้องรหัส</title>
+<title data-text="pageTitle">จับคู่พี่รหัส × น้องรหัส</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
@@ -53,11 +53,12 @@
 
   .input-group{margin-bottom:14px}
   .input-group label{display:block;font-weight:700;margin-bottom:6px;color:var(--gold);font-size:.95rem;letter-spacing:.5px}
-  input[type="text"],textarea{width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:inherit;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
+  input[type="text"],input[type="password"],textarea{width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:inherit;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
   input[type="text"]{font-size:1.1rem;font-family:'Mali',cursive}
+  input[type="password"]{font-family:monospace;font-size:.95rem}
   textarea{min-height:130px;resize:vertical}
-  input[type="text"]::placeholder,textarea::placeholder{color:#4a5a73}
-  input[type="text"]:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,169,97,.18)}
+  input[type="text"]::placeholder,input[type="password"]::placeholder,textarea::placeholder{color:#4a5a73}
+  input[type="text"]:focus,input[type="password"]:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,169,97,.18)}
 
   .role-picker{display:flex;gap:10px;margin-bottom:6px}
   .role-picker label{flex:1;cursor:pointer}
@@ -131,17 +132,202 @@
   .sync-pill.error{color:#ffb4ad;border-color:#5a2c2c}
   .sync-pill.error .dot{background:var(--danger);box-shadow:0 0 6px var(--danger)}
 
-  .config-error{
-    text-align:left;background:rgba(231,76,60,.06);border:1px solid rgba(231,76,60,.3);
-    border-radius:14px;padding:18px;color:var(--text);font-size:.9rem;line-height:1.7;
-    max-width:600px;margin:0 auto;
-  }
+  .config-error{text-align:left;background:rgba(231,76,60,.06);border:1px solid rgba(231,76,60,.3);border-radius:14px;padding:18px;color:var(--text);font-size:.9rem;line-height:1.7;max-width:600px;margin:0 auto}
   .config-error h3{color:#ffb4ad;font-family:'Mali',cursive;margin-bottom:10px}
   .config-error code{background:rgba(0,0,0,.4);padding:2px 6px;border-radius:4px;color:var(--gold-bright);font-size:.85rem}
-  .config-error pre{background:rgba(0,0,0,.4);padding:12px;border-radius:8px;overflow-x:auto;margin:10px 0;font-size:.78rem;color:var(--gold-bright)}
   .config-error a{color:var(--gold);border-bottom:1px dotted var(--gold);text-decoration:none}
   .config-error ol{padding-left:20px}
   .config-error ol li{margin:5px 0}
+
+  /* ── Math decoration layer ──────────────── */
+  #math-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:-1}
+  .math-glyph{
+    position:absolute;
+    font-family:'Cambria Math','STIX Two Math','Latin Modern Math',Georgia,serif;
+    font-style:italic;
+    color:rgba(201,169,97,.18);
+    pointer-events:none;
+    user-select:none;
+    will-change:transform,opacity;
+    animation:glyph-drift var(--t,70s) ease-in-out infinite alternate;
+    animation-delay:var(--d,0s);
+    text-shadow:0 0 14px rgba(201,169,97,.18);
+    white-space:nowrap;
+    line-height:1;
+  }
+  .math-glyph.cyan{color:rgba(120,170,230,.14);text-shadow:0 0 14px rgba(120,170,230,.14)}
+  .math-glyph.violet{color:rgba(160,110,200,.14);text-shadow:0 0 14px rgba(160,110,200,.14)}
+  @keyframes glyph-drift{
+    0%   {transform:translate(0,0) scale(1)}
+    33%  {transform:translate(18px,-12px) scale(1.05)}
+    66%  {transform:translate(-14px,16px) scale(.95)}
+    100% {transform:translate(8px,-20px) scale(1.02)}
+  }
+
+  /* Lissajous orbit accent — subtle gold dot orbiting near the title */
+  .orbit-ring{
+    position:absolute;
+    width:340px;height:340px;
+    border-radius:50%;
+    border:1px dashed rgba(201,169,97,.10);
+    pointer-events:none;
+    top:-100px;left:50%;transform:translateX(-50%);
+  }
+  .orbit-ring::before{
+    content:'';
+    position:absolute;
+    width:6px;height:6px;
+    background:var(--gold-bright);
+    border-radius:50%;
+    box-shadow:0 0 12px var(--gold-bright),0 0 24px rgba(201,169,97,.4);
+    top:-3px;left:50%;
+    transform-origin:0 173px;
+    animation:orbit-spin var(--orbit-t,18s) linear infinite;
+  }
+  @keyframes orbit-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+  /* Sine wave SVG below header */
+  .wave-band{
+    width:100%;max-width:560px;
+    margin:22px auto 6px;
+    height:36px;
+    pointer-events:none;
+    opacity:.55;
+  }
+  .wave-band svg{width:100%;height:100%;display:block}
+  .wave-band path{
+    stroke:var(--gold);
+    stroke-width:1.2;
+    fill:none;
+    stroke-dasharray:5 4;
+    animation:wave-shift 14s linear infinite;
+  }
+  @keyframes wave-shift{
+    from{stroke-dashoffset:0}
+    to{stroke-dashoffset:-180}
+  }
+
+  /* ── Interactive: click burst, mouse trail, confetti ── */
+  .click-burst{
+    position:fixed;
+    pointer-events:none;
+    z-index:100;
+    width:0;height:0;
+  }
+  .click-burst span{
+    position:absolute;
+    width:6px;height:6px;
+    border-radius:50%;
+    background:var(--gold-bright);
+    box-shadow:0 0 10px var(--gold-bright),0 0 18px var(--gold);
+    transform:translate(-50%,-50%);
+    animation:burst-out .7s cubic-bezier(.2,.6,.3,1) forwards;
+  }
+  @keyframes burst-out{
+    0%   {transform:translate(-50%,-50%) scale(1);opacity:1}
+    100% {transform:translate(calc(-50% + var(--dx,0px)),calc(-50% + var(--dy,0px))) scale(.2);opacity:0}
+  }
+
+  .trail{
+    position:fixed;
+    width:4px;height:4px;
+    border-radius:50%;
+    background:rgba(230,201,122,.7);
+    box-shadow:0 0 6px var(--gold-bright);
+    pointer-events:none;
+    transform:translate(-50%,-50%);
+    z-index:99;
+    animation:trail-fade .85s ease-out forwards;
+    will-change:opacity,transform;
+  }
+  @keyframes trail-fade{
+    0%   {opacity:1;transform:translate(-50%,-50%) scale(1)}
+    100% {opacity:0;transform:translate(-50%,-50%) scale(.3)}
+  }
+
+  .confetti{
+    position:fixed;
+    top:-20px;
+    width:8px;height:14px;
+    z-index:80;
+    pointer-events:none;
+    border-radius:2px;
+    animation:confetti-fall var(--dur,3s) cubic-bezier(.4,.05,.6,.4) forwards;
+    will-change:transform,opacity;
+  }
+  @keyframes confetti-fall{
+    0%   {transform:translateY(0) rotate(0deg);opacity:0}
+    10%  {opacity:1}
+    100% {transform:translateY(110vh) rotate(var(--rot,720deg));opacity:.6}
+  }
+
+  /* Button hover halo */
+  button.cta::after{
+    content:'';
+    position:absolute;
+    inset:-2px;
+    border-radius:inherit;
+    background:radial-gradient(circle at 50% 50%,rgba(230,201,122,.5),transparent 70%);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .3s;
+    z-index:-1;
+  }
+  button.cta{position:relative;z-index:1}
+  button.cta:hover::after{opacity:1;animation:halo-pulse 1.6s ease-in-out infinite}
+  @keyframes halo-pulse{
+    0%,100% {transform:scale(1);opacity:.4}
+    50%     {transform:scale(1.15);opacity:.7}
+  }
+
+  body.lite .trail{display:none}
+  body.lite .click-burst span{box-shadow:none}
+
+  /* Input glow on keystroke */
+  input.typing,textarea.typing{
+    animation:typing-glow .5s ease-out;
+  }
+  @keyframes typing-glow{
+    0%   {box-shadow:0 0 0 3px rgba(201,169,97,.18)}
+    40%  {box-shadow:0 0 0 5px rgba(201,169,97,.4),0 0 16px rgba(230,201,122,.3)}
+    100% {box-shadow:0 0 0 3px rgba(201,169,97,.18)}
+  }
+
+  /* Title press bounce — smooth */
+  header.site h1{
+    transition:transform .4s cubic-bezier(.34,1.56,.64,1),text-shadow .3s ease;
+    transform-origin:50% 60%;
+  }
+  header.site h1.pressed{
+    animation:title-bounce .55s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes title-bounce{
+    0%   {transform:scale(1) rotate(0)}
+    25%  {transform:scale(1.07) rotate(-1.5deg)}
+    55%  {transform:scale(1.04) rotate(1deg)}
+    100% {transform:scale(1) rotate(0)}
+  }
+
+  /* ── Mobile / lite mode (cheap effects) ── */
+  body.lite .nebula{filter:blur(28px);opacity:.16}
+  body.lite .nebula.cyan{display:none}
+  body.lite .starfield{animation:none}
+  body.lite .star.pulse{animation:twinkle var(--t,4s) ease-in-out infinite}
+  body.lite .star.bright::before,
+  body.lite .star.bright::after{display:none}
+  body.lite .dust{display:none}
+  body.lite .glass-panel{
+    backdrop-filter:none;-webkit-backdrop-filter:none;
+    background:rgba(14,26,47,.92);
+  }
+  body.lite .modal-bg{
+    backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
+    background:rgba(2,5,12,.92);
+  }
+  body.lite .math-glyph{animation-duration:140s}
+  body.lite .orbit-ring{display:none}
+  body.lite .reveal-stage{box-shadow:0 4px 12px rgba(0,0,0,.4)}
+  body.lite .wave-band{opacity:.35}
 
   .hidden{display:none !important}
 
@@ -151,8 +337,12 @@
     .reveal-stage{padding:22px 18px;min-height:200px}
     .sync-pill{top:8px;right:8px;font-size:.75rem}
     .admin-link{bottom:8px;right:8px}
+    .orbit-ring{width:240px;height:240px;top:-60px}
+    .orbit-ring::before{transform-origin:0 123px}
   }
-  @media(prefers-reduced-motion:reduce){.nebula,.star,.starfield,.dust{animation:none}}
+  @media(prefers-reduced-motion:reduce){
+    .nebula,.star,.starfield,.dust,.math-glyph,.wave-band path,.orbit-ring::before{animation:none}
+  }
 </style>
 </head>
 <body>
@@ -164,103 +354,104 @@
     <div class="starfield mid"  id="layer-mid"></div>
     <div class="starfield near" id="layer-near"></div>
   </div>
+  <div id="math-layer"></div>
 
   <div class="sync-pill" id="sync-pill">
-    <span class="dot"></span><span id="sync-text">เชื่อมต่อแล้ว</span>
+    <span class="dot"></span><span id="sync-text" data-text="syncOnline">เชื่อมต่อแล้ว</span>
   </div>
 
   <div class="app">
     <section id="screen-config" class="hero hidden">
       <header class="site">
-        <h1>ตั้งค่า Firebase</h1>
-        <p class="subtitle">ทำครั้งเดียวก่อน deploy</p>
+        <h1 data-text="setupTitle">ตั้งค่า Firebase</h1>
+        <p class="subtitle" data-text="setupSubtitle">ทำครั้งเดียวก่อน deploy</p>
       </header>
       <div class="config-error">
-        <h3>⚠ ยังไม่ได้ตั้งค่า Firebase</h3>
-        <p>เปิดไฟล์ <code>index.html</code> ในเครื่อง แล้วหา section <code>FIREBASE CONFIG</code> ในส่วน <code>&lt;script&gt;</code> ด้านล่าง paste ค่าจาก Firebase Console</p>
-        <p style="color:var(--gold);margin:14px 0 6px"><strong>วิธีรับค่า Firebase config:</strong></p>
+        <h3 data-text="setupErrorH3">⚠ ยังไม่ได้ตั้งค่า Firebase</h3>
+        <p data-text="setupInstr">เปิดไฟล์ index.html ในเครื่อง แล้วหา section FIREBASE CONFIG paste ค่าจาก Firebase Console</p>
+        <p style="color:var(--gold);margin:14px 0 6px"><strong data-text="setupHowto">วิธีรับค่า Firebase config:</strong></p>
         <ol>
-          <li>ไปที่ <a href="https://firebase.google.com" target="_blank">firebase.google.com</a> → Get Started → สมัครฟรี (Google)</li>
-          <li>Add Project → ตั้งชื่อ → Continue → Continue → Create project</li>
-          <li>Build → Firestore Database → Create database → "Start in test mode" → Next → เลือก location (เช่น <code>asia-southeast1</code>) → Enable</li>
-          <li>กลับมาหน้า Project Overview → คลิกไอคอน <code>&lt;/&gt;</code> Web → ลงทะเบียน app → Copy <code>firebaseConfig</code> object</li>
-          <li>Paste ลงในไฟล์ <code>index.html</code> ตรง section <code>FIREBASE CONFIG</code> → Save → upload ใหม่</li>
+          <li data-text="setupStep1"></li>
+          <li data-text="setupStep2"></li>
+          <li data-text="setupStep3"></li>
+          <li data-text="setupStep4"></li>
+          <li data-text="setupStep5"></li>
         </ol>
-        <p style="margin-top:14px;color:var(--muted);font-size:.85rem">
-          ตำแหน่งใน source: หาคำว่า <code>FIREBASE_CONFIG</code> ในไฟล์ index.html (ประมาณบรรทัด 270)
-        </p>
+        <p style="margin-top:14px;color:var(--muted);font-size:.85rem" data-text="setupLocation"></p>
       </div>
     </section>
 
     <section id="screen-home" class="hero hidden">
       <header class="site">
-        <h1>จับคู่พี่รหัส × น้องรหัส</h1>
-        <p class="subtitle">ม.5/1</p>
+        <h1 data-text="appTitle">จับคู่พี่รหัส × น้องรหัส</h1>
+        <p class="subtitle" data-text="appSubtitle">ม.5/1</p>
+        <div class="wave-band">
+          <svg viewBox="0 0 400 36" preserveAspectRatio="none">
+            <path d="M0,18 Q25,4 50,18 T100,18 T150,18 T200,18 T250,18 T300,18 T350,18 T400,18" />
+          </svg>
+        </div>
       </header>
       <div id="status-banner" class="status-banner">
-        <span class="dot"></span><span id="status-text">กำลังโหลด...</span>
+        <span class="dot"></span><span id="status-text" data-text="statusLoading">กำลังโหลด...</span>
       </div>
 
       <div id="welcome-panel" class="glass-panel hidden" style="margin-top:16px;text-align:center">
-        <p style="color:var(--muted);margin-bottom:6px;font-size:.95rem;letter-spacing:.5px">ยินดีต้อนรับกลับ</p>
-        <div id="welcome-name" style="font-family:'Mali',cursive;font-size:1.7rem;color:var(--gold-bright);margin-bottom:6px;line-height:1.2;text-shadow:0 0 14px rgba(230,201,122,.3)">—</div>
-        <p id="welcome-hint" style="color:var(--muted);margin-bottom:18px;font-size:.9rem">เลือกสิ่งที่จะทำ</p>
+        <p style="color:var(--muted);margin-bottom:6px;font-size:.95rem;letter-spacing:.5px" data-text="welcomeBack">ยินดีต้อนรับกลับ</p>
+        <div id="welcome-name" style="font-family:'Mali',cursive;font-size:1.7rem;color:var(--gold-bright);margin-bottom:18px;line-height:1.2;text-shadow:0 0 14px rgba(230,201,122,.3)">—</div>
         <div class="actions" style="margin-top:0">
           <button id="welcome-action" class="cta">แก้ไขข้อมูล</button>
-          <button id="welcome-logout" class="ghost">เปลี่ยนผู้ใช้</button>
+          <button id="welcome-delete" class="danger" data-text="btnDelete">ลบบัญชี</button>
         </div>
       </div>
 
       <div id="login-panel" class="glass-panel" style="margin-top:16px">
         <div class="input-group">
-          <label for="home-name">ใส่ชื่อของคุณ</label>
-          <input type="text" id="home-name" placeholder="ชื่อเล่น เช่น เอ บี ซี" autocomplete="off">
+          <label for="home-name" data-text="homeNameLabel">ใส่ชื่อของคุณ</label>
+          <input type="text" id="home-name" data-placeholder="homeNamePlaceholder" autocomplete="off">
         </div>
         <div class="actions">
-          <button id="home-go" class="cta">ดำเนินการ</button>
+          <button id="home-go" class="cta" data-text="btnGo">ดำเนินการ</button>
         </div>
         <div id="home-warn" class="warning hidden"></div>
-        <p style="text-align:center;color:var(--muted);font-size:.85rem;margin-top:18px;line-height:1.6">
-          ครั้งแรกจะให้ลงทะเบียน · เครื่องนี้จะจำคุณไว้ครั้งหน้าไม่ต้องพิมพ์อีก
-        </p>
+        <p style="text-align:center;color:var(--muted);font-size:.85rem;margin-top:18px;line-height:1.6" data-text="homeHelpText"></p>
       </div>
     </section>
 
     <section id="screen-register" class="hero hidden">
-      <header class="site"><h1>ลงทะเบียน</h1><p class="subtitle">ครั้งแรกของคุณ</p></header>
+      <header class="site">
+        <h1 data-text="registerTitle">ลงทะเบียน</h1>
+      </header>
       <div class="glass-panel">
         <div class="input-group">
-          <label>คุณคือ?</label>
           <div class="role-picker">
-            <label><input type="radio" name="reg-role" value="senior" checked><span class="role-card"><span class="icon">★</span>พี่รหัส</span></label>
-            <label><input type="radio" name="reg-role" value="junior"><span class="role-card"><span class="icon">☆</span>น้องรหัส</span></label>
+            <label><input type="radio" name="reg-role" value="senior" checked><span class="role-card"><span class="icon">★</span><span data-text="roleSeniorFull">พี่รหัส</span></span></label>
+            <label><input type="radio" name="reg-role" value="junior"><span class="role-card"><span class="icon">☆</span><span data-text="roleJuniorFull">น้องรหัส</span></span></label>
           </div>
         </div>
         <div class="input-group">
-          <label for="reg-name">ชื่อ</label>
-          <input type="text" id="reg-name" placeholder="ชื่อของคุณ" autocomplete="off">
+          <label for="reg-name" data-text="registerNameLabel">ชื่อ</label>
+          <input type="text" id="reg-name" data-placeholder="registerNamePlaceholder" autocomplete="off">
         </div>
         <div class="input-group">
-          <label for="reg-msg">ข้อความถึง "คู่ในอนาคต"</label>
-          <textarea id="reg-msg" placeholder="สวัสดีค่ะ ยินดีที่ได้รู้จัก..."></textarea>
+          <label for="reg-msg" data-text="registerMsgLabel">ข้อความถึง "คู่ในอนาคต"</label>
+          <textarea id="reg-msg" data-placeholder="registerMsgPlaceholder"></textarea>
         </div>
         <div class="actions">
-          <button id="reg-save" class="cta">บันทึก</button>
-          <button id="reg-cancel" class="ghost">ยกเลิก</button>
+          <button id="reg-save" class="cta" data-text="btnSave">บันทึก</button>
+          <button id="reg-cancel" class="ghost" data-text="btnCancel">ยกเลิก</button>
         </div>
         <div id="reg-warn" class="warning hidden"></div>
       </div>
     </section>
 
     <section id="screen-edit" class="hero hidden">
-      <header class="site"><h1>ข้อมูลของฉัน</h1><p class="subtitle" id="edit-role-label">—</p></header>
+      <header class="site"><h1 data-text="editTitle">ข้อมูลของฉัน</h1><p class="subtitle" id="edit-role-label">—</p></header>
       <div class="glass-panel">
-        <div class="input-group"><label for="edit-name">ชื่อ</label><input type="text" id="edit-name" autocomplete="off"></div>
-        <div class="input-group"><label for="edit-msg">ข้อความถึงคู่</label><textarea id="edit-msg"></textarea></div>
+        <div class="input-group"><label for="edit-name" data-text="editNameLabel">ชื่อ</label><input type="text" id="edit-name" autocomplete="off"></div>
+        <div class="input-group"><label for="edit-msg" data-text="editMsgLabel">ข้อความถึงคู่</label><textarea id="edit-msg"></textarea></div>
         <div class="actions">
-          <button id="edit-save" class="cta">บันทึก</button>
-          <button id="edit-back" class="ghost">กลับ</button>
-          <button id="edit-delete" class="danger">ลบบัญชี</button>
+          <button id="edit-save" class="cta" data-text="btnSave">บันทึก</button>
+          <button id="edit-back" class="ghost" data-text="btnBack">กลับ</button>
         </div>
         <div id="edit-warn" class="warning hidden"></div>
       </div>
@@ -270,51 +461,76 @@
       <header class="site"><h1 id="reveal-title">คู่ของคุณ</h1><p class="subtitle" id="reveal-self-label">—</p></header>
       <div class="reveal-stage" id="reveal-stage"></div>
       <p class="status-banner" id="reveal-hint" style="margin-top:8px">กำลังสแกน...</p>
-      <div class="actions"><button id="reveal-back" class="cta">กลับ</button></div>
+      <div class="actions"><button id="reveal-back" class="cta" data-text="btnBack">กลับ</button></div>
     </section>
 
     <section id="screen-admin" class="panel hidden" style="max-width:880px;margin:24px auto 0">
-      <div class="panel-head"><h2>Admin Panel</h2><span class="panel-meta" id="admin-status">—</span></div>
+      <div class="panel-head"><h2 data-text="adminTitle">Admin Panel</h2><span class="panel-meta" id="admin-status">—</span></div>
       <div class="stats">
-        <div class="stat"><div class="num" id="stat-seniors">0</div><div class="label">พี่</div></div>
-        <div class="stat"><div class="num" id="stat-juniors">0</div><div class="label">น้อง</div></div>
-        <div class="stat"><div class="num" id="stat-pairs">0</div><div class="label">คู่</div></div>
+        <div class="stat"><div class="num" id="stat-seniors">0</div><div class="label" data-text="statSeniorLabel">พี่</div></div>
+        <div class="stat"><div class="num" id="stat-juniors">0</div><div class="label" data-text="statJuniorLabel">น้อง</div></div>
+        <div class="stat"><div class="num" id="stat-pairs">0</div><div class="label" data-text="statPairLabel">คู่</div></div>
       </div>
-      <h3 style="font-family:'Mali',cursive;color:var(--gold);margin:8px 0 10px;font-size:1.05rem">รายชื่อ</h3>
+      <h3 style="font-family:'Mali',cursive;color:var(--gold);margin:8px 0 10px;font-size:1.05rem" data-text="adminListHeader">รายชื่อ</h3>
       <div id="admin-users" class="user-list"></div>
       <div class="actions" style="justify-content:flex-start">
         <button id="admin-randomize" class="cta">สุ่มจับคู่</button>
-        <button id="admin-reset-matches" class="ghost">ล้างผลสุ่ม</button>
-        <button id="admin-reset-all" class="danger">ล้างข้อมูลทั้งหมด</button>
-        <button id="admin-back" class="ghost">กลับ</button>
+        <button id="admin-reset-matches" class="ghost" data-text="btnResetMatches">ล้างผลสุ่ม</button>
+        <button id="admin-reset-all" class="danger" data-text="btnResetAll">ล้างข้อมูลทั้งหมด</button>
+        <button id="admin-change-pwd" class="ghost" data-text="btnChangePassword">เปลี่ยนรหัส Admin</button>
+        <button id="admin-back" class="ghost" data-text="btnBack">กลับ</button>
       </div>
     </section>
   </div>
 
-  <button class="admin-link hidden" id="admin-link">⚙ Admin</button>
+  <button class="admin-link hidden" id="admin-link" data-text="adminLinkLabel">⚙ Admin</button>
 
   <div id="confirm-modal" class="modal-bg hidden">
     <div class="modal">
       <h2 id="confirm-title">ยืนยัน</h2>
       <p id="confirm-text">—</p>
       <div class="row">
-        <button id="confirm-yes">ยืนยัน</button>
-        <button class="ghost" id="confirm-no">ยกเลิก</button>
+        <button id="confirm-yes" data-text="btnConfirm">ยืนยัน</button>
+        <button class="ghost" id="confirm-no" data-text="btnCancel">ยกเลิก</button>
       </div>
     </div>
   </div>
 
   <div id="auth-modal" class="modal-bg hidden">
     <div class="modal">
-      <h2>Admin Access</h2>
-      <p>ใส่รหัสเพื่อเข้า Admin Panel</p>
+      <h2 data-text="authTitle">Admin Access</h2>
+      <p data-text="authDesc">ใส่รหัสเพื่อเข้า Admin Panel</p>
       <div class="input-group" style="text-align:left">
-        <input type="password" id="auth-pwd" placeholder="รหัส" autocomplete="off" style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:monospace;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none">
+        <input type="password" id="auth-pwd" data-placeholder="authPlaceholder" autocomplete="off" style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:monospace;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none">
       </div>
       <div id="auth-warn" class="warning hidden"></div>
       <div class="row">
-        <button id="auth-go">ตกลง</button>
-        <button class="ghost" id="auth-cancel">ยกเลิก</button>
+        <button id="auth-go" data-text="btnAuthGo">ตกลง</button>
+        <button class="ghost" id="auth-cancel" data-text="btnCancel">ยกเลิก</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="pwd-modal" class="modal-bg hidden">
+    <div class="modal">
+      <h2 data-text="pwdModalTitle">เปลี่ยนรหัส Admin</h2>
+      <p data-text="pwdModalDesc">รหัสจะถูกบันทึกบน server</p>
+      <div class="input-group" style="text-align:left">
+        <label for="pwd-current" data-text="pwdCurrentLabel">รหัสปัจจุบัน</label>
+        <input type="password" id="pwd-current" autocomplete="off" style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:monospace;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none">
+      </div>
+      <div class="input-group" style="text-align:left">
+        <label for="pwd-new" data-text="pwdNewLabel">รหัสใหม่</label>
+        <input type="password" id="pwd-new" autocomplete="off" style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:monospace;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none">
+      </div>
+      <div class="input-group" style="text-align:left">
+        <label for="pwd-confirm" data-text="pwdConfirmLabel">ยืนยันรหัสใหม่</label>
+        <input type="password" id="pwd-confirm" autocomplete="off" style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:monospace;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none">
+      </div>
+      <div id="pwd-warn" class="warning hidden"></div>
+      <div class="row">
+        <button id="pwd-save" data-text="btnSave">บันทึก</button>
+        <button class="ghost" id="pwd-cancel" data-text="btnCancel">ยกเลิก</button>
       </div>
     </div>
   </div>
@@ -322,7 +538,6 @@
 <script type="module">
 // ════════════════════════════════════════════════════════════════
 // FIREBASE CONFIG — paste your config from Firebase Console here
-// (Project settings → General → Your apps → SDK setup and configuration)
 // ════════════════════════════════════════════════════════════════
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDOshXGLHOcdoiuQo0gOQV4XCSADAUloF4",
@@ -331,7 +546,183 @@ const FIREBASE_CONFIG = {
   storageBucket: "rahut-match.firebasestorage.app",
   messagingSenderId: "700033003323",
   appId: "1:700033003323:web:50a1814fb0d2b152cd111e",
-  measurementId: "G-ZHNCVQ8FBF"
+  measurementId: "G-ZHNCVQ8FBF",
+};
+
+// ════════════════════════════════════════════════════════════════
+// ADMIN PASSWORD — initial password (used only when Firestore has none)
+// After first load, password is stored in Firestore at data.adminPassword
+// — Admin can change it from Admin Panel anytime
+// ════════════════════════════════════════════════════════════════
+const DEFAULT_ADMIN_PASSWORD = 'sigma6767';
+
+// ════════════════════════════════════════════════════════════════
+// ALL UI TEXT — edit here to change any text on the website
+// แก้ที่นี่ที่เดียวเปลี่ยนข้อความทั้งเว็บ
+// ════════════════════════════════════════════════════════════════
+const TEXT = {
+  // Branding
+  pageTitle: 'คู่รหัส Sci-Math WK 2569',
+  appTitle: 'จับคู่พี่รหัส × น้องรหัส',
+  appSubtitle: 'SCI-MATH WK 2569',
+
+  // Roles
+  roleSenior: 'พี่',
+  roleJunior: 'น้อง',
+  roleSeniorFull: 'พี่รหัส',
+  roleJuniorFull: 'น้องรหัส',
+
+  // Sync pill
+  syncOnline: 'ออนไลน์',
+  syncBusy: 'กำลัง sync...',
+  syncError: 'ขัดข้อง',
+  syncSaving: 'บันทึก...',
+  syncSaveFailed: 'บันทึกล้มเหลว',
+  syncNotConfigured: 'ยังไม่ได้ตั้งค่า',
+  syncConnectFailed: 'เชื่อมต่อล้มเหลว',
+
+  // Setup error screen
+  setupTitle: 'ตั้งค่า Firebase',
+  setupSubtitle: 'ทำครั้งเดียวก่อน deploy',
+  setupErrorH3: '⚠ ยังไม่ได้ตั้งค่า Firebase',
+  setupInstr: 'เปิดไฟล์ index.html ในเครื่อง แล้วหา section FIREBASE_CONFIG ใน <script> paste ค่าจาก Firebase Console',
+  setupHowto: 'วิธีรับค่า Firebase config:',
+  setupStep1: 'ไปที่ firebase.google.com → Get Started → สมัครฟรี (Google)',
+  setupStep2: 'Add Project → ตั้งชื่อ → Continue → Continue → Create project',
+  setupStep3: 'Build → Firestore Database → Create database → "Start in test mode" → Next → location: asia-southeast1 → Enable',
+  setupStep4: 'Project Overview → คลิก </> Web → ลงทะเบียน app → Copy firebaseConfig',
+  setupStep5: 'Paste ในไฟล์ index.html ที่ FIREBASE_CONFIG → Save → upload ใหม่',
+  setupLocation: 'ตำแหน่งใน source: หา FIREBASE_CONFIG ใน index.html',
+
+  // Status banner
+  statusLoading: 'กำลังโหลด...',
+  statusRandomized: 'สุ่มแล้ว',
+  statusNotRandomized: (n, s, j) => `ยังไม่ได้เริ่มการจับคู่ — ลงทะเบียนแล้ว ${n} คน (พี่ ${s} · น้อง ${j})`,
+
+  // Welcome panel
+  welcomeBack: 'ยินดีต้อนรับ',
+  welcomeHint: 'เลือกสิ่งที่จะทำ',
+  welcomeMatchHint: 'สุ่มเสร็จแล้ว มาดูคู่ของคุณ',
+  welcomeEditHint: 'สามารถแก้ข้อมูลได้โดยกด แก้ไขข้อมูล',
+  btnViewMatch: 'ดูคู่รหัส',
+  btnEdit: 'แก้ไขข้อมูล',
+  btnLogout: 'เปลี่ยนผู้ใช้',
+
+  // Home / login
+  homeNameLabel: 'ชื่อ',
+  homeNamePlaceholder: 'ชื่อเล่น เช่น เอ บี ซี',
+  btnGo: 'ต่อไป',
+  homeHelpText: 'หลังกรอกชื่อเสร็จจะให้ระบุว่าเป็นพี่หรือน้องรหัส และข้อความที่จะบอก',
+  errEmptyName: 'กรอกชื่อก่อน',
+  errCannotRegisterAfter: 'ลงทะเบียนหลังสุ่มไม่ได้ ติดต่อพี่ฟอร์ด 🥰🥰',
+
+  // Register
+  registerTitle: 'กรอกข้อมูล',
+  registerSubtitle: 'เพื่อจับคู่',
+  registerRoleLabel: 'คุณคือ?',
+  registerNameLabel: 'ชื่อ',
+  registerNamePlaceholder: 'ชื่อของคุณ',
+  registerMsgLabel: 'ข้อความถึงคู่รหัส (น้องรหัสจะไม่เห็นชื่อพี่รหัส)',
+  registerMsgPlaceholder: 'ดีฮ้าบบบบบบบฟู่',
+  btnSave: 'บันทึก',
+  btnCancel: 'ยกเลิก',
+  errDuplicate: 'มีชื่อนี้ลงทะเบียนแล้ว',
+  errLocked: 'สุ่มแล้ว ลงทะเบียนไม่ได้',
+  okRegistered: (rl, n) => `ลงทะเบียน ${rl}${n} แล้ว`,
+  msgSaving: 'กำลังบันทึก...',
+  errSaveFail: (m) => 'บันทึกล้มเหลว: ' + m,
+
+  // Edit
+  editTitle: 'ข้อมูลของฉัน',
+  editNameLabel: 'ชื่อ',
+  editMsgLabel: 'ข้อความถึงคู่',
+  btnBack: 'กลับ',
+  btnDelete: 'ลบข้อมูล',
+  okSaved: 'บันทึกแล้ว',
+  errNotFound: 'ไม่พบบัญชี อาจถูกลบไปแล้ว',
+  errEditLocked: 'สุ่มแล้ว แก้ไม่ได้',
+  delConfirmTitle: (n) => `ลบข้อมูล`,
+  delConfirmText: 'ข้อมูลจะถูกลบทั้งหมด แน่ใจป่าว?',
+  okDeleted: 'ลบแล้ว',
+  errDelFail: (m) => 'ลบล้มเหลว: ' + m,
+
+  // Reveal
+  revealDefaultTitle: 'คู่ของคุณ',
+  revealSeniorTitle: 'น้องของคุณคือ',
+  revealJuniorTitle: 'ข้อความจากพี่รหัส',
+  revealNoPairTitle: 'ผลลัพธ์',
+  revealMysteryName: '???',
+  revealFromTag: (rl) => `ข้อความจาก${rl}`,
+  revealNoMessage: '(ไม่ได้เขียนข้อความ)',
+  revealNoPairMsg: 'รอบนี้ไม่ได้คู่',
+  revealNoPairHint: '(จำนวนพี่กับน้องไม่เท่ากัน)',
+  revealScanning: 'กำลังสแกน...',
+  revealScanned: 'สามารถกลับมาดูใหม่ได้หากลืม',
+
+  // Admin
+  adminTitle: 'Admin Panel',
+  adminStatusRandomized: (d) => `สุ่มเมื่อ ${d}`,
+  adminStatusNotRandomized: 'ยังไม่ได้เริ่มการจับคู่',
+  statSeniorLabel: 'พี่',
+  statJuniorLabel: 'น้อง',
+  statPairLabel: 'คู่',
+  adminListHeader: 'รายชื่อ',
+  adminEmpty: 'ยังไม่มีคนลงทะเบียน',
+  btnRandomize: 'สุ่มจับคู่',
+  btnRerandomize: 'สุ่มใหม่',
+  btnResetMatches: 'ล้างผลการจับคู่',
+  btnResetAll: 'ล้างข้อมูลทั้งหมด',
+  errInsufficient: 'ต้องมีทั้งพี่และน้องอย่างน้อย 1 คน',
+  randomizeConfirm: (act) => `${act}?`,
+  randomizeConfirmText: (n, w) => `จะสุ่ม ${n} คู่${w}`,
+  randomizeWarn: (s, j) => `\n(พี่ ${s} vs น้อง ${j} — จะมีคนไม่ได้คู่)`,
+  okRandomized: 'สุ่มการจับคู่แล้ว',
+  errRandomizeFail: (m) => 'สุ่มล้มเหลว: ' + m,
+  resetMatchesConfirm: 'ล้างผลการจับคู่ไหม?',
+  resetMatchesText: 'ข้อมูลที่ลงทะเบียนอยู่แล้วจะไม่หาย',
+  errNotRandomized: 'ยังไม่ได้สุ่ม',
+  okResetMatches: 'ล้างผลสุ่มแล้ว',
+  errFail: (m) => 'ล้มเหลว: ' + m,
+  resetAllConfirm: 'ล้างทุกอย่างไหม?',
+  resetAllText: 'ล้างข้อมูลทุกอย่าง รวมถึงผลการจับคู่',
+  okResetAll: 'ล้างข้อมูลสำเร็จ',
+  delChipConfirm: (n) => `ลบ "${n}"?`,
+  delChipText: 'จะลบบัญชีและข้อความ',
+
+  // Auth modal
+  authTitle: 'Admin Access',
+  authDesc: 'ใส่รหัสเพื่อเข้า Admin Panel',
+  authPlaceholder: 'รหัส',
+  btnAuthGo: 'ตกลง',
+  errAuthWrong: 'รหัสไม่ถูก',
+
+  // Confirm modal
+  btnConfirm: 'ยืนยัน',
+
+  // Logout
+  logoutConfirm: 'เปลี่ยนผู้ใช้?',
+  logoutText: 'จะลืมว่าคุณเป็นใคร แต่ข้อมูลใน server ยังอยู่',
+  okLogout: 'ลืมข้อมูลในเครื่องนี้แล้ว',
+
+  // Change password
+  btnChangePassword: 'เปลี่ยนรหัส Admin',
+  pwdModalTitle: 'เปลี่ยนรหัส Admin',
+  pwdModalDesc: 'อย่าเปลี่ยนมั่วซั่วเด้อ',
+  pwdCurrentLabel: 'รหัสปัจจุบัน',
+  pwdNewLabel: 'รหัสใหม่',
+  pwdConfirmLabel: 'ยืนยันรหัสใหม่',
+  errPwdWrong: 'รหัสปัจจุบันไม่ถูก',
+  errPwdMismatch: 'รหัสใหม่ทั้ง 2 ช่องไม่ตรงกัน',
+  errPwdEmpty: 'กรอกรหัสใหม่ก่อน',
+  errPwdShort: 'รหัสต้องอย่างน้อย 4 ตัว',
+  okPwdChanged: 'เปลี่ยนรหัสแล้ว',
+  errPwdSaveFail: (m) => 'บันทึกรหัสล้มเหลว: ' + m,
+
+  // Admin link
+  adminLinkLabel: '⚙ Admin',
+
+  // Misc errors
+  errFirebaseConnect: (m) => 'เชื่อมต่อ Firebase ไม่ได้: ' + m + '\n\nตรวจสอบ Firestore Rules และ config',
 };
 // ════════════════════════════════════════════════════════════════
 
@@ -339,14 +730,42 @@ const NEEDS_CONFIG = FIREBASE_CONFIG.apiKey.startsWith('PASTE_') || FIREBASE_CON
 
 const $ = id => document.getElementById(id);
 
-/* ── Background visuals (same as before) ── */
+// Apply text from TEXT object to all elements with data-text / data-placeholder
+const applyText = () => {
+  document.title = TEXT.pageTitle;
+  document.querySelectorAll('[data-text]').forEach(el => {
+    const key = el.dataset.text;
+    const v = TEXT[key];
+    if (typeof v === 'string') el.textContent = v;
+  });
+  document.querySelectorAll('[data-placeholder]').forEach(el => {
+    const key = el.dataset.placeholder;
+    const v = TEXT[key];
+    if (typeof v === 'string') el.placeholder = v;
+  });
+};
+applyText();
+
+/* ── Lite mode detection (mobile / low-end) ── */
+const isLite = (() => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
+  if (window.matchMedia('(pointer: coarse)').matches) return true;
+  if (window.innerWidth <= 768) return true;
+  if (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4) return true;
+  if (/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) return true;
+  return false;
+})();
+if (isLite) document.body.classList.add('lite');
+
+/* ── Background visuals ── */
 const bg = $('bg');
 const layerFar = $('layer-far'), layerMid = $('layer-mid'), layerNear = $('layer-near');
 const colorRoll = () => { const r = Math.random(); return r < 0.66 ? '' : r < 0.84 ? ' blue' : r < 0.95 ? ' gold' : ' red'; };
+const STAR_MULT = isLite ? 0.4 : 1;
 const layerSpec = [
-  { el: layerFar,  count: 220, sMin: 0.5, sMax: 1.3, oMin: 0.25, oMax: 0.7,  tMin: 4, tMax: 9, brightChance: 0,    pulseChance: 0.02 },
-  { el: layerMid,  count: 130, sMin: 1.0, sMax: 2.0, oMin: 0.4,  oMax: 0.85, tMin: 3, tMax: 7, brightChance: 0.04, pulseChance: 0.06 },
-  { el: layerNear, count: 55,  sMin: 1.6, sMax: 3.4, oMin: 0.55, oMax: 1.0,  tMin: 2.5, tMax: 6, brightChance: 0.3, pulseChance: 0.18 },
+  { el: layerFar,  count: Math.round(220 * STAR_MULT), sMin: 0.5, sMax: 1.3, oMin: 0.25, oMax: 0.7,  tMin: 4, tMax: 9, brightChance: 0,    pulseChance: 0.02 },
+  { el: layerMid,  count: Math.round(130 * STAR_MULT), sMin: 1.0, sMax: 2.0, oMin: 0.4,  oMax: 0.85, tMin: 3, tMax: 7, brightChance: 0.04, pulseChance: 0.06 },
+  { el: layerNear, count: Math.round(55  * STAR_MULT), sMin: 1.6, sMax: 3.4, oMin: 0.55, oMax: 1.0,  tMin: 2.5, tMax: 6, brightChance: 0.3, pulseChance: 0.18 },
 ];
 for (const L of layerSpec) {
   for (let i = 0; i < L.count; i++) {
@@ -366,7 +785,8 @@ for (const L of layerSpec) {
     L.el.appendChild(s);
   }
 }
-for (let i = 0; i < 30; i++) {
+const DUST_COUNT = isLite ? 0 : 30;
+for (let i = 0; i < DUST_COUNT; i++) {
   const d = document.createElement('div');
   d.className = 'dust';
   d.style.left = (Math.random() * 100).toFixed(2) + '%';
@@ -385,7 +805,7 @@ function spawnShootingStar() {
   bg.appendChild(s);
   setTimeout(() => s.remove(), 1800);
 }
-(function loop1(){ setTimeout(()=>{ spawnShootingStar(); loop1(); }, 2500 + Math.random()*4500); })();
+(function loop1(){ setTimeout(()=>{ spawnShootingStar(); loop1(); }, (isLite ? 6000 : 2500) + Math.random()*(isLite ? 8000 : 4500)); })();
 function spawnComet() {
   const c = document.createElement('div');
   c.className = 'comet';
@@ -394,7 +814,118 @@ function spawnComet() {
   bg.appendChild(c);
   setTimeout(() => c.remove(), 3400);
 }
-(function loop2(){ setTimeout(()=>{ spawnComet(); loop2(); }, 22000 + Math.random()*28000); })();
+if (!isLite) (function loop2(){ setTimeout(()=>{ spawnComet(); loop2(); }, 22000 + Math.random()*28000); })();
+
+/* ── Math glyph decorations ── */
+const mathLayer = $('math-layer');
+const MATH_GLYPHS = ['π','∞','∑','∫','√','∂','∇','Ω','φ','θ','Δ','λ','μ','σ','τ','ψ','Φ','ξ','ζ','ℝ','ℕ','ℤ','ℚ','ℂ','≈','≠','∈','∉','⊂','⊃','∪','∩','∀','∃','⊕','⊗','≡','≅','∝','×','÷'];
+const MATH_EQUATIONS = ['e^(iπ)+1=0','a²+b²=c²','E=mc²','π²/6','∑1/n²','∫f(x)dx','lim n→∞','f(x)=ax+b','(1+1/n)ⁿ','dy/dx','∇·E=ρ/ε','sin²x+cos²x=1','y=mx+c','φ=(1+√5)/2'];
+const MATH_COLOR_CLASSES = ['','cyan','violet'];
+const MATH_COUNT = isLite ? 5 : 14;
+for (let i = 0; i < MATH_COUNT; i++) {
+  const g = document.createElement('div');
+  const isEqn = Math.random() < 0.35;
+  const text = isEqn
+    ? MATH_EQUATIONS[Math.floor(Math.random() * MATH_EQUATIONS.length)]
+    : MATH_GLYPHS[Math.floor(Math.random() * MATH_GLYPHS.length)];
+  const colorCls = MATH_COLOR_CLASSES[Math.floor(Math.random() * MATH_COLOR_CLASSES.length)];
+  g.className = 'math-glyph' + (colorCls ? ' ' + colorCls : '');
+  g.textContent = text;
+  g.style.left = (Math.random() * 100).toFixed(1) + '%';
+  g.style.top = (Math.random() * 100).toFixed(1) + '%';
+  const size = isEqn ? (0.95 + Math.random() * 0.6) : (1.4 + Math.random() * 2.6);
+  g.style.fontSize = size.toFixed(2) + 'rem';
+  g.style.setProperty('--t', (50 + Math.random() * 70).toFixed(0) + 's');
+  g.style.setProperty('--d', (-Math.random() * 40).toFixed(1) + 's');
+  mathLayer.appendChild(g);
+}
+
+/* ── Interactive effects ── */
+function clickBurst(x, y) {
+  const burst = document.createElement('div');
+  burst.className = 'click-burst';
+  burst.style.left = x + 'px';
+  burst.style.top = y + 'px';
+  const count = isLite ? 5 : 9;
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('span');
+    const angle = (i / count) * Math.PI * 2 + Math.random() * 0.4;
+    const dist = 28 + Math.random() * 28;
+    p.style.setProperty('--dx', (Math.cos(angle) * dist).toFixed(0) + 'px');
+    p.style.setProperty('--dy', (Math.sin(angle) * dist).toFixed(0) + 'px');
+    p.style.animationDelay = (Math.random() * 0.04) + 's';
+    p.style.width = p.style.height = (3 + Math.random() * 5).toFixed(1) + 'px';
+    burst.appendChild(p);
+  }
+  document.body.appendChild(burst);
+  setTimeout(() => burst.remove(), 800);
+}
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('button, .role-card, .name-btn, .user-chip .x');
+  if (btn && !btn.disabled) clickBurst(e.clientX, e.clientY);
+});
+
+if (!isLite) {
+  let lastTrail = 0;
+  document.addEventListener('pointermove', e => {
+    const now = performance.now();
+    if (now - lastTrail < 55) return;
+    lastTrail = now;
+    const trail = document.createElement('div');
+    trail.className = 'trail';
+    trail.style.left = e.clientX + 'px';
+    trail.style.top = e.clientY + 'px';
+    document.body.appendChild(trail);
+    setTimeout(() => trail.remove(), 850);
+  }, { passive: true });
+}
+
+const CONFETTI_COLORS = ['#e6c97a', '#cfe1ff', '#ffb47a', '#a29bfe', '#c9a961', '#ffffff'];
+function confetti(count) {
+  const N = count || (isLite ? 30 : 70);
+  for (let i = 0; i < N; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.background = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+    c.style.left = (Math.random() * 100).toFixed(1) + '%';
+    const dur = (2 + Math.random() * 2.2);
+    c.style.setProperty('--dur', dur.toFixed(2) + 's');
+    c.style.setProperty('--rot', (360 + Math.random() * 720).toFixed(0) + 'deg');
+    c.style.animationDelay = (Math.random() * 0.5).toFixed(2) + 's';
+    if (Math.random() < 0.3) c.style.borderRadius = '50%';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), (dur + 0.6) * 1000);
+  }
+}
+
+function attachTypingEffect(el) {
+  let glowTimer = null;
+  el.addEventListener('input', () => {
+    el.classList.remove('typing');
+    void el.offsetWidth;
+    el.classList.add('typing');
+    clearTimeout(glowTimer);
+    glowTimer = setTimeout(() => el.classList.remove('typing'), 500);
+  });
+}
+
+document.querySelectorAll('input[type="text"], input[type="password"], textarea').forEach(attachTypingEffect);
+
+// Smooth count-up animation for numbers
+function animateNumber(el, to, dur) {
+  const from = parseInt(el.textContent) || 0;
+  if (from === to) { el.textContent = to; return; }
+  const D = dur || 600;
+  const t0 = performance.now();
+  function tick(now) {
+    const t = Math.min(1, (now - t0) / D);
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = Math.round(from + (to - from) * eased);
+    if (t < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
 
 /* ── Screens ── */
 const screens = {
@@ -420,8 +951,7 @@ const setScreen = name => {
 if (NEEDS_CONFIG) {
   setScreen('config');
   $('sync-pill').classList.add('error');
-  $('sync-text').textContent = 'ยังไม่ได้ตั้งค่า';
-  // Stop here — don't try to init Firebase
+  $('sync-text').textContent = TEXT.syncNotConfigured;
   throw new Error('Firebase config missing');
 }
 
@@ -435,36 +965,40 @@ const db = getFirestore(fb);
 const docRef = doc(db, "rahut-match", "data");
 
 /* ── Data + sync ── */
-const defaultData = () => ({ users: [], matches: {}, randomizedAt: null });
+const defaultData = () => ({ users: [], matches: {}, randomizedAt: null, adminPassword: DEFAULT_ADMIN_PASSWORD });
 let data = defaultData();
 const syncPill = $('sync-pill');
-const syncText = $('sync-text');
+const syncTextEl = $('sync-text');
 
 const setSync = (state, msg) => {
   syncPill.classList.remove('busy', 'error');
   if (state !== 'idle') syncPill.classList.add(state);
-  syncText.textContent = msg || (state === 'busy' ? 'กำลัง sync...' : state === 'error' ? 'ขัดข้อง' : 'ออนไลน์');
+  syncTextEl.textContent = msg || (state === 'busy' ? TEXT.syncBusy : state === 'error' ? TEXT.syncError : TEXT.syncOnline);
 };
 
 async function save() {
-  setSync('busy', 'บันทึก...');
+  setSync('busy', TEXT.syncSaving);
   try { await setDoc(docRef, data); setSync('idle'); }
-  catch (e) { setSync('error', 'บันทึกล้มเหลว'); throw e; }
+  catch (e) { setSync('error', TEXT.syncSaveFailed); throw e; }
 }
 
-// Initial fetch + subscribe to real-time updates
 try {
   const snap = await getDoc(docRef);
   if (snap.exists()) {
     data = Object.assign(defaultData(), snap.data());
+    // Migrate: if existing doc has no password, set default and persist
+    if (!snap.data().adminPassword) {
+      data.adminPassword = DEFAULT_ADMIN_PASSWORD;
+      await setDoc(docRef, data);
+    }
   } else {
     await setDoc(docRef, data);
   }
   setSync('idle');
 } catch (e) {
   console.error(e);
-  setSync('error', 'เชื่อมต่อล้มเหลว');
-  alert('เชื่อมต่อ Firebase ไม่ได้: ' + e.message + '\n\nตรวจสอบ Firestore Rules และ config');
+  setSync('error', TEXT.syncConnectFailed);
+  alert(TEXT.errFirebaseConnect(e.message));
 }
 
 onSnapshot(docRef, (snap) => {
@@ -494,7 +1028,7 @@ const findUserByName = name => {
 };
 const findUserById = id => data.users.find(u => u.id === id);
 const newId = () => 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-const roleLabel = r => r === 'senior' ? 'พี่' : 'น้อง';
+const roleLabel = r => r === 'senior' ? TEXT.roleSenior : TEXT.roleJunior;
 const isRandomized = () => !!data.randomizedAt;
 const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -514,9 +1048,7 @@ const statusText = $('status-text');
 const statusBanner = $('status-banner');
 const welcomePanel = $('welcome-panel');
 const welcomeName = $('welcome-name');
-const welcomeHint = $('welcome-hint');
 const welcomeAction = $('welcome-action');
-const welcomeLogout = $('welcome-logout');
 const loginPanel = $('login-panel');
 
 const getRememberedId = () => localStorage.getItem(REMEMBER_KEY) || null;
@@ -525,29 +1057,24 @@ const clearRemembered = () => localStorage.removeItem(REMEMBER_KEY);
 
 const updateHomeStatus = () => {
   if (isRandomized()) {
-    statusText.textContent = 'สุ่มแล้ว';
+    statusText.textContent = TEXT.statusRandomized;
     statusBanner.classList.add('live');
   } else {
-    statusText.textContent = `ยังไม่สุ่ม — ${data.users.length} คนลงทะเบียน`;
+    const sCount = data.users.filter(u => u.role === 'senior').length;
+    const jCount = data.users.filter(u => u.role === 'junior').length;
+    statusText.textContent = TEXT.statusNotRandomized(data.users.length, sCount, jCount);
     statusBanner.classList.remove('live');
   }
 
-  // Show welcome panel if we recognize this device's user
   const rememberedId = getRememberedId();
   const me = rememberedId ? findUserById(rememberedId) : null;
   if (me) {
     welcomeName.textContent = `${roleLabel(me.role)}${me.name}`;
-    if (isRandomized()) {
-      welcomeHint.textContent = 'สุ่มเสร็จแล้ว มาดูคู่ของคุณ';
-      welcomeAction.textContent = 'ดูคู่ของฉัน';
-    } else {
-      welcomeHint.textContent = 'แก้ไขชื่อหรือข้อความได้';
-      welcomeAction.textContent = 'แก้ไขข้อมูล';
-    }
+    welcomeAction.textContent = isRandomized() ? TEXT.btnViewMatch : TEXT.btnEdit;
     welcomePanel.classList.remove('hidden');
     loginPanel.classList.add('hidden');
   } else {
-    if (rememberedId) clearRemembered(); // user no longer exists
+    if (rememberedId) clearRemembered();
     welcomePanel.classList.add('hidden');
     loginPanel.classList.remove('hidden');
   }
@@ -561,27 +1088,18 @@ welcomeAction.addEventListener('click', () => {
   else openEdit(me);
 });
 
-welcomeLogout.addEventListener('click', () => {
-  confirmModal('เปลี่ยนผู้ใช้?', 'จะลืมว่าคุณเป็นใคร แต่ข้อมูลใน server ยังอยู่', () => {
-    clearRemembered();
-    currentUserId = null;
-    updateHomeStatus();
-    flash('ลืมข้อมูลในเครื่องนี้แล้ว');
-  });
-});
-
 const handleHomeGo = () => {
   const name = homeName.value.trim();
-  if (!name) { showWarn(homeWarn, 'กรอกชื่อก่อน', true); return; }
+  if (!name) { showWarn(homeWarn, TEXT.errEmptyName, true); return; }
   showWarn(homeWarn, '');
   const u = findUserByName(name);
   if (u) {
     currentUserId = u.id;
-    setRememberedId(u.id); // remember on this device
+    setRememberedId(u.id);
     if (isRandomized()) openReveal(u);
     else openEdit(u);
   } else {
-    if (isRandomized()) { showWarn(homeWarn, 'ลงทะเบียนหลังสุ่มไม่ได้ ติดต่อผู้จัด', true); return; }
+    if (isRandomized()) { showWarn(homeWarn, TEXT.errCannotRegisterAfter, true); return; }
     $('reg-name').value = name;
     openRegister();
   }
@@ -608,15 +1126,14 @@ regSave.addEventListener('click', async () => {
   const name = regName.value.trim();
   const role = document.querySelector('input[name="reg-role"]:checked').value;
   const message = regMsg.value.trim();
-  if (!name) { showWarn(regWarn, 'กรอกชื่อก่อน', true); return; }
+  if (!name) { showWarn(regWarn, TEXT.errEmptyName, true); return; }
 
-  showWarn(regWarn, 'กำลังบันทึก...');
+  showWarn(regWarn, TEXT.msgSaving);
   try {
-    // Refresh latest first to avoid races
     const snap = await getDoc(docRef);
     if (snap.exists()) data = Object.assign(defaultData(), snap.data());
-    if (findUserByName(name)) { showWarn(regWarn, 'มีชื่อนี้ลงทะเบียนแล้ว', true); return; }
-    if (isRandomized()) { showWarn(regWarn, 'สุ่มแล้ว ลงทะเบียนไม่ได้', true); return; }
+    if (findUserByName(name)) { showWarn(regWarn, TEXT.errDuplicate, true); return; }
+    if (isRandomized()) { showWarn(regWarn, TEXT.errLocked, true); return; }
     const user = { id: newId(), name, role, message, createdAt: Date.now() };
     data.users.push(user);
     await save();
@@ -624,9 +1141,10 @@ regSave.addEventListener('click', async () => {
     setRememberedId(user.id);
     homeName.value = '';
     setScreen('home');
-    flash(`ลงทะเบียน ${roleLabel(role)}${name} แล้ว`);
+    confetti();
+    flash(TEXT.okRegistered(roleLabel(role), name));
   } catch (e) {
-    showWarn(regWarn, 'บันทึกล้มเหลว: ' + e.message, true);
+    showWarn(regWarn, TEXT.errSaveFail(e.message), true);
   }
 });
 
@@ -638,7 +1156,6 @@ const editMsg = $('edit-msg');
 const editRoleLabel = $('edit-role-label');
 const editSave = $('edit-save');
 const editBack = $('edit-back');
-const editDelete = $('edit-delete');
 const editWarn = $('edit-warn');
 
 const openEdit = (u) => {
@@ -651,45 +1168,51 @@ const openEdit = (u) => {
 };
 
 editSave.addEventListener('click', async () => {
-  showWarn(editWarn, 'กำลังบันทึก...');
+  showWarn(editWarn, TEXT.msgSaving);
   try {
     const snap = await getDoc(docRef);
     if (snap.exists()) data = Object.assign(defaultData(), snap.data());
     const u = findUserById(currentUserId);
-    if (!u) { showWarn(editWarn, 'ไม่พบบัญชี อาจถูกลบไปแล้ว', true); return; }
-    if (isRandomized()) { showWarn(editWarn, 'สุ่มแล้ว แก้ไม่ได้', true); return; }
+    if (!u) { showWarn(editWarn, TEXT.errNotFound, true); return; }
+    if (isRandomized()) { showWarn(editWarn, TEXT.errEditLocked, true); return; }
     const name = editName.value.trim();
-    if (!name) { showWarn(editWarn, 'กรอกชื่อก่อน', true); return; }
+    if (!name) { showWarn(editWarn, TEXT.errEmptyName, true); return; }
     const dup = findUserByName(name);
-    if (dup && dup.id !== u.id) { showWarn(editWarn, 'มีชื่อนี้ลงทะเบียนแล้ว', true); return; }
+    if (dup && dup.id !== u.id) { showWarn(editWarn, TEXT.errDuplicate, true); return; }
     u.name = name;
     u.message = editMsg.value.trim();
     await save();
     homeName.value = '';
     setScreen('home');
-    flash('บันทึกแล้ว');
-  } catch (e) { showWarn(editWarn, 'บันทึกล้มเหลว: ' + e.message, true); }
+    flash(TEXT.okSaved);
+  } catch (e) { showWarn(editWarn, TEXT.errSaveFail(e.message), true); }
 });
 
 editBack.addEventListener('click', () => { homeName.value = ''; setScreen('home'); });
 
-editDelete.addEventListener('click', () => {
-  const u = findUserById(currentUserId);
+const deleteAccount = (userId) => {
+  const u = findUserById(userId);
   if (!u) return;
-  confirmModal(`ลบบัญชี "${u.name}"?`, 'ข้อมูลจะถูกล้าง', async () => {
+  confirmModal(TEXT.delConfirmTitle(u.name), TEXT.delConfirmText, async () => {
     try {
       const snap = await getDoc(docRef);
       if (snap.exists()) data = Object.assign(defaultData(), snap.data());
-      data.users = data.users.filter(x => x.id !== currentUserId);
-      delete data.matches[currentUserId];
+      data.users = data.users.filter(x => x.id !== userId);
+      delete data.matches[userId];
       await save();
       clearRemembered();
       currentUserId = null;
       homeName.value = '';
       setScreen('home');
-      flash('ลบแล้ว');
-    } catch (e) { flash('ลบล้มเหลว: ' + e.message, true); }
+      flash(TEXT.okDeleted);
+    } catch (e) { flash(TEXT.errDelFail(e.message), true); }
   });
+};
+
+const welcomeDelete = $('welcome-delete');
+welcomeDelete.addEventListener('click', () => {
+  const id = getRememberedId();
+  if (id) deleteAccount(id);
 });
 
 /* ── Reveal (light beam scan) ── */
@@ -702,34 +1225,40 @@ let scanRaf = null;
 
 const openReveal = (u) => {
   currentUserId = u.id;
-  revealSelfLabel.textContent = `${roleLabel(u.role)}${u.name}`;
+  if (u.role === 'junior') {
+    revealSelfLabel.textContent = '';
+    revealSelfLabel.style.display = 'none';
+  } else {
+    revealSelfLabel.textContent = `${roleLabel(u.role)}${u.name}`;
+    revealSelfLabel.style.display = '';
+  }
   const partnerId = data.matches[u.id];
   const partner = partnerId ? findUserById(partnerId) : null;
 
   revealStage.classList.remove('done', 'no-partner');
   revealStage.style.removeProperty('--scan');
-  revealHint.textContent = 'กำลังสแกน...';
+  revealHint.textContent = TEXT.revealScanning;
 
   if (!partner) {
-    revealTitle.textContent = 'ผลลัพธ์';
+    revealTitle.textContent = TEXT.revealNoPairTitle;
     revealStage.classList.add('no-partner');
-    revealStage.innerHTML = `<div class="no-partner-msg">รอบนี้ไม่ได้คู่<br><span style="font-size:.95rem;color:var(--muted);font-style:italic">(จำนวนพี่กับน้องไม่เท่ากัน)</span></div>`;
+    revealStage.innerHTML = `<div class="no-partner-msg">${escapeHtml(TEXT.revealNoPairMsg)}<br><span style="font-size:.95rem;color:var(--muted);font-style:italic">${escapeHtml(TEXT.revealNoPairHint)}</span></div>`;
     revealHint.textContent = '';
     setScreen('reveal');
     return;
   }
 
-  const fromTag = `<div class="from-tag">ข้อความจาก${roleLabel(partner.role)}</div>`;
+  const fromTag = `<div class="from-tag">${escapeHtml(TEXT.revealFromTag(roleLabel(partner.role)))}</div>`;
   const msgClass = partner.message ? '' : ' empty';
-  const msgText = partner.message || '(ไม่ได้เขียนข้อความ)';
+  const msgText = partner.message || TEXT.revealNoMessage;
   let html = '<div class="content">';
   if (u.role === 'senior') {
-    revealTitle.textContent = 'น้องของคุณคือ';
+    revealTitle.textContent = TEXT.revealSeniorTitle;
     html += `<div class="partner-name">${escapeHtml(partner.name)}</div>`;
     html += fromTag + `<div class="partner-message${msgClass}">${escapeHtml(msgText)}</div>`;
   } else {
-    revealTitle.textContent = 'ข้อความจากพี่ลึกลับ';
-    html += `<div class="partner-name" style="color:var(--muted);font-size:1.4rem;font-style:italic">??? พี่ลึกลับของคุณ</div>`;
+    revealTitle.textContent = TEXT.revealJuniorTitle;
+    html += `<div class="partner-name" style="color:var(--muted);font-size:1.4rem;font-style:italic">${escapeHtml(TEXT.revealMysteryName)}</div>`;
     html += fromTag + `<div class="partner-message${msgClass}">${escapeHtml(msgText)}</div>`;
   }
   html += '</div><div class="beam"></div>';
@@ -748,7 +1277,7 @@ const runScan = () => {
     const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
     revealStage.style.setProperty('--scan', (eased * 100).toFixed(2) + '%');
     if (t < 1) scanRaf = requestAnimationFrame(tick);
-    else { revealStage.classList.add('done'); revealHint.textContent = 'จดจำชื่อ/ข้อความนี้ไว้'; scanRaf = null; }
+    else { revealStage.classList.add('done'); revealHint.textContent = TEXT.revealScanned; scanRaf = null; }
   };
   scanRaf = requestAnimationFrame(tick);
 };
@@ -771,7 +1300,6 @@ const adminResetAll = $('admin-reset-all');
 const adminBack = $('admin-back');
 
 /* ── Admin auth ── */
-const ADMIN_PASSWORD = 'sigma6767';
 const AUTH_KEY = 'rahut-match-admin-auth';
 const authModal = $('auth-modal');
 const authPwd = $('auth-pwd');
@@ -791,12 +1319,13 @@ const tryEnterAdmin = () => {
 };
 
 const submitAuth = () => {
-  if (authPwd.value === ADMIN_PASSWORD) {
+  const correct = data.adminPassword || DEFAULT_ADMIN_PASSWORD;
+  if (authPwd.value === correct) {
     setAdminAuthed();
     authModal.classList.add('hidden');
     setScreen('admin');
   } else {
-    showWarn(authWarn, 'รหัสไม่ถูก', true);
+    showWarn(authWarn, TEXT.errAuthWrong, true);
     authPwd.value = '';
     authPwd.focus();
   }
@@ -809,27 +1338,82 @@ authCancel.addEventListener('click', () => { authModal.classList.add('hidden'); 
 adminLink.addEventListener('click', tryEnterAdmin);
 adminBack.addEventListener('click', () => setScreen('home'));
 
+/* ── Change password ── */
+const pwdModal = $('pwd-modal');
+const pwdCurrent = $('pwd-current');
+const pwdNew = $('pwd-new');
+const pwdConfirm = $('pwd-confirm');
+const pwdSave = $('pwd-save');
+const pwdCancel = $('pwd-cancel');
+const pwdWarn = $('pwd-warn');
+const adminChangePwd = $('admin-change-pwd');
+
+adminChangePwd.addEventListener('click', () => {
+  pwdCurrent.value = '';
+  pwdNew.value = '';
+  pwdConfirm.value = '';
+  showWarn(pwdWarn, '');
+  pwdModal.classList.remove('hidden');
+  setTimeout(() => pwdCurrent.focus(), 80);
+});
+
+pwdCancel.addEventListener('click', () => pwdModal.classList.add('hidden'));
+
+pwdSave.addEventListener('click', async () => {
+  const cur = pwdCurrent.value;
+  const nw = pwdNew.value;
+  const cf = pwdConfirm.value;
+  const correct = data.adminPassword || DEFAULT_ADMIN_PASSWORD;
+  if (cur !== correct) { showWarn(pwdWarn, TEXT.errPwdWrong, true); return; }
+  if (!nw) { showWarn(pwdWarn, TEXT.errPwdEmpty, true); return; }
+  if (nw.length < 4) { showWarn(pwdWarn, TEXT.errPwdShort, true); return; }
+  if (nw !== cf) { showWarn(pwdWarn, TEXT.errPwdMismatch, true); return; }
+  try {
+    const snap = await getDoc(docRef);
+    if (snap.exists()) data = Object.assign(defaultData(), snap.data());
+    data.adminPassword = nw;
+    await save();
+    pwdModal.classList.add('hidden');
+    flash(TEXT.okPwdChanged);
+  } catch (e) {
+    showWarn(pwdWarn, TEXT.errPwdSaveFail(e.message), true);
+  }
+});
+
+pwdConfirm.addEventListener('keydown', e => { if (e.key === 'Enter') pwdSave.click(); });
+
 const renderAdmin = () => {
   const seniors = data.users.filter(u => u.role === 'senior');
   const juniors = data.users.filter(u => u.role === 'junior');
-  statSeniors.textContent = seniors.length;
-  statJuniors.textContent = juniors.length;
-  statPairs.textContent = Object.keys(data.matches).length / 2;
+  animateNumber(statSeniors, seniors.length);
+  animateNumber(statJuniors, juniors.length);
+  animateNumber(statPairs, Object.keys(data.matches).length / 2);
 
   adminStatus.textContent = isRandomized()
-    ? `สุ่มเมื่อ ${new Date(data.randomizedAt).toLocaleString('th-TH')}`
-    : 'ยังไม่สุ่ม';
+    ? TEXT.adminStatusRandomized(new Date(data.randomizedAt).toLocaleString('th-TH'))
+    : TEXT.adminStatusNotRandomized;
 
   adminUsers.innerHTML = '';
   if (data.users.length === 0) {
-    adminUsers.innerHTML = '<div class="user-list-empty">ยังไม่มีคนลงทะเบียน</div>';
+    const empty = document.createElement('div');
+    empty.className = 'user-list-empty';
+    empty.textContent = TEXT.adminEmpty;
+    adminUsers.appendChild(empty);
   } else {
     data.users.forEach(u => {
       const chip = document.createElement('span');
       chip.className = 'user-chip';
-      chip.innerHTML = `<span class="role">${roleLabel(u.role)}</span><span>${escapeHtml(u.name)}</span><span class="x" title="ลบ">✕</span>`;
-      chip.querySelector('.x').addEventListener('click', () => {
-        confirmModal(`ลบ "${u.name}"?`, 'จะลบบัญชีและข้อความ', async () => {
+      const role = document.createElement('span');
+      role.className = 'role';
+      role.textContent = roleLabel(u.role);
+      const name = document.createElement('span');
+      name.textContent = u.name;
+      const x = document.createElement('span');
+      x.className = 'x';
+      x.title = TEXT.btnDelete;
+      x.textContent = '✕';
+      x.addEventListener('click', () => {
+        confirmModal(TEXT.delChipConfirm(u.name), TEXT.delChipText, async () => {
           try {
             const snap = await getDoc(docRef);
             if (snap.exists()) data = Object.assign(defaultData(), snap.data());
@@ -839,26 +1423,29 @@ const renderAdmin = () => {
               if (data.matches[k] === u.id) delete data.matches[k];
             }
             await save();
-          } catch (e) { flash('ลบล้มเหลว: ' + e.message, true); }
+          } catch (e) { flash(TEXT.errDelFail(e.message), true); }
         });
       });
+      chip.appendChild(role);
+      chip.appendChild(name);
+      chip.appendChild(x);
       adminUsers.appendChild(chip);
     });
   }
 
-  adminRandomize.textContent = isRandomized() ? 'สุ่มใหม่' : 'สุ่มจับคู่';
+  adminRandomize.textContent = isRandomized() ? TEXT.btnRerandomize : TEXT.btnRandomize;
 };
 
 adminRandomize.addEventListener('click', () => {
   const seniors = data.users.filter(u => u.role === 'senior');
   const juniors = data.users.filter(u => u.role === 'junior');
-  if (seniors.length === 0 || juniors.length === 0) { flash('ต้องมีทั้งพี่และน้องอย่างน้อย 1 คน', true); return; }
-  const action = isRandomized() ? 'สุ่มใหม่' : 'สุ่มจับคู่';
+  if (seniors.length === 0 || juniors.length === 0) { flash(TEXT.errInsufficient, true); return; }
+  const action = isRandomized() ? TEXT.btnRerandomize : TEXT.btnRandomize;
   let warn = '';
   if (seniors.length !== juniors.length) {
-    warn = `\n(พี่ ${seniors.length} vs น้อง ${juniors.length} — จะมีคนไม่ได้คู่)`;
+    warn = TEXT.randomizeWarn(seniors.length, juniors.length);
   }
-  confirmModal(`${action}?`, `จะสุ่ม ${Math.min(seniors.length, juniors.length)} คู่${warn}`, async () => {
+  confirmModal(TEXT.randomizeConfirm(action), TEXT.randomizeConfirmText(Math.min(seniors.length, juniors.length), warn), async () => {
     try {
       const snap = await getDoc(docRef);
       if (snap.exists()) data = Object.assign(defaultData(), snap.data());
@@ -871,30 +1458,31 @@ adminRandomize.addEventListener('click', () => {
       });
       data.randomizedAt = Date.now();
       await save();
-      flash('สุ่มเสร็จแล้ว — ทุกคนเห็นทันทีโดยไม่ต้อง refresh');
-    } catch (e) { flash('สุ่มล้มเหลว: ' + e.message, true); }
+      confetti(120);
+      flash(TEXT.okRandomized);
+    } catch (e) { flash(TEXT.errRandomizeFail(e.message), true); }
   });
 });
 
 adminResetMatches.addEventListener('click', () => {
-  if (!isRandomized()) { flash('ยังไม่ได้สุ่ม', true); return; }
-  confirmModal('ล้างผลสุ่ม?', 'คนที่ลงทะเบียนยังอยู่', async () => {
+  if (!isRandomized()) { flash(TEXT.errNotRandomized, true); return; }
+  confirmModal(TEXT.resetMatchesConfirm, TEXT.resetMatchesText, async () => {
     try {
       data.matches = {};
       data.randomizedAt = null;
       await save();
-      flash('ล้างผลสุ่มแล้ว');
-    } catch (e) { flash('ล้มเหลว: ' + e.message, true); }
+      flash(TEXT.okResetMatches);
+    } catch (e) { flash(TEXT.errFail(e.message), true); }
   });
 });
 
 adminResetAll.addEventListener('click', () => {
-  confirmModal('ล้างทุกอย่าง?', 'ลบรายชื่อ ข้อความ และผลสุ่มทั้งหมดบน server', async () => {
+  confirmModal(TEXT.resetAllConfirm, TEXT.resetAllText, async () => {
     try {
       data = defaultData();
       await save();
-      flash('ล้างข้อมูลแล้ว');
-    } catch (e) { flash('ล้มเหลว: ' + e.message, true); }
+      flash(TEXT.okResetAll);
+    } catch (e) { flash(TEXT.errFail(e.message), true); }
   });
 });
 
@@ -938,6 +1526,27 @@ const flash = (msg, isError = false) => {
   clearTimeout(flashTimer);
   flashTimer = setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateX(-50%)'; }, 2400);
 };
+
+/* ── Easter egg: click title for confetti ── */
+document.querySelectorAll('header.site h1').forEach(h => {
+  h.style.cursor = 'pointer';
+  h.style.userSelect = 'none';
+  let clickCount = 0;
+  let resetTimer = null;
+  h.addEventListener('click', () => {
+    clickCount++;
+    h.classList.remove('pressed');
+    void h.offsetWidth;
+    h.classList.add('pressed');
+    setTimeout(() => h.classList.remove('pressed'), 600);
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => clickCount = 0, 1500);
+    if (clickCount >= 3) {
+      confetti(90);
+      clickCount = 0;
+    }
+  });
+});
 
 /* ── Init ── */
 setScreen('home');
