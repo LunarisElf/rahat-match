@@ -473,6 +473,7 @@
         <div id="welcome-notify" class="welcome-notify hidden"></div>
         <div class="actions" style="margin-top:8px">
           <button id="welcome-action" class="cta"><span id="welcome-action-label">แก้ไขข้อมูล</span><span id="welcome-action-badge" class="hidden">0</span></button>
+          <button id="welcome-switch" class="ghost" data-text="btnSwitchUser">เปลี่ยนผู้ใช้</button>
           <button id="welcome-delete" class="danger" data-text="btnDelete">ลบบัญชี</button>
         </div>
       </div>
@@ -781,6 +782,7 @@ const TEXT = {
   btnViewMatch: 'ดูคู่รหัส',
   btnEdit: 'แก้ไขข้อมูล',
   btnLogout: 'เปลี่ยนผู้ใช้',
+  btnSwitchUser: 'เปลี่ยนผู้ใช้',
 
   // Home / login
   homeNameLabel: 'ชื่อ',
@@ -1935,6 +1937,16 @@ const welcomeDelete = $('welcome-delete');
 welcomeDelete.addEventListener('click', () => {
   const id = getRememberedId();
   if (id) deleteAccount(id);
+});
+
+$('welcome-switch').addEventListener('click', () => {
+  confirmModal(TEXT.logoutConfirm, TEXT.logoutText, () => {
+    clearRemembered();
+    currentUserId = null;
+    homeName.value = '';
+    updateHomeStatus();
+    flash(TEXT.okLogout);
+  });
 });
 
 /* ── Reveal (light beam scan) ── */
