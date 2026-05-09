@@ -25,7 +25,12 @@
   .nebula.cyan{background:radial-gradient(circle,rgba(80,160,235,.78) 0%,transparent 65%);top:30%;left:28%;animation-duration:42s;animation-delay:-18s}
   .nebula.pink{position:absolute;width:45vw;height:45vw;max-width:780px;max-height:780px;background:radial-gradient(circle,rgba(220,110,180,.65) 0%,transparent 60%);top:60%;left:60%;border-radius:50%;filter:blur(56px);opacity:.42;mix-blend-mode:screen;animation:nebula-float 38s ease-in-out infinite alternate;animation-delay:-22s;contain:layout paint;will-change:transform}
   @keyframes nebula-float{0%{transform:translate(0,0) scale(1) rotate(0deg);opacity:.32}50%{transform:translate(5%,-4%) scale(1.15) rotate(8deg);opacity:.5}100%{transform:translate(-4%,5%) scale(1.06) rotate(-7deg);opacity:.36}}
-  .starfield{position:absolute;inset:0;contain:layout paint}
+  .starfield{position:absolute;inset:-25%;width:150%;height:150%;transform-origin:50% 50%;contain:layout paint;will-change:transform}
+  .starfield.far{animation:spin-cw 720s linear infinite}
+  .starfield.mid{animation:spin-ccw 460s linear infinite}
+  .starfield.near{animation:spin-cw 280s linear infinite}
+  @keyframes spin-cw{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  @keyframes spin-ccw{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
   .star{position:absolute;background:#fff;border-radius:50%;width:var(--s,2px);height:var(--s,2px);opacity:var(--o,.85);animation:twinkle var(--t,4s) ease-in-out infinite;animation-delay:var(--d,0s);box-shadow:0 0 var(--g,8px) rgba(255,255,255,.85)}
   .star.blue{background:#cfe1ff;box-shadow:0 0 var(--g,10px) rgba(184,212,255,.9)}
   .star.gold{background:var(--gold-bright);box-shadow:0 0 var(--g,10px) rgba(230,201,122,.9)}
