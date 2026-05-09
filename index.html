@@ -1046,7 +1046,7 @@ if (!isLite) (function loop2(){ setTimeout(()=>{ spawnComet(); loop2(); }, 12000
 
 /* ── Math decorations (สูตร ม.4 สสวท) ── */
 const mathLayer = $('math-layer');
-const MATH_GLYPHS = ['A∪B','A∩B','A−B','A\'','A⊂B','∅','U','|x|','ⁿ√x','√x','f(x)','f⁻¹','f∘g','∀x','∃x','p∧q','p∨q','p→q','p↔q','~p','≡','D(f)','R(f)'];
+const MATH_GLYPHS = ['A∪B','A∩B','A−B','A\'','A⊂B','∅','U','|x|','ⁿ√x','√x','f(x)','f⁻¹','f∘g','∀x','∃x','p∧q','p∨q','p→q','p↔q','~p','≡','D(f)','R(f)','(h,k)','F','2a','2b','e=c/a'];
 const MATH_EQUATIONS = [
   'n(A∪B)=n(A)+n(B)−n(A∩B)',
   'n(A\')=n(U)−n(A)',
@@ -1064,6 +1064,19 @@ const MATH_EQUATIONS = [
   '(f∘g)(x)=f(g(x))',
   'f(x)=ax+b',
   '|x|={x, x≥0; −x, x<0}',
+  'x²+y²=r²',
+  '(x−h)²+(y−k)²=r²',
+  'y=ax²+bx+c',
+  'y²=4px',
+  'x²=4py',
+  '(y−k)²=4p(x−h)',
+  '(x−h)²=4p(y−k)',
+  'x²/a²+y²/b²=1',
+  '(x−h)²/a²+(y−k)²/b²=1',
+  'x²/a²−y²/b²=1',
+  '(x−h)²/a²−(y−k)²/b²=1',
+  'c²=a²−b² (วงรี)',
+  'c²=a²+b² (ไฮเพอร์โบลา)',
 ];
 const MATH_COLOR_CLASSES = ['','cyan','violet'];
 const MATH_COUNT = isLite ? 5 : 14;
