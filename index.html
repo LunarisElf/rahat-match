@@ -617,8 +617,7 @@
         <button id="admin-randomize" class="cta">สุ่มจับคู่</button>
         <button id="admin-reset-matches" class="ghost" data-text="btnResetMatches">ล้างผลสุ่ม</button>
         <button id="admin-reset-all" class="danger" data-text="btnResetAll">ล้างข้อมูลทั้งหมด</button>
-        <button id="admin-change-pwd" class="ghost" data-text="btnChangePassword">เปลี่ยนรหัส Admin</button>
-        <button id="admin-back" class="ghost" data-text="btnBack">กลับ</button>
+        <button id="admin-back" class="ghost" data-text="btnBack">ออกจาก Admin</button>
       </div>
     </section>
   </div>
@@ -639,13 +638,18 @@
   <div id="auth-modal" class="modal-bg hidden">
     <div class="modal">
       <h2 data-text="authTitle">Admin Access</h2>
-      <p data-text="authDesc">ใส่รหัสเพื่อเข้า Admin Panel</p>
+      <p data-text="authDesc">ใส่ email + password ของ admin</p>
       <div class="input-group" style="text-align:left">
-        <input type="password" id="auth-pwd" data-placeholder="authPlaceholder" autocomplete="off" style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:monospace;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none">
+        <label for="auth-email" data-text="authEmailLabel">Email</label>
+        <input type="email" id="auth-email" autocomplete="off" style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:'Sarabun',sans-serif;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none">
+      </div>
+      <div class="input-group" style="text-align:left">
+        <label for="auth-pwd" data-text="authPwdLabel">Password</label>
+        <input type="password" id="auth-pwd" autocomplete="off" style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:monospace;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none">
       </div>
       <div id="auth-warn" class="warning hidden"></div>
       <div class="row">
-        <button id="auth-go" data-text="btnAuthGo">ตกลง</button>
+        <button id="auth-go" data-text="btnAuthGo">เข้าสู่ระบบ</button>
         <button class="ghost" id="auth-cancel" data-text="btnCancel">ยกเลิก</button>
       </div>
     </div>
@@ -681,30 +685,6 @@
     </div>
   </div>
 
-  <div id="pwd-modal" class="modal-bg hidden">
-    <div class="modal">
-      <h2 data-text="pwdModalTitle">เปลี่ยนรหัส Admin</h2>
-      <p data-text="pwdModalDesc">รหัสจะถูกบันทึกบน server</p>
-      <div class="input-group" style="text-align:left">
-        <label for="pwd-current" data-text="pwdCurrentLabel">รหัสปัจจุบัน</label>
-        <input type="password" id="pwd-current" autocomplete="off" style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:monospace;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none">
-      </div>
-      <div class="input-group" style="text-align:left">
-        <label for="pwd-new" data-text="pwdNewLabel">รหัสใหม่</label>
-        <input type="password" id="pwd-new" autocomplete="off" style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:monospace;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none">
-      </div>
-      <div class="input-group" style="text-align:left">
-        <label for="pwd-confirm" data-text="pwdConfirmLabel">ยืนยันรหัสใหม่</label>
-        <input type="password" id="pwd-confirm" autocomplete="off" style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:monospace;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none">
-      </div>
-      <div id="pwd-warn" class="warning hidden"></div>
-      <div class="row">
-        <button id="pwd-save" data-text="btnSave">บันทึก</button>
-        <button class="ghost" id="pwd-cancel" data-text="btnCancel">ยกเลิก</button>
-      </div>
-    </div>
-  </div>
-
   <div id="user-detail-modal" class="modal-bg hidden">
     <div class="modal" style="max-width:520px;text-align:left">
       <div id="ud-content"></div>
@@ -727,13 +707,6 @@ const FIREBASE_CONFIG = {
   appId: "1:700033003323:web:50a1814fb0d2b152cd111e",
   measurementId: "G-ZHNCVQ8FBF",
 };
-
-// ════════════════════════════════════════════════════════════════
-// ADMIN PASSWORD — initial password (used only when Firestore has none)
-// After first load, password is stored in Firestore at data.adminPassword
-// — Admin can change it from Admin Panel anytime
-// ════════════════════════════════════════════════════════════════
-const DEFAULT_ADMIN_PASSWORD = 'sigma6767';
 
 // ════════════════════════════════════════════════════════════════
 // ALL UI TEXT — edit here to change any text on the website
@@ -922,10 +895,14 @@ const TEXT = {
 
   // Auth modal
   authTitle: 'Admin Access',
-  authDesc: 'ใส่รหัสเพื่อเข้า Admin Panel',
-  authPlaceholder: 'รหัส',
-  btnAuthGo: 'ตกลง',
-  errAuthWrong: 'รหัสไม่ถูก',
+  authDesc: 'ใส่ email + password ของ admin',
+  authEmailLabel: 'Email',
+  authPwdLabel: 'Password',
+  btnAuthGo: 'เข้าสู่ระบบ',
+  errAuthWrong: 'email หรือ password ผิด',
+  errAuthNotAdmin: 'บัญชีนี้ไม่ใช่ admin',
+  errAuthNetwork: 'เชื่อมต่อไม่ได้ ลองอีกครั้ง',
+  okAdminSignedOut: 'ออกจากระบบ admin แล้ว',
 
   // Confirm modal
   btnConfirm: 'ยืนยัน',
@@ -934,20 +911,6 @@ const TEXT = {
   logoutConfirm: 'เปลี่ยนผู้ใช้?',
   logoutText: 'จะลืมว่าคุณเป็นใคร แต่ข้อมูลใน server ยังอยู่',
   okLogout: 'ลืมข้อมูลในเครื่องนี้แล้ว',
-
-  // Change password
-  btnChangePassword: 'เปลี่ยนรหัส Admin',
-  pwdModalTitle: 'เปลี่ยนรหัส Admin',
-  pwdModalDesc: 'อย่าเปลี่ยนมั่วซั่วเด้อ',
-  pwdCurrentLabel: 'รหัสปัจจุบัน',
-  pwdNewLabel: 'รหัสใหม่',
-  pwdConfirmLabel: 'ยืนยันรหัสใหม่',
-  errPwdWrong: 'รหัสปัจจุบันไม่ถูก',
-  errPwdMismatch: 'รหัสใหม่ทั้ง 2 ช่องไม่ตรงกัน',
-  errPwdEmpty: 'กรอกรหัสใหม่ก่อน',
-  errPwdShort: 'รหัสต้องอย่างน้อย 4 ตัว',
-  okPwdChanged: 'เปลี่ยนรหัสแล้ว',
-  errPwdSaveFail: (m) => 'บันทึกรหัสล้มเหลว: ' + m,
 
   // Admin link
   adminLinkLabel: '⚙ Admin',
@@ -1192,13 +1155,27 @@ if (NEEDS_CONFIG) {
 const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js");
 const { getFirestore, doc, getDoc, setDoc, onSnapshot, runTransaction } =
   await import("https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js");
+const { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } =
+  await import("https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js");
 
 const fb = initializeApp(FIREBASE_CONFIG);
 const db = getFirestore(fb);
+const auth = getAuth(fb);
 const docRef = doc(db, "rahut-match", "data");
 
+let _adminUser = null;
+const isAdminAuthed = () => !!_adminUser;
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { _adminUser = null; return; }
+  try {
+    const adminDoc = await getDoc(doc(db, "admins", user.uid));
+    if (adminDoc.exists()) _adminUser = user;
+    else { _adminUser = null; await signOut(auth); }
+  } catch { _adminUser = null; }
+});
+
 /* ── Data + sync ── */
-const defaultData = () => ({ users: [], matches: {}, randomizedAt: null, adminPassword: DEFAULT_ADMIN_PASSWORD });
+const defaultData = () => ({ users: [], matches: {}, randomizedAt: null });
 let data = defaultData();
 const syncPill = $('sync-pill');
 const syncTextEl = $('sync-text');
@@ -1238,16 +1215,8 @@ async function txnUpdate(mutator) {
 
 try {
   const snap = await getDoc(docRef);
-  if (snap.exists()) {
-    data = Object.assign(defaultData(), snap.data());
-    // Migrate: if existing doc has no password, set default and persist
-    if (!snap.data().adminPassword) {
-      data.adminPassword = DEFAULT_ADMIN_PASSWORD;
-      await setDoc(docRef, data);
-    }
-  } else {
-    await setDoc(docRef, data);
-  }
+  if (snap.exists()) data = Object.assign(defaultData(), snap.data());
+  else await setDoc(docRef, data);
   setSync('idle');
 } catch (e) {
   console.error(e);
@@ -1998,90 +1967,63 @@ window.addEventListener('keydown', e => {
   else if (e.key === 'Escape') closePinModal();
 });
 
-/* ── Admin auth ── */
-const AUTH_KEY = 'rahut-match-admin-auth';
+/* ── Admin auth (Firebase Auth) ── */
 const authModal = $('auth-modal');
+const authEmail = $('auth-email');
 const authPwd = $('auth-pwd');
 const authGo = $('auth-go');
 const authCancel = $('auth-cancel');
 const authWarn = $('auth-warn');
 
-const isAdminAuthed = () => sessionStorage.getItem(AUTH_KEY) === '1' || localStorage.getItem(AUTH_KEY) === '1';
-const setAdminAuthed = () => sessionStorage.setItem(AUTH_KEY, '1');
-
 const tryEnterAdmin = () => {
   if (isAdminAuthed()) { setScreen('admin'); return; }
   showWarn(authWarn, '');
+  authEmail.value = '';
   authPwd.value = '';
   authModal.classList.remove('hidden');
-  setTimeout(() => authPwd.focus(), 80);
+  setTimeout(() => authEmail.focus(), 80);
 };
 
-const submitAuth = () => {
-  const correct = data.adminPassword || DEFAULT_ADMIN_PASSWORD;
-  if (authPwd.value === correct) {
-    setAdminAuthed();
+const submitAuth = async () => {
+  const email = authEmail.value.trim();
+  const pwd = authPwd.value;
+  if (!email || !pwd) { showWarn(authWarn, TEXT.errAuthWrong, true); return; }
+  showWarn(authWarn, TEXT.msgSaving);
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, pwd);
+    const adminDoc = await getDoc(doc(db, "admins", cred.user.uid));
+    if (!adminDoc.exists()) {
+      await signOut(auth);
+      showWarn(authWarn, TEXT.errAuthNotAdmin, true);
+      return;
+    }
+    _adminUser = cred.user;
     authModal.classList.add('hidden');
+    authPwd.value = '';
     setScreen('admin');
-  } else {
-    showWarn(authWarn, TEXT.errAuthWrong, true);
+  } catch (e) {
+    if (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found' || e.code === 'auth/invalid-email') {
+      showWarn(authWarn, TEXT.errAuthWrong, true);
+    } else if (e.code === 'auth/network-request-failed') {
+      showWarn(authWarn, TEXT.errAuthNetwork, true);
+    } else {
+      showWarn(authWarn, e.message, true);
+    }
     authPwd.value = '';
     authPwd.focus();
   }
 };
 
 authGo.addEventListener('click', submitAuth);
+authEmail.addEventListener('keydown', e => { if (e.key === 'Enter') authPwd.focus(); });
 authPwd.addEventListener('keydown', e => { if (e.key === 'Enter') submitAuth(); });
 authCancel.addEventListener('click', () => { authModal.classList.add('hidden'); });
 
 adminLink.addEventListener('click', tryEnterAdmin);
-adminBack.addEventListener('click', () => setScreen('home'));
-
-/* ── Change password ── */
-const pwdModal = $('pwd-modal');
-const pwdCurrent = $('pwd-current');
-const pwdNew = $('pwd-new');
-const pwdConfirm = $('pwd-confirm');
-const pwdSave = $('pwd-save');
-const pwdCancel = $('pwd-cancel');
-const pwdWarn = $('pwd-warn');
-const adminChangePwd = $('admin-change-pwd');
-
-adminChangePwd.addEventListener('click', () => {
-  pwdCurrent.value = '';
-  pwdNew.value = '';
-  pwdConfirm.value = '';
-  showWarn(pwdWarn, '');
-  pwdModal.classList.remove('hidden');
-  setTimeout(() => pwdCurrent.focus(), 80);
+adminBack.addEventListener('click', async () => {
+  if (isAdminAuthed()) { try { await signOut(auth); flash(TEXT.okAdminSignedOut); } catch {} }
+  setScreen('home');
 });
-
-pwdCancel.addEventListener('click', () => pwdModal.classList.add('hidden'));
-
-pwdSave.addEventListener('click', async () => {
-  const cur = pwdCurrent.value;
-  const nw = pwdNew.value;
-  const cf = pwdConfirm.value;
-  const correct = data.adminPassword || DEFAULT_ADMIN_PASSWORD;
-  if (cur !== correct) { showWarn(pwdWarn, TEXT.errPwdWrong, true); return; }
-  if (!nw) { showWarn(pwdWarn, TEXT.errPwdEmpty, true); return; }
-  if (nw.length < 4) { showWarn(pwdWarn, TEXT.errPwdShort, true); return; }
-  if (nw !== cf) { showWarn(pwdWarn, TEXT.errPwdMismatch, true); return; }
-  try {
-    await txnUpdate(curr => {
-      const liveCorrect = curr.adminPassword || DEFAULT_ADMIN_PASSWORD;
-      if (cur !== liveCorrect) throw new TxnAbort(TEXT.errPwdWrong);
-      curr.adminPassword = nw;
-      return curr;
-    });
-    pwdModal.classList.add('hidden');
-    flash(TEXT.okPwdChanged);
-  } catch (e) {
-    showWarn(pwdWarn, e.uiAbort ? e.message : TEXT.errPwdSaveFail(e.message), true);
-  }
-});
-
-pwdConfirm.addEventListener('keydown', e => { if (e.key === 'Enter') pwdSave.click(); });
 
 const renderAdmin = () => {
   const seniors = data.users.filter(u => u.role === 'senior');
@@ -2222,11 +2164,7 @@ adminResetMatches.addEventListener('click', () => {
 adminResetAll.addEventListener('click', () => {
   confirmModal(TEXT.resetAllConfirm, TEXT.resetAllText, async () => {
     try {
-      await txnUpdate(curr => {
-        const fresh = defaultData();
-        fresh.adminPassword = curr.adminPassword || DEFAULT_ADMIN_PASSWORD;
-        return fresh;
-      });
+      await txnUpdate(() => defaultData());
       flash(TEXT.okResetAll);
     } catch (e) { flash(TEXT.errFail(e.message), true); }
   });
