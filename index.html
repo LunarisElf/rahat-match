@@ -58,12 +58,13 @@
 
   .input-group{margin-bottom:14px}
   .input-group label{display:block;font-weight:700;margin-bottom:6px;color:var(--gold);font-size:.95rem;letter-spacing:.5px}
-  input[type="text"],input[type="password"],textarea{width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:inherit;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
-  input[type="text"]{font-size:1.1rem;font-family:'Mali',cursive}
+  input[type="text"],input[type="password"],input[type="url"],textarea{width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:inherit;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
+  input[type="text"],input[type="url"]{font-size:1.1rem;font-family:'Mali',cursive}
   input[type="password"]{font-family:monospace;font-size:.95rem}
+  input[type="text"][readonly],input[type="url"][readonly]{background:rgba(10,19,34,.4);color:var(--gold-bright);cursor:default}
   textarea{min-height:130px;resize:vertical}
-  input[type="text"]::placeholder,input[type="password"]::placeholder,textarea::placeholder{color:#4a5a73}
-  input[type="text"]:focus,input[type="password"]:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,169,97,.18)}
+  input[type="text"]::placeholder,input[type="password"]::placeholder,input[type="url"]::placeholder,textarea::placeholder{color:#4a5a73}
+  input[type="text"]:focus,input[type="password"]:focus,input[type="url"]:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,169,97,.18)}
 
   .role-picker{display:flex;gap:10px;margin-bottom:6px}
   .role-picker label{flex:1;cursor:pointer}
@@ -115,10 +116,19 @@
   .panel-meta{color:var(--muted);font-size:.95rem}
 
   .user-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-  .user-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(201,169,97,.08);border:1px solid rgba(201,169,97,.25);border-radius:999px;padding:6px 14px;font-family:'Mali',cursive;font-size:1rem}
+  .user-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(201,169,97,.08);border:1px solid rgba(201,169,97,.25);border-radius:999px;padding:6px 14px;font-family:'Mali',cursive;font-size:1rem;cursor:pointer;transition:background .15s,border-color .15s}
+  .user-chip:hover{background:rgba(201,169,97,.16);border-color:var(--gold)}
   .user-chip .role{font-family:'Sarabun',sans-serif;font-weight:700;font-size:.7rem;color:var(--gold);letter-spacing:1.5px;padding:2px 8px;background:rgba(201,169,97,.2);border-radius:999px}
   .user-chip .x{cursor:pointer;color:var(--muted);font-size:.95rem;padding:2px 4px;line-height:1}
   .user-chip .x:hover{color:#ffb4ad}
+
+  .ud-block{padding:14px 16px;background:rgba(20,35,60,.4);border:1px solid var(--line);border-radius:14px;margin:10px 0}
+  .ud-section-label{font-family:'Sarabun',sans-serif;font-size:.72rem;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+  .ud-name{font-family:'Mali',cursive;color:var(--gold-bright);font-size:1.3rem;margin-bottom:6px;word-break:break-word}
+  .ud-msg{color:var(--text);font-family:'Mali',cursive;font-size:.95rem;line-height:1.5;white-space:pre-wrap;word-break:break-word;background:rgba(201,169,97,.08);border-left:3px solid var(--gold);padding:8px 12px;border-radius:8px;margin-top:6px}
+  .ud-msg.empty{color:var(--muted);font-style:italic;border-left-color:var(--line);background:rgba(36,58,94,.18)}
+  .ud-divider{text-align:center;color:var(--muted);font-size:.85rem;margin:8px 0;letter-spacing:1px}
+  .ud-empty{color:var(--muted);font-style:italic;text-align:center;padding:14px;font-size:.95rem}
   .user-list-empty{color:var(--muted);font-style:italic;padding:14px;text-align:center}
 
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
@@ -136,6 +146,25 @@
   .reveal-stage.no-partner{background:radial-gradient(circle at 50% 50%,#2a1a1a 0%,#0a0508 75%);border-color:#5a2c2c}
   .reveal-stage .no-partner-msg{text-align:center;color:#ffb4ad;font-family:'Mali',cursive;font-size:1.3rem;padding:30px}
   .reveal-stage.done .beam{opacity:0}
+
+  .song-card{display:flex;align-items:center;gap:12px;padding:12px 14px;margin-top:14px;background:rgba(20,35,60,.45);border:1px solid var(--line);border-radius:14px;text-decoration:none;color:var(--text);transition:transform .2s,border-color .2s,box-shadow .2s;cursor:pointer}
+  .song-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35),0 0 0 1px rgba(201,169,97,.18)}
+  .platform-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--brand,#444)}
+  .platform-icon svg{width:24px;height:24px;fill:#fff}
+  .platform-icon.apple-music{background:linear-gradient(135deg,#fa233b 0%,#fb5c74 100%)}
+  .song-info{flex:1;min-width:0}
+  .song-title{font-family:'Mali',cursive;font-weight:700;color:var(--gold-bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:1rem}
+  .song-artist{font-size:.85rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .song-meta-line{font-size:.72rem;color:var(--muted);margin-top:2px;letter-spacing:.5px;text-transform:uppercase}
+  .song-arrow{color:var(--muted);font-size:1.1rem;flex-shrink:0;transition:transform .2s,color .2s}
+  .song-card:hover .song-arrow{color:var(--gold-bright);transform:translate(2px,-2px)}
+
+  .song-preview{display:flex;align-items:center;gap:10px;margin-top:8px;padding:8px 12px;background:rgba(20,35,60,.35);border:1px solid var(--line);border-radius:10px;font-size:.85rem}
+  .song-preview .platform-icon{width:28px;height:28px;border-radius:8px}
+  .song-preview .platform-icon svg{width:16px;height:16px}
+  .song-preview .preview-text{flex:1;color:var(--gold-bright)}
+  .song-preview.invalid{border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.08)}
+  .song-preview.invalid .preview-text{color:#ffb4ad}
 
   .modal-bg{position:fixed;inset:0;background:rgba(2,5,12,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:50;animation:fadeIn .25s ease both;padding:20px}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -419,8 +448,8 @@
       </div>
 
       <div id="welcome-panel" class="glass-panel hidden" style="margin-top:16px;text-align:center">
-        <p style="color:var(--muted);margin-bottom:6px;font-size:.95rem;letter-spacing:.5px" data-text="welcomeBack">ยินดีต้อนรับกลับ</p>
-        <div id="welcome-name" style="font-family:'Mali',cursive;font-size:1.7rem;color:var(--gold-bright);margin-bottom:18px;line-height:1.2;text-shadow:0 0 14px rgba(230,201,122,.3)">—</div>
+        <p style="color:var(--muted);margin-bottom:14px;font-size:.95rem;letter-spacing:.5px" data-text="welcomeBack">ยินดีต้อนรับกลับ</p>
+        <div id="welcome-name" style="font-family:'Mali',cursive;font-size:1.7rem;color:var(--gold-bright);margin-top:6px;margin-bottom:22px;line-height:1.2;text-shadow:0 0 14px rgba(230,201,122,.3)">—</div>
         <div class="actions" style="margin-top:0">
           <button id="welcome-action" class="cta">แก้ไขข้อมูล</button>
           <button id="welcome-delete" class="danger" data-text="btnDelete">ลบบัญชี</button>
@@ -458,6 +487,16 @@
         <div class="input-group">
           <label for="reg-msg" data-text="registerMsgLabel">ข้อความถึง "คู่ในอนาคต"</label>
           <textarea id="reg-msg" data-placeholder="registerMsgPlaceholder"></textarea>
+        </div>
+        <div class="input-group">
+          <label for="reg-song-url" data-text="registerSongUrlLabel">เพลงที่ฝากให้คู่ฟัง (ไม่ใส่ก็ได้)</label>
+          <input type="url" id="reg-song-url" data-placeholder="registerSongUrlPlaceholder" autocomplete="off">
+          <div id="reg-song-preview" class="song-preview hidden"></div>
+          <p style="font-size:.75rem;color:var(--muted);margin-top:6px;line-height:1.5" data-text="registerSongHint">รองรับ Spotify · YouTube · YouTube Music · SoundCloud · Apple Music · Tidal</p>
+        </div>
+        <div class="input-group">
+          <label for="reg-song-title" data-text="registerSongTitleLabel">ชื่อเพลง</label>
+          <input type="text" id="reg-song-title" data-placeholder="registerSongTitlePlaceholder" autocomplete="off" readonly>
         </div>
         <div class="actions">
           <button id="reg-next" class="cta" data-text="btnNext">ต่อไป</button>
@@ -506,6 +545,16 @@
       <div class="glass-panel">
         <div class="input-group"><label for="edit-name" data-text="editNameLabel">ชื่อ</label><input type="text" id="edit-name" autocomplete="off"></div>
         <div class="input-group"><label for="edit-msg" data-text="editMsgLabel">ข้อความถึงคู่</label><textarea id="edit-msg"></textarea></div>
+        <div class="input-group">
+          <label for="edit-song-url" data-text="editSongUrlLabel">เพลงที่ฝากให้คู่ฟัง</label>
+          <input type="url" id="edit-song-url" data-placeholder="registerSongUrlPlaceholder" autocomplete="off">
+          <div id="edit-song-preview" class="song-preview hidden"></div>
+          <p style="font-size:.75rem;color:var(--muted);margin-top:6px;line-height:1.5" data-text="registerSongHint">รองรับ Spotify · YouTube · YouTube Music · SoundCloud · Apple Music · Tidal</p>
+        </div>
+        <div class="input-group">
+          <label for="edit-song-title" data-text="registerSongTitleLabel">ชื่อเพลง</label>
+          <input type="text" id="edit-song-title" data-placeholder="registerSongTitlePlaceholder" autocomplete="off" readonly>
+        </div>
         <div class="actions">
           <button id="edit-save" class="cta" data-text="btnSave">บันทึก</button>
           <button id="edit-change-pin" class="ghost" data-text="btnChangePin">เปลี่ยน PIN</button>
@@ -656,6 +705,15 @@
     </div>
   </div>
 
+  <div id="user-detail-modal" class="modal-bg hidden">
+    <div class="modal" style="max-width:520px;text-align:left">
+      <div id="ud-content"></div>
+      <div class="row" style="justify-content:center;margin-top:18px">
+        <button class="ghost" id="ud-close" data-text="btnClose">ปิด</button>
+      </div>
+    </div>
+  </div>
+
 <script type="module">
 // ════════════════════════════════════════════════════════════════
 // FIREBASE CONFIG — paste your config from Firebase Console here
@@ -745,6 +803,22 @@ const TEXT = {
   registerNamePlaceholder: 'ชื่อของคุณ',
   registerMsgLabel: 'ข้อความถึงคู่รหัส (น้องรหัสจะไม่เห็นชื่อพี่รหัส)',
   registerMsgPlaceholder: 'ดีฮ้าบบบบบบบฟู่',
+  registerSongUrlLabel: 'เพลงที่ฝากให้คู่ฟัง (ไม่ใส่ก็ได้)',
+  registerSongUrlPlaceholder: 'วาง link เพลง — Spotify, YouTube ฯลฯ',
+  registerSongTitleLabel: 'ชื่อเพลง',
+  registerSongTitlePlaceholder: 'ชื่อเพลง',
+  registerSongArtistLabel: 'ศิลปิน',
+  registerSongArtistPlaceholder: 'ชื่อศิลปิน',
+  registerSongHint: 'รองรับ Spotify · YouTube · YouTube Music · SoundCloud · Apple Music · Tidal',
+  songPreviewValid: (p) => `ตรวจแล้ว: ${p}`,
+  songPreviewInvalid: 'ลิ้งนี้ไม่รองรับ — ใช้ได้เฉพาะ Spotify / YouTube / SoundCloud / Apple Music / Tidal',
+  songFetching: 'กำลังดึงข้อมูลเพลง...',
+  songAutoFetched: (p) => `ดึงข้อมูลจาก ${p} แล้ว`,
+  songFetchFailed: (p) => `ดึงข้อมูล ${p} ไม่สำเร็จ — พิมพ์เอง`,
+  errSongUrlInvalid: 'ลิ้งเพลงไม่รองรับ ใส่ลิ้งจาก Spotify/YouTube/SoundCloud/Apple Music/Tidal',
+  errSongTitleRequired: 'ใส่ชื่อเพลงด้วย (เพราะ link เพลงเเล้ว)',
+  editSongUrlLabel: 'เพลงที่ฝากให้คู่ฟัง',
+  songOnPlatform: (p) => `เปิดบน ${p}`,
   registerPinTitle: 'ตั้ง PIN',
   registerPinSubtitle: 'ป้องกันคนสวมรอย',
   registerPinHint: 'PIN ใช้ยืนยันตัวตนตอน login จากเครื่องอื่น กรุณาจำให้ดี',
@@ -794,6 +868,7 @@ const TEXT = {
   delConfirmText: 'ข้อมูลจะถูกลบทั้งหมด แน่ใจป่าว?',
   okDeleted: 'ลบแล้ว',
   errDelFail: (m) => 'ลบล้มเหลว: ' + m,
+  errDeleteAfterRandomize: 'สุ่มแล้ว ลบบัญชีไม่ได้',
 
   // Reveal
   revealDefaultTitle: 'คู่ของคุณ',
@@ -837,6 +912,13 @@ const TEXT = {
   okResetAll: 'ล้างข้อมูลสำเร็จ',
   delChipConfirm: (n) => `ลบ "${n}"?`,
   delChipText: 'จะลบบัญชีและข้อความ',
+  udSectionUser: 'ผู้ใช้',
+  udSectionPartner: 'คู่',
+  udPartnerArrow: 'จับคู่กับ',
+  udNotRandomized: 'ยังไม่ได้สุ่ม',
+  udNoPartner: 'ไม่ได้คู่ในรอบนี้',
+  udNoMessage: '(ไม่มีข้อความ)',
+  btnClose: 'ปิด',
 
   // Auth modal
   authTitle: 'Admin Access',
@@ -1211,6 +1293,147 @@ const roleLabel = r => r === 'senior' ? TEXT.roleSenior : TEXT.roleJunior;
 const isRandomized = () => !!data.randomizedAt;
 const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+/* ── Song / streaming-platform helpers ── */
+const ALLOWED_HOSTS = {
+  'open.spotify.com': 'spotify',
+  'spotify.link': 'spotify',
+  'youtube.com': 'youtube',
+  'www.youtube.com': 'youtube',
+  'm.youtube.com': 'youtube',
+  'youtu.be': 'youtube',
+  'music.youtube.com': 'youtube-music',
+  'soundcloud.com': 'soundcloud',
+  'm.soundcloud.com': 'soundcloud',
+  'on.soundcloud.com': 'soundcloud',
+  'music.apple.com': 'apple-music',
+  'tidal.com': 'tidal',
+  'listen.tidal.com': 'tidal',
+};
+const PLATFORM_NAMES = {
+  spotify: 'Spotify',
+  youtube: 'YouTube',
+  'youtube-music': 'YouTube Music',
+  soundcloud: 'SoundCloud',
+  'apple-music': 'Apple Music',
+  tidal: 'Tidal',
+};
+const PLATFORM_BRAND = {
+  spotify: '#1db954',
+  youtube: '#ff0000',
+  'youtube-music': '#ff0000',
+  soundcloud: '#ff5500',
+  'apple-music': '#fa233b',
+  tidal: '#000000',
+};
+const PLATFORM_ICON_PATH = {
+  spotify: 'M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.84-.18-.94-.6-.122-.418.18-.842.6-.94 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.282 1.121zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.299.421-1.02.599-1.559.3z',
+  youtube: 'M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z',
+  'youtube-music': 'M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm0 4.8c4 0 7.2 3.2 7.2 7.2S16 19.2 12 19.2 4.8 16 4.8 12 8 4.8 12 4.8zm-2 3.6v7.2L16 12l-6-3.6z',
+  soundcloud: 'M7 17.939h-1v-8.068c.308-.231.639-.429 1-.566zm3 0h1v-9.224c-.229-.265-.56-.466-1-.606zm-2 0h1v-9.07c-.317-.024-.658-.024-1 0zm-4 0h1v-7.541c-.375.087-.715.225-1 .411zm-3-3.962l-1 .378v3.219l1 .365zm22.485-2.057c-.448 0-.886.069-1.292.205-.31-3.094-2.901-5.515-6.063-5.515-.745 0-1.473.139-2.13.396v10.539c.13.061.4.06.55.06h8.5c2.214 0 3.95-1.799 3.95-4.06 0-2.235-1.81-4.05-4.025-4.05zm-19.485-.044l-1 .583v2.566l1 .54z',
+  'apple-music': 'M23.997 6.124c0-.738-.065-1.47-.24-2.19-.317-1.31-1.062-2.31-2.18-3.043C21.003.517 20.373.285 19.7.164c-.517-.093-1.038-.135-1.564-.15h-.117a3.42 3.42 0 0 0-.153-.014h-11.6c-.057 0-.114.005-.17.014-.12.005-.24.014-.36.022-.694.038-1.378.105-2.022.27C2.39.49 1.426 1.094.683 2.115.234 2.728-.022 3.42 0 4.197v15.605c.026.797.317 1.49.776 2.115.745 1.018 1.71 1.622 2.927 1.928.65.165 1.34.232 2.034.27.118.008.237.017.355.022.057.01.115.014.17.014h11.6c.05 0 .102-.005.153-.014h.118c.524-.014 1.045-.057 1.564-.15.673-.12 1.302-.353 1.876-.728 1.118-.733 1.864-1.732 2.181-3.043.176-.72.24-1.452.24-2.19V6.124zM7.97 17.71c-1.4 0-2.55-1.118-2.55-2.494a2.546 2.546 0 0 1 2.06-2.498V9.305l9.05-1.846v9.143c0 1.376-1.137 2.493-2.55 2.493-1.4 0-2.55-1.118-2.55-2.494a2.546 2.546 0 0 1 2.06-2.498V11.31L9.83 12.81v4.59c-.067 1.385-1.183 2.483-2.55 2.483-1.4-.18-1.4-1.31-1.4-2.18z',
+  tidal: 'M12.012 3.992L8.008 7.996 4.004 3.992 0 7.996l4.004 4.004 4.004-4.004 4.004 4.004 4.004-4.004 4.004 4.004L24 7.996l-4.004-4.004-4.004 4.004zM8.008 12l4.004 4.004L8.008 20.008 4.004 16.004z',
+};
+const parsePlatform = (url) => {
+  if (!url) return null;
+  try {
+    const u = new URL(url.trim());
+    if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+    return ALLOWED_HOSTS[u.hostname.toLowerCase()] || null;
+  } catch { return null; }
+};
+const platformIconHtml = (platform) => {
+  const path = PLATFORM_ICON_PATH[platform] || '';
+  const brand = PLATFORM_BRAND[platform] || '#444';
+  return `<span class="platform-icon ${platform === 'apple-music' ? 'apple-music' : ''}" style="--brand:${brand}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${path}"/></svg></span>`;
+};
+const songCardHtml = (song) => {
+  if (!song || !song.url) return '';
+  const platform = parsePlatform(song.url);
+  if (!platform) return '';
+  const platformName = PLATFORM_NAMES[platform];
+  const hasTitle = !!song.title;
+  const title = hasTitle ? escapeHtml(song.title) : escapeHtml(TEXT.songOnPlatform(platformName));
+  return `<a class="song-card" href="${escapeHtml(song.url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(TEXT.songOnPlatform(platformName))}">${platformIconHtml(platform)}<div class="song-info"><div class="song-title">${title}</div>${hasTitle ? `<div class="song-meta-line">${escapeHtml(platformName)}</div>` : ''}</div><span class="song-arrow">↗</span></a>`;
+};
+const renderSongPreview = (previewEl, url) => {
+  if (!url) { previewEl.classList.add('hidden'); previewEl.innerHTML = ''; return; }
+  const platform = parsePlatform(url);
+  if (platform) {
+    previewEl.classList.remove('hidden', 'invalid');
+    previewEl.innerHTML = `${platformIconHtml(platform)}<span class="preview-text">${escapeHtml(TEXT.songPreviewValid(PLATFORM_NAMES[platform]))}</span>`;
+  } else {
+    previewEl.classList.remove('hidden');
+    previewEl.classList.add('invalid');
+    previewEl.innerHTML = `<span class="preview-text">${escapeHtml(TEXT.songPreviewInvalid)}</span>`;
+  }
+};
+// Auto-fetch song metadata via public oEmbed endpoints (no API key, CORS-enabled).
+// Returns { title, artist } or null if platform/endpoint unavailable.
+const fetchSongMeta = async (url, platform, signal) => {
+  let endpoint = null;
+  if (platform === 'spotify') endpoint = `https://open.spotify.com/oembed?url=${encodeURIComponent(url)}`;
+  else if (platform === 'youtube' || platform === 'youtube-music') endpoint = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
+  else if (platform === 'soundcloud') endpoint = `https://soundcloud.com/oembed?format=json&url=${encodeURIComponent(url)}`;
+  else return null;
+  try {
+    const res = await fetch(endpoint, { signal });
+    if (!res.ok) return null;
+    const j = await res.json();
+    return { title: (j.title || '').trim(), artist: (j.author_name || '').trim() };
+  } catch { return null; }
+};
+
+const songFieldHandlers = {};
+const setupSongFields = (prefix) => {
+  const urlInput = $(prefix + '-url');
+  const titleInput = $(prefix + '-title');
+  const previewEl = $(prefix + '-preview');
+  let _abort = null;
+  let _lastProcessed = '';
+
+  const process = async () => {
+    const url = urlInput.value.trim();
+    if (url === _lastProcessed) return;
+    _lastProcessed = url;
+    titleInput.value = '';
+
+    if (!url) { previewEl.classList.add('hidden'); previewEl.innerHTML = ''; return; }
+    const platform = parsePlatform(url);
+    if (!platform) {
+      previewEl.classList.remove('hidden');
+      previewEl.classList.add('invalid');
+      previewEl.innerHTML = `<span class="preview-text">${escapeHtml(TEXT.songPreviewInvalid)}</span>`;
+      return;
+    }
+    if (_abort) _abort.abort();
+    _abort = new AbortController();
+    previewEl.classList.remove('hidden', 'invalid');
+    previewEl.innerHTML = `${platformIconHtml(platform)}<span class="preview-text">${escapeHtml(TEXT.songFetching)}</span>`;
+    const meta = await fetchSongMeta(url, platform, _abort.signal);
+    if (urlInput.value.trim() !== url) return;
+    if (meta && meta.title) {
+      titleInput.value = meta.title;
+      previewEl.innerHTML = `${platformIconHtml(platform)}<span class="preview-text">${escapeHtml(TEXT.songAutoFetched(PLATFORM_NAMES[platform]))}</span>`;
+    } else {
+      previewEl.innerHTML = `${platformIconHtml(platform)}<span class="preview-text">${escapeHtml(TEXT.songPreviewValid(PLATFORM_NAMES[platform]))}</span>`;
+    }
+  };
+
+  urlInput.addEventListener('paste', () => setTimeout(process, 60));
+  urlInput.addEventListener('change', process);
+
+  songFieldHandlers[prefix] = { syncFromData: (url) => { _lastProcessed = url || ''; } };
+};
+
+const readSongFromForm = (prefix) => {
+  const url = $(prefix + '-url').value.trim();
+  const title = $(prefix + '-title').value.trim();
+  if (!url) return { song: null };
+  const platform = parsePlatform(url);
+  if (!platform) throw new TxnAbort(TEXT.errSongUrlInvalid);
+  return { song: { url, title, platform } };
+};
+
 let currentUserId = null;
 const showWarn = (el, msg, isError = false) => {
   if (!msg) { el.classList.add('hidden'); return; }
@@ -1250,6 +1473,7 @@ const updateHomeStatus = () => {
   if (me) {
     welcomeName.textContent = `${roleLabel(me.role)}${me.name}`;
     welcomeAction.textContent = isRandomized() ? TEXT.btnViewMatch : TEXT.btnEdit;
+    $('welcome-delete').classList.toggle('hidden', isRandomized());
     welcomePanel.classList.remove('hidden');
     loginPanel.classList.add('hidden');
   } else {
@@ -1306,15 +1530,24 @@ const openRegister = () => {
   showWarn(regWarn, '');
   document.querySelector('input[name="reg-role"][value="senior"]').checked = true;
   regMsg.value = '';
+  $('reg-song-url').value = '';
+  $('reg-song-title').value = '';
+  $('reg-song-preview').classList.add('hidden');
+  $('reg-song-preview').innerHTML = '';
+  songFieldHandlers['reg-song'].syncFromData('');
   setScreen('register');
   setTimeout(() => regName.focus(), 80);
 };
+
+setupSongFields('reg-song');
 
 regNext.addEventListener('click', () => {
   const name = regName.value.trim();
   if (!name) { showWarn(regWarn, TEXT.errEmptyName, true); return; }
   if (findUserByName(name)) { showWarn(regWarn, TEXT.errDuplicate, true); return; }
   if (isRandomized()) { showWarn(regWarn, TEXT.errLocked, true); return; }
+  try { readSongFromForm('reg-song'); }
+  catch (e) { if (e.uiAbort) { showWarn(regWarn, e.message, true); return; } throw e; }
   showWarn(regWarn, '');
   openRegisterPin();
 });
@@ -1392,8 +1625,9 @@ regSave.addEventListener('click', async () => {
 
   showWarn(regPinWarn, TEXT.msgSaving);
   try {
+    const { song } = readSongFromForm('reg-song');
     const pinHash = await hashPin(_regPinFirst);
-    const user = { id: newId(), name, role, message, pin: pinHash, createdAt: Date.now() };
+    const user = { id: newId(), name, role, message, song, pin: pinHash, createdAt: Date.now() };
     const lname = name.toLowerCase();
     await txnUpdate(curr => {
       if (curr.randomizedAt) throw new TxnAbort(TEXT.errLocked);
@@ -1435,14 +1669,24 @@ const openEdit = (u) => {
   editRoleLabel.textContent = `${roleLabel(u.role)}${u.name}`;
   editName.value = u.name;
   editMsg.value = u.message || '';
+  const s = u.song || {};
+  $('edit-song-url').value = s.url || '';
+  $('edit-song-title').value = s.title || '';
+  renderSongPreview($('edit-song-preview'), s.url || '');
+  songFieldHandlers['edit-song'].syncFromData(s.url || '');
   setScreen('edit');
 };
+
+setupSongFields('edit-song');
 
 editSave.addEventListener('click', async () => {
   const name = editName.value.trim();
   if (!name) { showWarn(editWarn, TEXT.errEmptyName, true); return; }
   const newMsg = editMsg.value.trim();
   const lname = name.toLowerCase();
+  let newSong;
+  try { newSong = readSongFromForm('edit-song').song; }
+  catch (e) { showWarn(editWarn, e.uiAbort ? e.message : TEXT.errSaveFail(e.message), true); return; }
   showWarn(editWarn, TEXT.msgSaving);
   try {
     await txnUpdate(curr => {
@@ -1453,6 +1697,7 @@ editSave.addEventListener('click', async () => {
       if (dup && dup.id !== u.id) throw new TxnAbort(TEXT.errDuplicate);
       u.name = name;
       u.message = newMsg;
+      u.song = newSong;
       return curr;
     });
     homeName.value = '';
@@ -1570,9 +1815,11 @@ window.addEventListener('keydown', e => {
 const deleteAccount = (userId) => {
   const u = findUserById(userId);
   if (!u) return;
+  if (isRandomized()) { flash(TEXT.errDeleteAfterRandomize, true); return; }
   confirmModal(TEXT.delConfirmTitle(u.name), TEXT.delConfirmText, async () => {
     try {
       await txnUpdate(curr => {
+        if (curr.randomizedAt) throw new TxnAbort(TEXT.errDeleteAfterRandomize);
         curr.users = curr.users.filter(x => x.id !== userId);
         delete curr.matches[userId];
         for (const k of Object.keys(curr.matches)) {
@@ -1605,13 +1852,8 @@ let scanRaf = null;
 
 const openReveal = (u) => {
   currentUserId = u.id;
-  if (u.role === 'junior') {
-    revealSelfLabel.textContent = '';
-    revealSelfLabel.style.display = 'none';
-  } else {
-    revealSelfLabel.textContent = `${roleLabel(u.role)}${u.name}`;
-    revealSelfLabel.style.display = '';
-  }
+  revealSelfLabel.textContent = '';
+  revealSelfLabel.style.display = 'none';
   const partnerId = data.matches[u.id];
   const partner = partnerId ? findUserById(partnerId) : null;
 
@@ -1631,6 +1873,7 @@ const openReveal = (u) => {
   const fromTag = `<div class="from-tag">${escapeHtml(TEXT.revealFromTag(roleLabel(partner.role)))}</div>`;
   const msgClass = partner.message ? '' : ' empty';
   const msgText = partner.message || TEXT.revealNoMessage;
+  const songHtml = songCardHtml(partner.song);
   let html = '<div class="content">';
   if (u.role === 'senior') {
     revealTitle.textContent = TEXT.revealSeniorTitle;
@@ -1641,6 +1884,7 @@ const openReveal = (u) => {
     html += `<div class="partner-name" style="color:var(--muted);font-size:1.4rem;font-style:italic">${escapeHtml(TEXT.revealMysteryName)}</div>`;
     html += fromTag + `<div class="partner-message${msgClass}">${escapeHtml(msgText)}</div>`;
   }
+  html += songHtml;
   html += '</div><div class="beam"></div>';
   revealStage.innerHTML = html;
 
@@ -1860,6 +2104,7 @@ const renderAdmin = () => {
     data.users.forEach(u => {
       const chip = document.createElement('span');
       chip.className = 'user-chip';
+      chip.title = TEXT.udPartnerArrow;
       const role = document.createElement('span');
       role.className = 'role';
       role.textContent = roleLabel(u.role);
@@ -1869,7 +2114,8 @@ const renderAdmin = () => {
       x.className = 'x';
       x.title = TEXT.btnDelete;
       x.textContent = '✕';
-      x.addEventListener('click', () => {
+      x.addEventListener('click', (e) => {
+        e.stopPropagation();
         confirmModal(TEXT.delChipConfirm(u.name), TEXT.delChipText, async () => {
           try {
             await txnUpdate(curr => {
@@ -1883,6 +2129,7 @@ const renderAdmin = () => {
           } catch (e) { flash(TEXT.errDelFail(e.message), true); }
         });
       });
+      chip.addEventListener('click', () => showUserDetail(u.id));
       chip.appendChild(role);
       chip.appendChild(name);
       chip.appendChild(x);
@@ -1892,6 +2139,46 @@ const renderAdmin = () => {
 
   adminRandomize.textContent = isRandomized() ? TEXT.btnRerandomize : TEXT.btnRandomize;
 };
+
+/* ── User detail modal (admin) ── */
+const userDetailModal = $('user-detail-modal');
+const udContent = $('ud-content');
+const udClose = $('ud-close');
+
+const renderUserBlock = (u, sectionLabel) => {
+  const msgEmpty = !u.message;
+  const msg = msgEmpty ? TEXT.udNoMessage : escapeHtml(u.message);
+  return `<div class="ud-block">
+    <div class="ud-section-label">${escapeHtml(sectionLabel)}</div>
+    <div class="ud-name">${escapeHtml(roleLabel(u.role) + u.name)}</div>
+    <div class="ud-msg${msgEmpty ? ' empty' : ''}">${msg}</div>
+    ${songCardHtml(u.song)}
+  </div>`;
+};
+
+const showUserDetail = (userId) => {
+  const u = findUserById(userId);
+  if (!u) return;
+  const partnerId = data.matches[u.id];
+  const partner = partnerId ? findUserById(partnerId) : null;
+
+  let html = renderUserBlock(u, TEXT.udSectionUser);
+  html += `<div class="ud-divider">↓ ${escapeHtml(TEXT.udPartnerArrow)} ↓</div>`;
+  if (!isRandomized()) {
+    html += `<div class="ud-block"><div class="ud-empty">${escapeHtml(TEXT.udNotRandomized)}</div></div>`;
+  } else if (!partner) {
+    html += `<div class="ud-block"><div class="ud-empty">${escapeHtml(TEXT.udNoPartner)}</div></div>`;
+  } else {
+    html += renderUserBlock(partner, TEXT.udSectionPartner);
+  }
+  udContent.innerHTML = html;
+  userDetailModal.classList.remove('hidden');
+};
+
+const closeUserDetail = () => userDetailModal.classList.add('hidden');
+udClose.addEventListener('click', closeUserDetail);
+userDetailModal.addEventListener('click', (e) => { if (e.target === userDetailModal) closeUserDetail(); });
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !userDetailModal.classList.contains('hidden')) closeUserDetail(); });
 
 adminRandomize.addEventListener('click', () => {
   const seniors = data.users.filter(u => u.role === 'senior');
