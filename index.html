@@ -619,7 +619,6 @@
         <button id="admin-randomize" class="cta">สุ่มจับคู่</button>
         <button id="admin-reset-matches" class="ghost" data-text="btnResetMatches">ล้างผลสุ่ม</button>
         <button id="admin-reset-all" class="danger" data-text="btnResetAll">ล้างข้อมูลทั้งหมด</button>
-        <button id="admin-back" class="ghost" data-text="btnBack">กลับ</button>
         <button id="admin-signout" class="ghost" data-text="btnAdminSignout">ออกจากระบบ</button>
       </div>
     </section>
@@ -918,6 +917,7 @@ const TEXT = {
 
   // Admin link
   adminLinkLabel: '⚙ Admin',
+  adminLinkClose: '✕ ปิด Admin',
 
   // Misc errors
   errFirebaseConnect: (m) => 'เชื่อมต่อ Firebase ไม่ได้: ' + m + '\n\nตรวจสอบ Firestore Rules และ config',
@@ -1143,6 +1143,7 @@ const setScreen = name => {
   currentScreen = name;
   Object.entries(screens).forEach(([k, el]) => el.classList.toggle('hidden', k !== name));
   adminLink.classList.toggle('hidden', name === 'config');
+  adminLink.textContent = name === 'admin' ? TEXT.adminLinkClose : TEXT.adminLinkLabel;
   if (name === 'home') updateHomeStatus();
   if (name === 'admin') renderAdmin();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1911,7 +1912,6 @@ const statPairs = $('stat-pairs');
 const adminRandomize = $('admin-randomize');
 const adminResetMatches = $('admin-reset-matches');
 const adminResetAll = $('admin-reset-all');
-const adminBack = $('admin-back');
 
 /* ── User PIN modal (numpad) ── */
 const pinModal = $('pin-modal');
@@ -2040,8 +2040,10 @@ authEmail.addEventListener('keydown', e => { if (e.key === 'Enter') authPwd.focu
 authPwd.addEventListener('keydown', e => { if (e.key === 'Enter') submitAuth(); });
 authCancel.addEventListener('click', () => { authModal.classList.add('hidden'); });
 
-adminLink.addEventListener('click', tryEnterAdmin);
-adminBack.addEventListener('click', () => setScreen('home'));
+adminLink.addEventListener('click', () => {
+  if (currentScreen === 'admin') { setScreen('home'); return; }
+  tryEnterAdmin();
+});
 $('admin-signout').addEventListener('click', async () => {
   try { await signOut(auth); flash(TEXT.okAdminSignedOut); } catch {}
   setScreen('home');
