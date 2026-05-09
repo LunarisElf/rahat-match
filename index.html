@@ -166,6 +166,10 @@
   .hint-compose{display:flex;gap:8px;margin-top:12px}
   .hint-compose input{flex:1}
   .hint-compose button{flex-shrink:0;padding:0 16px;font-size:.95rem;width:auto;height:auto;white-space:nowrap}
+
+  .welcome-notify{display:inline-block;padding:8px 14px;border-radius:999px;background:rgba(201,169,97,.12);border:1px solid var(--gold);color:var(--gold-bright);font-size:.9rem;font-family:'Mali',cursive;margin-bottom:14px;animation:notify-pulse 1.6s ease-in-out infinite}
+  @keyframes notify-pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,169,97,.45)}50%{box-shadow:0 0 0 6px rgba(201,169,97,0)}}
+  #welcome-action-badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 7px;margin-left:8px;border-radius:999px;background:#fff;color:#0a1322;font-family:'Sarabun',sans-serif;font-weight:700;font-size:.8rem;vertical-align:middle}
   .song-info{flex:1;min-width:0}
   .song-title{font-family:'Mali',cursive;font-weight:700;color:var(--gold-bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:1rem}
   .song-artist{font-size:.85rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -463,9 +467,10 @@
 
       <div id="welcome-panel" class="glass-panel hidden" style="margin-top:16px;text-align:center">
         <p style="color:var(--muted);margin-bottom:14px;font-size:.95rem;letter-spacing:.5px" data-text="welcomeBack">ยินดีต้อนรับกลับ</p>
-        <div id="welcome-name" style="font-family:'Mali',cursive;font-size:1.7rem;color:var(--gold-bright);margin-top:6px;margin-bottom:22px;line-height:1.2;text-shadow:0 0 14px rgba(230,201,122,.3)">—</div>
-        <div class="actions" style="margin-top:0">
-          <button id="welcome-action" class="cta">แก้ไขข้อมูล</button>
+        <div id="welcome-name" style="font-family:'Mali',cursive;font-size:1.7rem;color:var(--gold-bright);margin-top:6px;margin-bottom:14px;line-height:1.2;text-shadow:0 0 14px rgba(230,201,122,.3)">—</div>
+        <div id="welcome-notify" class="welcome-notify hidden"></div>
+        <div class="actions" style="margin-top:8px">
+          <button id="welcome-action" class="cta"><span id="welcome-action-label">แก้ไขข้อมูล</span><span id="welcome-action-badge" class="hidden">0</span></button>
           <button id="welcome-delete" class="danger" data-text="btnDelete">ลบบัญชี</button>
         </div>
       </div>
@@ -879,6 +884,7 @@ const TEXT = {
   hintsPlaceholder: 'พิมพ์คำใบ้...',
   btnAddHint: '+ เพิ่ม',
   errHintEmpty: 'พิมพ์คำใบ้ก่อน',
+  notifyNewHints: (n) => `✨ พี่ให้คำใบ้ใหม่ ${n} อัน`,
 
   // Admin
   adminTitle: 'Admin Panel',
@@ -1469,6 +1475,15 @@ const getRememberedId = () => localStorage.getItem(REMEMBER_KEY) || null;
 const setRememberedId = id => localStorage.setItem(REMEMBER_KEY, id);
 const clearRemembered = () => localStorage.removeItem(REMEMBER_KEY);
 
+const HINTS_SEEN_KEY = 'rahut-match-hints-seen';
+const getHintsSeenMap = () => { try { return JSON.parse(localStorage.getItem(HINTS_SEEN_KEY) || '{}'); } catch { return {}; } };
+const getHintsSeenFor = (userId) => getHintsSeenMap()[userId] || 0;
+const setHintsSeenFor = (userId, count) => {
+  const m = getHintsSeenMap();
+  m[userId] = count;
+  localStorage.setItem(HINTS_SEEN_KEY, JSON.stringify(m));
+};
+
 const updateHomeStatus = () => {
   if (isRandomized()) {
     statusText.textContent = TEXT.statusRandomized;
@@ -1484,8 +1499,31 @@ const updateHomeStatus = () => {
   const me = rememberedId ? findUserById(rememberedId) : null;
   if (me) {
     welcomeName.textContent = `${roleLabel(me.role)}${me.name}`;
-    welcomeAction.textContent = isRandomized() ? TEXT.btnViewMatch : TEXT.btnEdit;
+    $('welcome-action-label').textContent = isRandomized() ? TEXT.btnViewMatch : TEXT.btnEdit;
     $('welcome-delete').classList.toggle('hidden', isRandomized());
+
+    const notifyEl = $('welcome-notify');
+    const badgeEl = $('welcome-action-badge');
+    let unread = 0;
+    if (isRandomized() && me.role === 'junior') {
+      const partnerId = data.matches[me.id];
+      const partner = partnerId ? findUserById(partnerId) : null;
+      if (partner) {
+        const total = (partner.hints || []).length;
+        const seen = getHintsSeenFor(me.id);
+        unread = Math.max(0, total - seen);
+      }
+    }
+    if (unread > 0) {
+      notifyEl.textContent = TEXT.notifyNewHints(unread);
+      notifyEl.classList.remove('hidden');
+      badgeEl.textContent = String(unread);
+      badgeEl.classList.remove('hidden');
+    } else {
+      notifyEl.classList.add('hidden');
+      badgeEl.classList.add('hidden');
+    }
+
     welcomePanel.classList.remove('hidden');
     loginPanel.classList.add('hidden');
   } else {
@@ -1904,6 +1942,7 @@ const openReveal = (u) => {
   html += '</div><div class="beam"></div>';
   revealStage.innerHTML = html;
 
+  if (u.role === 'junior') setHintsSeenFor(u.id, (partner.hints || []).length);
   renderHintsPanel();
   setScreen('reveal');
   runScan();
@@ -1920,6 +1959,7 @@ const renderHintsPanel = () => {
   const isAuthor = me.role === 'senior';
   const sourceUser = isAuthor ? me : partner;
   const hints = sourceUser.hints || [];
+  if (!isAuthor) setHintsSeenFor(me.id, hints.length);
 
   const prevInput = $('hint-input');
   const prevValue = prevInput ? prevInput.value : '';
