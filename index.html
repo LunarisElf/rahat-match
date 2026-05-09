@@ -149,9 +149,11 @@
 
   .song-card{display:flex;align-items:center;gap:12px;padding:12px 14px;margin-top:14px;background:rgba(20,35,60,.45);border:1px solid var(--line);border-radius:14px;text-decoration:none;color:var(--text);transition:transform .2s,border-color .2s,box-shadow .2s;cursor:pointer}
   .song-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35),0 0 0 1px rgba(201,169,97,.18)}
-  .platform-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--brand,#444)}
+  .platform-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--brand,#444);overflow:hidden}
   .platform-icon svg{width:24px;height:24px;fill:#fff}
   .platform-icon.apple-music{background:linear-gradient(135deg,#fa233b 0%,#fb5c74 100%)}
+  .platform-icon.thumb{padding:0}
+  .platform-icon.thumb img{width:100%;height:100%;object-fit:cover;display:block}
   .song-info{flex:1;min-width:0}
   .song-title{font-family:'Mali',cursive;font-weight:700;color:var(--gold-bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:1rem}
   .song-artist{font-size:.85rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -495,8 +497,8 @@
           <p style="font-size:.75rem;color:var(--muted);margin-top:6px;line-height:1.5" data-text="registerSongHint">รองรับ Spotify · YouTube · YouTube Music · SoundCloud · Apple Music · Tidal</p>
         </div>
         <div class="input-group">
-          <label for="reg-song-title" data-text="registerSongTitleLabel">ชื่อเพลง</label>
           <input type="text" id="reg-song-title" data-placeholder="registerSongTitlePlaceholder" autocomplete="off" readonly>
+          <input type="hidden" id="reg-song-thumbnail">
         </div>
         <div class="actions">
           <button id="reg-next" class="cta" data-text="btnNext">ต่อไป</button>
@@ -552,8 +554,8 @@
           <p style="font-size:.75rem;color:var(--muted);margin-top:6px;line-height:1.5" data-text="registerSongHint">รองรับ Spotify · YouTube · YouTube Music · SoundCloud · Apple Music · Tidal</p>
         </div>
         <div class="input-group">
-          <label for="edit-song-title" data-text="registerSongTitleLabel">ชื่อเพลง</label>
           <input type="text" id="edit-song-title" data-placeholder="registerSongTitlePlaceholder" autocomplete="off" readonly>
+          <input type="hidden" id="edit-song-thumbnail">
         </div>
         <div class="actions">
           <button id="edit-save" class="cta" data-text="btnSave">บันทึก</button>
@@ -778,8 +780,8 @@ const TEXT = {
   registerMsgPlaceholder: 'ดีฮ้าบบบบบบบฟู่',
   registerSongUrlLabel: 'เพลงที่ฝากให้คู่ฟัง (ไม่ใส่ก็ได้)',
   registerSongUrlPlaceholder: 'วาง link เพลง — Spotify, YouTube ฯลฯ',
-  registerSongTitleLabel: 'ชื่อเพลง',
-  registerSongTitlePlaceholder: 'ชื่อเพลง',
+  registerSongTitleLabel: '',
+  registerSongTitlePlaceholder: '',
   registerSongArtistLabel: 'ศิลปิน',
   registerSongArtistPlaceholder: 'ชื่อศิลปิน',
   registerSongHint: 'รองรับ Spotify · YouTube · YouTube Music · SoundCloud · Apple Music · Tidal',
@@ -1315,6 +1317,10 @@ const platformIconHtml = (platform) => {
   const brand = PLATFORM_BRAND[platform] || '#444';
   return `<span class="platform-icon ${platform === 'apple-music' ? 'apple-music' : ''}" style="--brand:${brand}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${path}"/></svg></span>`;
 };
+const thumbIconHtml = (platform, thumbnail) => {
+  const brand = PLATFORM_BRAND[platform] || '#444';
+  return `<span class="platform-icon thumb${platform === 'apple-music' ? ' apple-music' : ''}" style="--brand:${brand}"><img src="${escapeHtml(thumbnail)}" loading="lazy" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none'"></span>`;
+};
 const songCardHtml = (song) => {
   if (!song || !song.url) return '';
   const platform = parsePlatform(song.url);
@@ -1322,14 +1328,16 @@ const songCardHtml = (song) => {
   const platformName = PLATFORM_NAMES[platform];
   const hasTitle = !!song.title;
   const title = hasTitle ? escapeHtml(song.title) : escapeHtml(TEXT.songOnPlatform(platformName));
-  return `<a class="song-card" href="${escapeHtml(song.url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(TEXT.songOnPlatform(platformName))}">${platformIconHtml(platform)}<div class="song-info"><div class="song-title">${title}</div>${hasTitle ? `<div class="song-meta-line">${escapeHtml(platformName)}</div>` : ''}</div><span class="song-arrow">↗</span></a>`;
+  const iconHtml = song.thumbnail ? thumbIconHtml(platform, song.thumbnail) : platformIconHtml(platform);
+  return `<a class="song-card" href="${escapeHtml(song.url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(TEXT.songOnPlatform(platformName))}">${iconHtml}<div class="song-info"><div class="song-title">${title}</div>${hasTitle ? `<div class="song-meta-line">${escapeHtml(platformName)}</div>` : ''}</div><span class="song-arrow">↗</span></a>`;
 };
-const renderSongPreview = (previewEl, url) => {
+const renderSongPreview = (previewEl, url, thumbnail) => {
   if (!url) { previewEl.classList.add('hidden'); previewEl.innerHTML = ''; return; }
   const platform = parsePlatform(url);
   if (platform) {
     previewEl.classList.remove('hidden', 'invalid');
-    previewEl.innerHTML = `${platformIconHtml(platform)}<span class="preview-text">${escapeHtml(TEXT.songPreviewValid(PLATFORM_NAMES[platform]))}</span>`;
+    const icon = thumbnail ? thumbIconHtml(platform, thumbnail) : platformIconHtml(platform);
+    previewEl.innerHTML = `${icon}<span class="preview-text">${escapeHtml(TEXT.songPreviewValid(PLATFORM_NAMES[platform]))}</span>`;
   } else {
     previewEl.classList.remove('hidden');
     previewEl.classList.add('invalid');
@@ -1348,7 +1356,11 @@ const fetchSongMeta = async (url, platform, signal) => {
     const res = await fetch(endpoint, { signal });
     if (!res.ok) return null;
     const j = await res.json();
-    return { title: (j.title || '').trim(), artist: (j.author_name || '').trim() };
+    return {
+      title: (j.title || '').trim(),
+      artist: (j.author_name || '').trim(),
+      thumbnail: (j.thumbnail_url || '').trim(),
+    };
   } catch { return null; }
 };
 
@@ -1356,6 +1368,7 @@ const songFieldHandlers = {};
 const setupSongFields = (prefix) => {
   const urlInput = $(prefix + '-url');
   const titleInput = $(prefix + '-title');
+  const thumbnailInput = $(prefix + '-thumbnail');
   const previewEl = $(prefix + '-preview');
   let _abort = null;
   let _lastProcessed = '';
@@ -1365,6 +1378,7 @@ const setupSongFields = (prefix) => {
     if (url === _lastProcessed) return;
     _lastProcessed = url;
     titleInput.value = '';
+    thumbnailInput.value = '';
 
     if (!url) { previewEl.classList.add('hidden'); previewEl.innerHTML = ''; return; }
     const platform = parsePlatform(url);
@@ -1382,7 +1396,9 @@ const setupSongFields = (prefix) => {
     if (urlInput.value.trim() !== url) return;
     if (meta && meta.title) {
       titleInput.value = meta.title;
-      previewEl.innerHTML = `${platformIconHtml(platform)}<span class="preview-text">${escapeHtml(TEXT.songAutoFetched(PLATFORM_NAMES[platform]))}</span>`;
+      if (meta.thumbnail) thumbnailInput.value = meta.thumbnail;
+      const icon = meta.thumbnail ? thumbIconHtml(platform, meta.thumbnail) : platformIconHtml(platform);
+      previewEl.innerHTML = `${icon}<span class="preview-text">${escapeHtml(TEXT.songAutoFetched(PLATFORM_NAMES[platform]))}</span>`;
     } else {
       previewEl.innerHTML = `${platformIconHtml(platform)}<span class="preview-text">${escapeHtml(TEXT.songPreviewValid(PLATFORM_NAMES[platform]))}</span>`;
     }
@@ -1397,10 +1413,11 @@ const setupSongFields = (prefix) => {
 const readSongFromForm = (prefix) => {
   const url = $(prefix + '-url').value.trim();
   const title = $(prefix + '-title').value.trim();
+  const thumbnail = $(prefix + '-thumbnail').value.trim();
   if (!url) return { song: null };
   const platform = parsePlatform(url);
   if (!platform) throw new TxnAbort(TEXT.errSongUrlInvalid);
-  return { song: { url, title, platform } };
+  return { song: { url, title, platform, thumbnail } };
 };
 
 let currentUserId = null;
@@ -1501,6 +1518,7 @@ const openRegister = () => {
   regMsg.value = '';
   $('reg-song-url').value = '';
   $('reg-song-title').value = '';
+  $('reg-song-thumbnail').value = '';
   $('reg-song-preview').classList.add('hidden');
   $('reg-song-preview').innerHTML = '';
   songFieldHandlers['reg-song'].syncFromData('');
@@ -1641,7 +1659,8 @@ const openEdit = (u) => {
   const s = u.song || {};
   $('edit-song-url').value = s.url || '';
   $('edit-song-title').value = s.title || '';
-  renderSongPreview($('edit-song-preview'), s.url || '');
+  $('edit-song-thumbnail').value = s.thumbnail || '';
+  renderSongPreview($('edit-song-preview'), s.url || '', s.thumbnail || '');
   songFieldHandlers['edit-song'].syncFromData(s.url || '');
   setScreen('edit');
 };
