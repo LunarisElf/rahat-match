@@ -216,18 +216,18 @@
     position:absolute;
     font-family:'Cambria Math','STIX Two Math','Latin Modern Math',Georgia,serif;
     font-style:italic;
-    color:rgba(201,169,97,.18);
+    color:rgba(201,169,97,.32);
     pointer-events:none;
     user-select:none;
     will-change:transform,opacity;
     animation:glyph-drift var(--t,70s) ease-in-out infinite alternate;
     animation-delay:var(--d,0s);
-    text-shadow:0 0 14px rgba(201,169,97,.18);
+    text-shadow:0 0 16px rgba(201,169,97,.28);
     white-space:nowrap;
     line-height:1;
   }
-  .math-glyph.cyan{color:rgba(120,170,230,.14);text-shadow:0 0 14px rgba(120,170,230,.14)}
-  .math-glyph.violet{color:rgba(160,110,200,.14);text-shadow:0 0 14px rgba(160,110,200,.14)}
+  .math-glyph.cyan{color:rgba(120,170,230,.28);text-shadow:0 0 16px rgba(120,170,230,.24)}
+  .math-glyph.violet{color:rgba(160,110,200,.28);text-shadow:0 0 16px rgba(160,110,200,.24)}
   @keyframes glyph-drift{
     0%   {transform:translate(0,0) scale(1)}
     33%  {transform:translate(18px,-12px) scale(1.05)}
@@ -1063,7 +1063,7 @@ const MATH_EQUATIONS = [
   '(a/b)ⁿ=aⁿ/bⁿ',
   '(f∘g)(x)=f(g(x))',
   'f(x)=ax+b',
-  '|x|={x, x≥0; −x, x<0}',
+  '|x|=√x²',
   'x²+y²=r²',
   '(x−h)²+(y−k)²=r²',
   'y=ax²+bx+c',
@@ -1075,8 +1075,8 @@ const MATH_EQUATIONS = [
   '(x−h)²/a²+(y−k)²/b²=1',
   'x²/a²−y²/b²=1',
   '(x−h)²/a²−(y−k)²/b²=1',
-  'c²=a²−b² (วงรี)',
-  'c²=a²+b² (ไฮเพอร์โบลา)',
+  'c²=a²−b²',
+  'c²=a²+b²',
 ];
 const MATH_COLOR_CLASSES = ['','cyan','violet'];
 const MATH_COUNT = isLite ? 5 : 14;
