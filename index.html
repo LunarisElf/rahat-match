@@ -18,30 +18,31 @@
   html,body{min-height:100vh;min-height:100dvh}
   body{font-family:'Sarabun',sans-serif;color:var(--text);background:var(--bg);overflow-x:hidden;display:flex;flex-direction:column}
 
-  #bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:radial-gradient(1400px 900px at 20% 0%,#16263f 0%,transparent 60%),radial-gradient(1200px 800px at 90% 100%,#0e1a2f 0%,transparent 70%),radial-gradient(circle at 70% 90%,#0c1830 0%,#040810 90%),var(--bg)}
-  .nebula{position:absolute;width:55vw;height:55vw;max-width:900px;max-height:900px;border-radius:50%;filter:blur(60px);opacity:.25;mix-blend-mode:screen;animation:nebula-float 32s ease-in-out infinite alternate}
-  .nebula.purple{background:radial-gradient(circle,rgba(140,80,200,.55) 0%,transparent 65%);top:-10%;left:-10%;animation-duration:36s}
-  .nebula.gold{background:radial-gradient(circle,rgba(201,169,97,.5) 0%,transparent 60%);bottom:-15%;right:-10%;animation-duration:28s;animation-delay:-12s}
-  .nebula.cyan{background:radial-gradient(circle,rgba(70,140,210,.55) 0%,transparent 65%);top:35%;left:30%;animation-duration:42s;animation-delay:-18s}
-  @keyframes nebula-float{0%{transform:translate(0,0) scale(1) rotate(0deg);opacity:.18}50%{transform:translate(4%,-3%) scale(1.12) rotate(8deg);opacity:.32}100%{transform:translate(-3%,4%) scale(1.05) rotate(-6deg);opacity:.22}}
+  #bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:radial-gradient(1600px 1100px at 20% 0%,#1a2c4a 0%,transparent 55%),radial-gradient(1400px 900px at 88% 100%,#11203b 0%,transparent 65%),radial-gradient(900px 700px at 60% 40%,#1c2754 0%,transparent 70%),radial-gradient(circle at 70% 90%,#0a1228 0%,#020510 95%),#020510}
+  .nebula{position:absolute;width:60vw;height:60vw;max-width:1000px;max-height:1000px;border-radius:50%;filter:blur(70px);opacity:.42;mix-blend-mode:screen;animation:nebula-float 32s ease-in-out infinite alternate}
+  .nebula.purple{background:radial-gradient(circle,rgba(155,90,220,.75) 0%,transparent 65%);top:-12%;left:-12%;animation-duration:36s}
+  .nebula.gold{background:radial-gradient(circle,rgba(220,180,110,.62) 0%,transparent 60%);bottom:-18%;right:-12%;animation-duration:28s;animation-delay:-12s}
+  .nebula.cyan{background:radial-gradient(circle,rgba(80,160,235,.7) 0%,transparent 65%);top:30%;left:28%;animation-duration:42s;animation-delay:-18s}
+  .nebula.pink{position:absolute;width:45vw;height:45vw;max-width:780px;max-height:780px;background:radial-gradient(circle,rgba(220,110,180,.55) 0%,transparent 60%);top:60%;left:60%;border-radius:50%;filter:blur(80px);opacity:.32;mix-blend-mode:screen;animation:nebula-float 38s ease-in-out infinite alternate;animation-delay:-22s}
+  @keyframes nebula-float{0%{transform:translate(0,0) scale(1) rotate(0deg);opacity:.32}50%{transform:translate(5%,-4%) scale(1.15) rotate(8deg);opacity:.5}100%{transform:translate(-4%,5%) scale(1.06) rotate(-7deg);opacity:.36}}
   .starfield{position:absolute;inset:-25%;width:150%;height:150%;transform-origin:50% 50%}
   .starfield.far{animation:spin-cw 720s linear infinite}
   .starfield.mid{animation:spin-ccw 460s linear infinite}
   .starfield.near{animation:spin-cw 280s linear infinite}
   @keyframes spin-cw{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
   @keyframes spin-ccw{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
-  .star{position:absolute;background:#fff;border-radius:50%;width:var(--s,2px);height:var(--s,2px);opacity:var(--o,.7);animation:twinkle var(--t,4s) ease-in-out infinite;animation-delay:var(--d,0s);box-shadow:0 0 var(--g,4px) rgba(255,255,255,.55);will-change:opacity,transform}
-  .star.blue{background:#cfe1ff;box-shadow:0 0 var(--g,6px) rgba(184,212,255,.75)}
-  .star.gold{background:var(--gold-bright);box-shadow:0 0 var(--g,6px) rgba(230,201,122,.75)}
-  .star.red{background:#ffb47a;box-shadow:0 0 var(--g,6px) rgba(255,180,122,.7)}
+  .star{position:absolute;background:#fff;border-radius:50%;width:var(--s,2px);height:var(--s,2px);opacity:var(--o,.85);animation:twinkle var(--t,4s) ease-in-out infinite;animation-delay:var(--d,0s);box-shadow:0 0 var(--g,8px) rgba(255,255,255,.85);will-change:opacity,transform}
+  .star.blue{background:#cfe1ff;box-shadow:0 0 var(--g,10px) rgba(184,212,255,.9)}
+  .star.gold{background:var(--gold-bright);box-shadow:0 0 var(--g,10px) rgba(230,201,122,.9)}
+  .star.red{background:#ffb47a;box-shadow:0 0 var(--g,10px) rgba(255,180,122,.85)}
   .star.pulse{animation:pulse var(--t,3s) ease-in-out infinite}
-  @keyframes twinkle{0%,100%{opacity:var(--o,.7);transform:scale(1)}50%{opacity:.1;transform:scale(.5)}}
-  @keyframes pulse{0%,100%{opacity:var(--o,.6);transform:scale(1)}50%{opacity:1;transform:scale(1.7)}}
-  .star.bright::before,.star.bright::after{content:'';position:absolute;background:rgba(255,255,255,.55);border-radius:1px;pointer-events:none}
-  .star.bright::before{width:200%;height:1px;left:-50%;top:50%;transform:translateY(-50%)}
-  .star.bright::after{width:1px;height:200%;top:-50%;left:50%;transform:translateX(-50%)}
-  .dust{position:absolute;width:1px;height:1px;background:rgba(255,255,255,.5);border-radius:50%;pointer-events:none;animation:dust-drift var(--t,40s) linear infinite;animation-delay:var(--d,0s)}
-  @keyframes dust-drift{0%{transform:translate(0,0);opacity:0}10%{opacity:.5}90%{opacity:.5}100%{transform:translate(var(--dx,-200px),var(--dy,80px));opacity:0}}
+  @keyframes twinkle{0%,100%{opacity:var(--o,.85);transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+  @keyframes pulse{0%,100%{opacity:var(--o,.75);transform:scale(1)}50%{opacity:1;transform:scale(1.9)}}
+  .star.bright::before,.star.bright::after{content:'';position:absolute;background:rgba(255,255,255,.75);border-radius:1px;pointer-events:none}
+  .star.bright::before{width:280%;height:1px;left:-90%;top:50%;transform:translateY(-50%);box-shadow:0 0 4px rgba(255,255,255,.6)}
+  .star.bright::after{width:1px;height:280%;top:-90%;left:50%;transform:translateX(-50%);box-shadow:0 0 4px rgba(255,255,255,.6)}
+  .dust{position:absolute;width:1.5px;height:1.5px;background:rgba(255,255,255,.7);border-radius:50%;pointer-events:none;animation:dust-drift var(--t,40s) linear infinite;animation-delay:var(--d,0s);box-shadow:0 0 3px rgba(255,255,255,.4)}
+  @keyframes dust-drift{0%{transform:translate(0,0);opacity:0}10%{opacity:.7}90%{opacity:.7}100%{transform:translate(var(--dx,-200px),var(--dy,80px));opacity:0}}
   .shooting-star{position:absolute;width:140px;height:1px;background:linear-gradient(to left,transparent,rgba(255,255,255,1),rgba(230,201,122,.7),transparent);border-radius:1px;pointer-events:none;transform-origin:left center;box-shadow:0 0 6px rgba(255,236,180,.6);animation:shoot 1.6s cubic-bezier(.55,.1,.85,.4) forwards}
   @keyframes shoot{0%{opacity:0;transform:translate(0,0) rotate(-22deg) scaleX(.2)}10%{opacity:1}100%{opacity:0;transform:translate(-360px,160px) rotate(-22deg) scaleX(1)}}
   .comet{position:absolute;width:280px;height:2px;background:linear-gradient(to left,transparent 0%,rgba(255,255,255,1) 20%,rgba(230,201,122,.85) 50%,rgba(140,180,240,.5) 80%,transparent 100%);border-radius:2px;pointer-events:none;transform-origin:left center;box-shadow:0 0 10px rgba(255,236,180,.8),0 0 22px rgba(201,169,97,.4);animation:comet 3.2s cubic-bezier(.45,.1,.7,.35) forwards}
@@ -420,6 +421,7 @@
     <div class="nebula purple"></div>
     <div class="nebula cyan"></div>
     <div class="nebula gold"></div>
+    <div class="nebula pink"></div>
     <div class="starfield far"  id="layer-far"></div>
     <div class="starfield mid"  id="layer-mid"></div>
     <div class="starfield near" id="layer-near"></div>
@@ -987,11 +989,11 @@ if (isLite) document.body.classList.add('lite');
 const bg = $('bg');
 const layerFar = $('layer-far'), layerMid = $('layer-mid'), layerNear = $('layer-near');
 const colorRoll = () => { const r = Math.random(); return r < 0.66 ? '' : r < 0.84 ? ' blue' : r < 0.95 ? ' gold' : ' red'; };
-const STAR_MULT = isLite ? 0.4 : 1;
+const STAR_MULT = isLite ? 0.5 : 1;
 const layerSpec = [
-  { el: layerFar,  count: Math.round(220 * STAR_MULT), sMin: 0.5, sMax: 1.3, oMin: 0.25, oMax: 0.7,  tMin: 4, tMax: 9, brightChance: 0,    pulseChance: 0.02 },
-  { el: layerMid,  count: Math.round(130 * STAR_MULT), sMin: 1.0, sMax: 2.0, oMin: 0.4,  oMax: 0.85, tMin: 3, tMax: 7, brightChance: 0.04, pulseChance: 0.06 },
-  { el: layerNear, count: Math.round(55  * STAR_MULT), sMin: 1.6, sMax: 3.4, oMin: 0.55, oMax: 1.0,  tMin: 2.5, tMax: 6, brightChance: 0.3, pulseChance: 0.18 },
+  { el: layerFar,  count: Math.round(380 * STAR_MULT), sMin: 0.6, sMax: 1.5, oMin: 0.4,  oMax: 0.85, tMin: 4, tMax: 9, brightChance: 0.01, pulseChance: 0.04 },
+  { el: layerMid,  count: Math.round(220 * STAR_MULT), sMin: 1.1, sMax: 2.4, oMin: 0.55, oMax: 0.95, tMin: 3, tMax: 7, brightChance: 0.08, pulseChance: 0.12 },
+  { el: layerNear, count: Math.round(95  * STAR_MULT), sMin: 1.8, sMax: 3.8, oMin: 0.7,  oMax: 1.0,  tMin: 2.5, tMax: 6, brightChance: 0.45, pulseChance: 0.28 },
 ];
 for (const L of layerSpec) {
   for (let i = 0; i < L.count; i++) {
@@ -1002,7 +1004,7 @@ for (const L of layerSpec) {
     s.className = cls;
     const size = L.sMin + Math.random() * (L.sMax - L.sMin);
     s.style.setProperty('--s', size.toFixed(2) + 'px');
-    s.style.setProperty('--g', (size * 3).toFixed(1) + 'px');
+    s.style.setProperty('--g', (size * 5).toFixed(1) + 'px');
     s.style.left = (Math.random() * 100).toFixed(2) + '%';
     s.style.top = (Math.random() * 100).toFixed(2) + '%';
     s.style.setProperty('--o', (L.oMin + Math.random() * (L.oMax - L.oMin)).toFixed(2));
@@ -1011,7 +1013,7 @@ for (const L of layerSpec) {
     L.el.appendChild(s);
   }
 }
-const DUST_COUNT = isLite ? 0 : 30;
+const DUST_COUNT = isLite ? 0 : 55;
 for (let i = 0; i < DUST_COUNT; i++) {
   const d = document.createElement('div');
   d.className = 'dust';
@@ -1031,7 +1033,7 @@ function spawnShootingStar() {
   bg.appendChild(s);
   setTimeout(() => s.remove(), 1800);
 }
-(function loop1(){ setTimeout(()=>{ spawnShootingStar(); loop1(); }, (isLite ? 6000 : 2500) + Math.random()*(isLite ? 8000 : 4500)); })();
+(function loop1(){ setTimeout(()=>{ spawnShootingStar(); loop1(); }, (isLite ? 4500 : 1500) + Math.random()*(isLite ? 6000 : 3000)); })();
 function spawnComet() {
   const c = document.createElement('div');
   c.className = 'comet';
@@ -1040,7 +1042,7 @@ function spawnComet() {
   bg.appendChild(c);
   setTimeout(() => c.remove(), 3400);
 }
-if (!isLite) (function loop2(){ setTimeout(()=>{ spawnComet(); loop2(); }, 22000 + Math.random()*28000); })();
+if (!isLite) (function loop2(){ setTimeout(()=>{ spawnComet(); loop2(); }, 12000 + Math.random()*15000); })();
 
 /* ── Math glyph decorations ── */
 const mathLayer = $('math-layer');
