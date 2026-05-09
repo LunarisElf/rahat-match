@@ -619,7 +619,8 @@
         <button id="admin-randomize" class="cta">สุ่มจับคู่</button>
         <button id="admin-reset-matches" class="ghost" data-text="btnResetMatches">ล้างผลสุ่ม</button>
         <button id="admin-reset-all" class="danger" data-text="btnResetAll">ล้างข้อมูลทั้งหมด</button>
-        <button id="admin-back" class="ghost" data-text="btnBack">ออกจาก Admin</button>
+        <button id="admin-back" class="ghost" data-text="btnBack">กลับ</button>
+        <button id="admin-signout" class="ghost" data-text="btnAdminSignout">ออกจากระบบ</button>
       </div>
     </section>
   </div>
@@ -905,6 +906,7 @@ const TEXT = {
   errAuthNotAdmin: 'บัญชีนี้ไม่ใช่ admin',
   errAuthNetwork: 'เชื่อมต่อไม่ได้ ลองอีกครั้ง',
   okAdminSignedOut: 'ออกจากระบบ admin แล้ว',
+  btnAdminSignout: 'ออกจากระบบ',
 
   // Confirm modal
   btnConfirm: 'ยืนยัน',
@@ -2039,8 +2041,9 @@ authPwd.addEventListener('keydown', e => { if (e.key === 'Enter') submitAuth(); 
 authCancel.addEventListener('click', () => { authModal.classList.add('hidden'); });
 
 adminLink.addEventListener('click', tryEnterAdmin);
-adminBack.addEventListener('click', async () => {
-  if (isAdminAuthed()) { try { await signOut(auth); flash(TEXT.okAdminSignedOut); } catch {} }
+adminBack.addEventListener('click', () => setScreen('home'));
+$('admin-signout').addEventListener('click', async () => {
+  try { await signOut(auth); flash(TEXT.okAdminSignedOut); } catch {}
   setScreen('home');
 });
 
