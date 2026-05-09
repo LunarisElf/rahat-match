@@ -154,6 +154,18 @@
   .platform-icon.apple-music{background:linear-gradient(135deg,#fa233b 0%,#fb5c74 100%)}
   .platform-icon.thumb{padding:0}
   .platform-icon.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+  .hints-panel{margin-top:14px;padding:14px 16px;background:rgba(20,35,60,.4);border:1px solid var(--line);border-radius:14px;text-align:left}
+  .hints-title{font-family:'Sarabun',sans-serif;font-weight:700;font-size:.72rem;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+  .hints-list{margin:0;padding-left:24px;color:var(--text);font-family:'Mali',cursive;line-height:1.7}
+  .hints-list li{margin-bottom:4px;position:relative;padding-right:32px;animation:hint-in .3s ease both}
+  @keyframes hint-in{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+  .hints-empty{color:var(--muted);font-style:italic;font-size:.95rem;font-family:'Mali',cursive}
+  .hint-del{position:absolute;right:0;top:2px;background:transparent;border:none;color:var(--muted);font-size:.85rem;cursor:pointer;padding:2px 6px;border-radius:6px;width:auto;height:auto;line-height:1}
+  .hint-del:hover{color:#ffb4ad;background:rgba(231,76,60,.1)}
+  .hint-compose{display:flex;gap:8px;margin-top:12px}
+  .hint-compose input{flex:1}
+  .hint-compose button{flex-shrink:0;padding:0 16px;font-size:.95rem;width:auto;height:auto;white-space:nowrap}
   .song-info{flex:1;min-width:0}
   .song-title{font-family:'Mali',cursive;font-weight:700;color:var(--gold-bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:1rem}
   .song-artist{font-size:.85rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -603,6 +615,7 @@
       <header class="site"><h1 id="reveal-title">คู่ของคุณ</h1><p class="subtitle" id="reveal-self-label">—</p></header>
       <div class="reveal-stage" id="reveal-stage"></div>
       <p class="status-banner" id="reveal-hint" style="margin-top:8px">กำลังสแกน...</p>
+      <div class="hints-panel hidden" id="hints-panel"></div>
       <div class="actions"><button id="reveal-back" class="cta" data-text="btnBack">กลับ</button></div>
     </section>
 
@@ -857,6 +870,15 @@ const TEXT = {
   revealNoPairHint: '(จำนวนพี่กับน้องไม่เท่ากัน)',
   revealScanning: 'กำลังสแกน...',
   revealScanned: 'สามารถกลับมาดูใหม่ได้หากลืม',
+
+  // Hints
+  hintsTitleAuthor: 'คำใบ้ที่ให้น้อง',
+  hintsTitleViewer: 'คำใบ้จากพี่',
+  hintsEmptyAuthor: 'ยังไม่ได้ให้คำใบ้น้อง — เพิ่มได้เลย',
+  hintsEmptyViewer: 'พี่ยังไม่ให้คำใบ้',
+  hintsPlaceholder: 'พิมพ์คำใบ้...',
+  btnAddHint: '+ เพิ่ม',
+  errHintEmpty: 'พิมพ์คำใบ้ก่อน',
 
   // Admin
   adminTitle: 'Admin Panel',
@@ -1239,6 +1261,7 @@ onSnapshot(docRef, (snap) => {
 const onDataChanged = () => {
   if (currentScreen === 'home') updateHomeStatus();
   if (currentScreen === 'admin') renderAdmin();
+  if (currentScreen === 'reveal' && typeof renderHintsPanel === 'function') renderHintsPanel();
 };
 
 /* ── Helpers ── */
@@ -1835,6 +1858,7 @@ welcomeDelete.addEventListener('click', () => {
 
 /* ── Reveal (light beam scan) ── */
 const revealStage = $('reveal-stage');
+const hintsPanel = $('hints-panel');
 const revealTitle = $('reveal-title');
 const revealSelfLabel = $('reveal-self-label');
 const revealHint = $('reveal-hint');
@@ -1857,6 +1881,7 @@ const openReveal = (u) => {
     revealStage.classList.add('no-partner');
     revealStage.innerHTML = `<div class="no-partner-msg">${escapeHtml(TEXT.revealNoPairMsg)}<br><span style="font-size:.95rem;color:var(--muted);font-style:italic">${escapeHtml(TEXT.revealNoPairHint)}</span></div>`;
     revealHint.textContent = '';
+    hintsPanel.classList.add('hidden');
     setScreen('reveal');
     return;
   }
@@ -1879,8 +1904,85 @@ const openReveal = (u) => {
   html += '</div><div class="beam"></div>';
   revealStage.innerHTML = html;
 
+  renderHintsPanel();
   setScreen('reveal');
   runScan();
+};
+
+const renderHintsPanel = () => {
+  if (!currentUserId) { hintsPanel.classList.add('hidden'); return; }
+  const me = findUserById(currentUserId);
+  if (!me) { hintsPanel.classList.add('hidden'); return; }
+  const partnerId = data.matches[me.id];
+  const partner = partnerId ? findUserById(partnerId) : null;
+  if (!partner) { hintsPanel.classList.add('hidden'); return; }
+
+  const isAuthor = me.role === 'senior';
+  const sourceUser = isAuthor ? me : partner;
+  const hints = sourceUser.hints || [];
+
+  const prevInput = $('hint-input');
+  const prevValue = prevInput ? prevInput.value : '';
+  const prevFocused = prevInput && document.activeElement === prevInput;
+  const prevSelStart = prevFocused ? prevInput.selectionStart : null;
+  const prevSelEnd = prevFocused ? prevInput.selectionEnd : null;
+
+  let html = `<div class="hints-title">${escapeHtml(isAuthor ? TEXT.hintsTitleAuthor : TEXT.hintsTitleViewer)}</div>`;
+  if (hints.length > 0) {
+    html += '<ol class="hints-list">';
+    hints.forEach((h, i) => {
+      html += `<li>${escapeHtml(h)}${isAuthor ? `<button class="hint-del" data-idx="${i}" type="button" aria-label="ลบคำใบ้">✕</button>` : ''}</li>`;
+    });
+    html += '</ol>';
+  } else {
+    html += `<div class="hints-empty">${escapeHtml(isAuthor ? TEXT.hintsEmptyAuthor : TEXT.hintsEmptyViewer)}</div>`;
+  }
+  if (isAuthor) {
+    html += `<div class="hint-compose"><input type="text" id="hint-input" maxlength="120" data-placeholder="hintsPlaceholder" placeholder="${escapeHtml(TEXT.hintsPlaceholder)}"><button class="cta" id="hint-add" type="button">${escapeHtml(TEXT.btnAddHint)}</button></div>`;
+  }
+
+  hintsPanel.innerHTML = html;
+  hintsPanel.classList.remove('hidden');
+
+  if (isAuthor) {
+    const input = $('hint-input');
+    const addBtn = $('hint-add');
+    if (prevValue) input.value = prevValue;
+    if (prevFocused) {
+      input.focus();
+      try { input.setSelectionRange(prevSelStart, prevSelEnd); } catch {}
+    }
+    const submit = async () => {
+      const text = input.value.trim();
+      if (!text) { flash(TEXT.errHintEmpty, true); return; }
+      try {
+        await txnUpdate(curr => {
+          const u = curr.users.find(x => x.id === currentUserId);
+          if (!u) throw new TxnAbort(TEXT.errNotFound);
+          if (u.role !== 'senior') throw new TxnAbort(TEXT.errNotFound);
+          u.hints = (u.hints || []).concat([text]);
+          return curr;
+        });
+        input.value = '';
+      } catch (e) { flash(e.uiAbort ? e.message : TEXT.errSaveFail(e.message), true); }
+    };
+    addBtn.addEventListener('click', submit);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+
+    hintsPanel.querySelectorAll('.hint-del').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const idx = parseInt(btn.dataset.idx, 10);
+        try {
+          await txnUpdate(curr => {
+            const u = curr.users.find(x => x.id === currentUserId);
+            if (!u || !Array.isArray(u.hints)) throw new TxnAbort(TEXT.errNotFound);
+            u.hints.splice(idx, 1);
+            return curr;
+          });
+        } catch (e) { flash(e.uiAbort ? e.message : TEXT.errSaveFail(e.message), true); }
+      });
+    });
+  }
 };
 
 const runScan = () => {
