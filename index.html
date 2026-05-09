@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="จับคู่พี่รหัส × น้องรหัส — Sci-Math WK 2569">
+<meta property="og:title" content="จับคู่พี่รหัส × น้องรหัส">
+<meta property="og:description" content="ะสุ่มจับคู่พี่รหัส–น้องรหัส Sci-Math WK 2569">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
 <title data-text="pageTitle">จับคู่พี่รหัส × น้องรหัส</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -81,6 +86,24 @@
 
   .warning{text-align:center;background:rgba(201,169,97,.08);border:1px solid rgba(201,169,97,.3);color:var(--gold-bright);padding:10px 14px;border-radius:12px;margin:14px 0 0;font-size:.95rem}
   .warning.error{background:rgba(231,76,60,.1);border-color:rgba(231,76,60,.4);color:#ffb4ad}
+
+  .pin-stage-label{text-align:center;color:var(--gold-bright);font-family:'Mali',cursive;font-size:1.1rem;margin:6px 0 14px;letter-spacing:.5px}
+  .pin-display{display:flex;justify-content:center;gap:14px;margin:8px 0 22px}
+  .pin-display.compact{gap:11px;margin:6px 0 16px}
+  .pin-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);background:transparent;transition:all .2s}
+  .pin-display.compact .pin-dot{width:14px;height:14px;border-width:2px}
+  .pin-dot.filled{background:var(--gold);border-color:var(--gold);box-shadow:0 0 12px rgba(201,169,97,.55);transform:scale(1.05)}
+  .pin-dot.shake{animation:pin-shake .4s ease}
+  @keyframes pin-shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+  .numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 auto 8px;max-width:280px}
+  .numpad.compact{gap:8px;max-width:240px}
+  .numpad-btn{aspect-ratio:1;border-radius:14px;background:transparent;border:1px solid rgba(201,169,97,.22);color:var(--text);font-size:1.5rem;font-family:'Sarabun',sans-serif;font-weight:500;cursor:pointer;transition:transform .1s,background .15s,border-color .15s,box-shadow .15s,color .15s;user-select:none;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px);padding:0}
+  .numpad.compact .numpad-btn{font-size:1.25rem;border-radius:12px}
+  .numpad-btn:hover{background:rgba(201,169,97,.06);border-color:rgba(201,169,97,.55);color:var(--gold-bright)}
+  .numpad-btn:active{transform:scale(.93);background:rgba(201,169,97,.14);border-color:var(--gold);box-shadow:0 0 22px rgba(201,169,97,.3),inset 0 0 12px rgba(201,169,97,.1);color:var(--gold-bright)}
+  .numpad-btn.action{font-size:1rem;color:var(--muted);font-family:'Sarabun',sans-serif}
+  .numpad.compact .numpad-btn.action{font-size:.9rem}
+  .numpad-btn.action.backspace{font-size:1.4rem}
 
   .status-banner{text-align:center;margin-bottom:20px;padding:8px 16px;background:rgba(14,26,47,.4);border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:.9rem;letter-spacing:.5px;display:inline-block;align-self:center}
   .status-banner.live{color:var(--gold-bright);border-color:rgba(201,169,97,.4)}
@@ -437,10 +460,44 @@
           <textarea id="reg-msg" data-placeholder="registerMsgPlaceholder"></textarea>
         </div>
         <div class="actions">
-          <button id="reg-save" class="cta" data-text="btnSave">บันทึก</button>
+          <button id="reg-next" class="cta" data-text="btnNext">ต่อไป</button>
           <button id="reg-cancel" class="ghost" data-text="btnCancel">ยกเลิก</button>
         </div>
         <div id="reg-warn" class="warning hidden"></div>
+      </div>
+    </section>
+
+    <section id="screen-register-pin" class="hero hidden">
+      <header class="site">
+        <h1 data-text="registerPinTitle">ตั้ง PIN</h1>
+        <p class="subtitle" data-text="registerPinSubtitle">ป้องกันคนสวมรอย</p>
+      </header>
+      <div class="glass-panel">
+        <p style="text-align:center;color:var(--muted);font-size:.9rem;margin-bottom:6px;line-height:1.6" data-text="registerPinHint">PIN ใช้ยืนยันตัวตนตอน login จากเครื่องอื่น</p>
+        <div class="pin-stage-label" id="reg-pin-stage-label">ตั้ง PIN (4-6 หลัก)</div>
+        <div class="pin-display" id="reg-pin-display">
+          <span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span>
+          <span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span>
+        </div>
+        <div class="numpad" id="reg-pin-numpad">
+          <button type="button" class="numpad-btn" data-digit="1">1</button>
+          <button type="button" class="numpad-btn" data-digit="2">2</button>
+          <button type="button" class="numpad-btn" data-digit="3">3</button>
+          <button type="button" class="numpad-btn" data-digit="4">4</button>
+          <button type="button" class="numpad-btn" data-digit="5">5</button>
+          <button type="button" class="numpad-btn" data-digit="6">6</button>
+          <button type="button" class="numpad-btn" data-digit="7">7</button>
+          <button type="button" class="numpad-btn" data-digit="8">8</button>
+          <button type="button" class="numpad-btn" data-digit="9">9</button>
+          <button type="button" class="numpad-btn action" id="reg-pin-clear" data-text="numpadClear">ล้าง</button>
+          <button type="button" class="numpad-btn" data-digit="0">0</button>
+          <button type="button" class="numpad-btn action backspace" id="reg-pin-backspace" aria-label="backspace">⌫</button>
+        </div>
+        <div class="actions">
+          <button id="reg-save" class="cta" data-text="btnNext">ต่อไป</button>
+          <button id="reg-pin-back" class="ghost" data-text="btnBack">กลับ</button>
+        </div>
+        <div id="reg-pin-warn" class="warning hidden"></div>
       </div>
     </section>
 
@@ -451,9 +508,43 @@
         <div class="input-group"><label for="edit-msg" data-text="editMsgLabel">ข้อความถึงคู่</label><textarea id="edit-msg"></textarea></div>
         <div class="actions">
           <button id="edit-save" class="cta" data-text="btnSave">บันทึก</button>
+          <button id="edit-change-pin" class="ghost" data-text="btnChangePin">เปลี่ยน PIN</button>
           <button id="edit-back" class="ghost" data-text="btnBack">กลับ</button>
         </div>
         <div id="edit-warn" class="warning hidden"></div>
+      </div>
+    </section>
+
+    <section id="screen-change-pin" class="hero hidden">
+      <header class="site">
+        <h1 data-text="changePinTitle">เปลี่ยน PIN</h1>
+        <p class="subtitle" data-text="changePinSubtitle">ใส่ PIN เดิมก่อน แล้วตั้ง PIN ใหม่</p>
+      </header>
+      <div class="glass-panel">
+        <div class="pin-stage-label" id="cpin-stage-label">ใส่ PIN เดิม</div>
+        <div class="pin-display" id="cpin-display">
+          <span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span>
+          <span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span>
+        </div>
+        <div class="numpad" id="cpin-numpad">
+          <button type="button" class="numpad-btn" data-digit="1">1</button>
+          <button type="button" class="numpad-btn" data-digit="2">2</button>
+          <button type="button" class="numpad-btn" data-digit="3">3</button>
+          <button type="button" class="numpad-btn" data-digit="4">4</button>
+          <button type="button" class="numpad-btn" data-digit="5">5</button>
+          <button type="button" class="numpad-btn" data-digit="6">6</button>
+          <button type="button" class="numpad-btn" data-digit="7">7</button>
+          <button type="button" class="numpad-btn" data-digit="8">8</button>
+          <button type="button" class="numpad-btn" data-digit="9">9</button>
+          <button type="button" class="numpad-btn action" id="cpin-clear" data-text="numpadClear">ล้าง</button>
+          <button type="button" class="numpad-btn" data-digit="0">0</button>
+          <button type="button" class="numpad-btn action backspace" id="cpin-backspace" aria-label="backspace">⌫</button>
+        </div>
+        <div class="actions">
+          <button id="cpin-next" class="cta" data-text="btnNext">ต่อไป</button>
+          <button id="cpin-back" class="ghost" data-text="btnBack">กลับ</button>
+        </div>
+        <div id="cpin-warn" class="warning hidden"></div>
       </div>
     </section>
 
@@ -507,6 +598,36 @@
       <div class="row">
         <button id="auth-go" data-text="btnAuthGo">ตกลง</button>
         <button class="ghost" id="auth-cancel" data-text="btnCancel">ยกเลิก</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="pin-modal" class="modal-bg hidden">
+    <div class="modal">
+      <h2 data-text="pinModalTitle">ใส่ PIN</h2>
+      <p id="pin-desc">—</p>
+      <div class="pin-display compact" id="pin-display">
+        <span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span>
+        <span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span>
+      </div>
+      <div class="numpad compact" id="pin-numpad">
+        <button type="button" class="numpad-btn" data-digit="1">1</button>
+        <button type="button" class="numpad-btn" data-digit="2">2</button>
+        <button type="button" class="numpad-btn" data-digit="3">3</button>
+        <button type="button" class="numpad-btn" data-digit="4">4</button>
+        <button type="button" class="numpad-btn" data-digit="5">5</button>
+        <button type="button" class="numpad-btn" data-digit="6">6</button>
+        <button type="button" class="numpad-btn" data-digit="7">7</button>
+        <button type="button" class="numpad-btn" data-digit="8">8</button>
+        <button type="button" class="numpad-btn" data-digit="9">9</button>
+        <button type="button" class="numpad-btn action" id="pin-clear" data-text="numpadClear">ล้าง</button>
+        <button type="button" class="numpad-btn" data-digit="0">0</button>
+        <button type="button" class="numpad-btn action backspace" id="pin-backspace" aria-label="backspace">⌫</button>
+      </div>
+      <div id="pin-warn" class="warning hidden"></div>
+      <div class="row">
+        <button id="pin-go" data-text="btnAuthGo">ตกลง</button>
+        <button class="ghost" id="pin-cancel" data-text="btnCancel">ยกเลิก</button>
       </div>
     </div>
   </div>
@@ -624,13 +745,29 @@ const TEXT = {
   registerNamePlaceholder: 'ชื่อของคุณ',
   registerMsgLabel: 'ข้อความถึงคู่รหัส (น้องรหัสจะไม่เห็นชื่อพี่รหัส)',
   registerMsgPlaceholder: 'ดีฮ้าบบบบบบบฟู่',
+  registerPinTitle: 'ตั้ง PIN',
+  registerPinSubtitle: 'ป้องกันคนสวมรอย',
+  registerPinHint: 'PIN ใช้ยืนยันตัวตนตอน login จากเครื่องอื่น กรุณาจำให้ดี',
+  registerPinStageEnter: 'ตั้ง PIN (4-6 หลัก)',
+  registerPinStageConfirm: 'ยืนยัน PIN อีกครั้ง',
+  numpadClear: 'ล้าง',
+  btnNext: 'ต่อไป',
   btnSave: 'บันทึก',
   btnCancel: 'ยกเลิก',
   errDuplicate: 'มีชื่อนี้ลงทะเบียนแล้ว',
   errLocked: 'สุ่มแล้ว ลงทะเบียนไม่ได้',
+  errPinInvalid: 'PIN ต้องเป็นตัวเลข 4-6 หลัก',
+  errPinMismatch: 'PIN ทั้ง 2 ช่องไม่ตรงกัน',
+  errPinRequired: 'กรุณาใส่ PIN',
+  errPinWrong: 'PIN ไม่ถูกต้อง',
   okRegistered: (rl, n) => `ลงทะเบียน ${rl}${n} แล้ว`,
   msgSaving: 'กำลังบันทึก...',
   errSaveFail: (m) => 'บันทึกล้มเหลว: ' + m,
+
+  // PIN modal
+  pinModalTitle: 'ใส่ PIN',
+  pinModalDesc: (n) => `ใส่ PIN ของบัญชี "${n}"`,
+  pinPlaceholder: 'PIN',
 
   // Edit
   editTitle: 'ข้อมูลของฉัน',
@@ -638,7 +775,19 @@ const TEXT = {
   editMsgLabel: 'ข้อความถึงคู่',
   btnBack: 'กลับ',
   btnDelete: 'ลบข้อมูล',
+  btnChangePin: 'เปลี่ยน PIN',
   okSaved: 'บันทึกแล้ว',
+
+  // Change PIN
+  changePinTitle: 'เปลี่ยน PIN',
+  changePinSubtitle: 'ใส่ PIN เดิมก่อน แล้วตั้ง PIN ใหม่',
+  changePinStageCurrent: 'ใส่ PIN เดิม',
+  changePinStageNew: 'ตั้ง PIN ใหม่ (4-6 หลัก)',
+  changePinStageConfirm: 'ยืนยัน PIN ใหม่',
+  okPinChanged: 'เปลี่ยน PIN แล้ว',
+  errPinNoAccount: 'ไม่พบบัญชี',
+  errPinNotSet: 'บัญชีนี้ยังไม่ได้ตั้ง PIN',
+  errPinChangeSaveFail: (m) => 'บันทึก PIN ใหม่ล้มเหลว: ' + m,
   errNotFound: 'ไม่พบบัญชี อาจถูกลบไปแล้ว',
   errEditLocked: 'สุ่มแล้ว แก้ไม่ได้',
   delConfirmTitle: (n) => `ลบข้อมูล`,
@@ -932,7 +1081,9 @@ const screens = {
   config: $('screen-config'),
   home: $('screen-home'),
   register: $('screen-register'),
+  registerPin: $('screen-register-pin'),
   edit: $('screen-edit'),
+  changePin: $('screen-change-pin'),
   reveal: $('screen-reveal'),
   admin: $('screen-admin'),
 };
@@ -957,7 +1108,7 @@ if (NEEDS_CONFIG) {
 
 /* ── Firebase init ── */
 const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js");
-const { getFirestore, doc, getDoc, setDoc, onSnapshot } =
+const { getFirestore, doc, getDoc, setDoc, onSnapshot, runTransaction } =
   await import("https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js");
 
 const fb = initializeApp(FIREBASE_CONFIG);
@@ -980,6 +1131,27 @@ async function save() {
   setSync('busy', TEXT.syncSaving);
   try { await setDoc(docRef, data); setSync('idle'); }
   catch (e) { setSync('error', TEXT.syncSaveFailed); throw e; }
+}
+
+class TxnAbort extends Error { constructor(uiMsg) { super(uiMsg); this.uiAbort = true; } }
+
+async function txnUpdate(mutator) {
+  setSync('busy', TEXT.syncSaving);
+  try {
+    const committed = await runTransaction(db, async (tx) => {
+      const snap = await tx.get(docRef);
+      const current = snap.exists() ? Object.assign(defaultData(), snap.data()) : defaultData();
+      const next = await mutator(current);
+      tx.set(docRef, next);
+      return next;
+    });
+    data = committed;
+    setSync('idle');
+    return committed;
+  } catch (e) {
+    setSync('error', TEXT.syncSaveFailed);
+    throw e;
+  }
 }
 
 try {
@@ -1028,6 +1200,13 @@ const findUserByName = name => {
 };
 const findUserById = id => data.users.find(u => u.id === id);
 const newId = () => 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const PIN_SALT = 'rahut-match-2569';
+const hashPin = async (pin) => {
+  const data = new TextEncoder().encode(PIN_SALT + ':' + pin);
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+};
+const isValidPin = (pin) => /^\d{4,6}$/.test(pin);
 const roleLabel = r => r === 'senior' ? TEXT.roleSenior : TEXT.roleJunior;
 const isRandomized = () => !!data.randomizedAt;
 const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1094,10 +1273,19 @@ const handleHomeGo = () => {
   showWarn(homeWarn, '');
   const u = findUserByName(name);
   if (u) {
-    currentUserId = u.id;
-    setRememberedId(u.id);
-    if (isRandomized()) openReveal(u);
-    else openEdit(u);
+    if (u.pin) {
+      openPinModal(u, async () => {
+        currentUserId = u.id;
+        setRememberedId(u.id);
+        homeName.value = '';
+        setScreen('home');
+      });
+    } else {
+      currentUserId = u.id;
+      setRememberedId(u.id);
+      homeName.value = '';
+      setScreen('home');
+    }
   } else {
     if (isRandomized()) { showWarn(homeWarn, TEXT.errCannotRegisterAfter, true); return; }
     $('reg-name').value = name;
@@ -1107,10 +1295,10 @@ const handleHomeGo = () => {
 homeGo.addEventListener('click', handleHomeGo);
 homeName.addEventListener('keydown', e => { if (e.key === 'Enter') handleHomeGo(); });
 
-/* ── Register ── */
+/* ── Register (step 1: info) ── */
 const regName = $('reg-name');
 const regMsg = $('reg-msg');
-const regSave = $('reg-save');
+const regNext = $('reg-next');
 const regCancel = $('reg-cancel');
 const regWarn = $('reg-warn');
 
@@ -1122,33 +1310,116 @@ const openRegister = () => {
   setTimeout(() => regName.focus(), 80);
 };
 
+regNext.addEventListener('click', () => {
+  const name = regName.value.trim();
+  if (!name) { showWarn(regWarn, TEXT.errEmptyName, true); return; }
+  if (findUserByName(name)) { showWarn(regWarn, TEXT.errDuplicate, true); return; }
+  if (isRandomized()) { showWarn(regWarn, TEXT.errLocked, true); return; }
+  showWarn(regWarn, '');
+  openRegisterPin();
+});
+
+regCancel.addEventListener('click', () => { homeName.value = ''; setScreen('home'); });
+
+/* ── Register (step 2: PIN numpad) ── */
+const regSave = $('reg-save');
+const regPinBack = $('reg-pin-back');
+const regPinWarn = $('reg-pin-warn');
+const regPinDisplay = $('reg-pin-display');
+const regPinStageLabel = $('reg-pin-stage-label');
+let _regPinStage = 'enter';
+let _regPinFirst = '';
+let _regPinCurrent = '';
+
+const renderRegPinDisplay = () => {
+  const dots = regPinDisplay.querySelectorAll('.pin-dot');
+  dots.forEach((d, i) => d.classList.toggle('filled', i < _regPinCurrent.length));
+};
+
+const shakeRegPinDisplay = () => {
+  regPinDisplay.classList.add('shake');
+  setTimeout(() => regPinDisplay.classList.remove('shake'), 400);
+};
+
+const setRegPinStage = (stage) => {
+  _regPinStage = stage;
+  _regPinCurrent = '';
+  showWarn(regPinWarn, '');
+  regPinStageLabel.textContent = stage === 'enter' ? TEXT.registerPinStageEnter : TEXT.registerPinStageConfirm;
+  regSave.textContent = stage === 'enter' ? TEXT.btnNext : TEXT.btnSave;
+  renderRegPinDisplay();
+};
+
+const openRegisterPin = () => {
+  _regPinFirst = '';
+  setRegPinStage('enter');
+  setScreen('registerPin');
+};
+
+regPinBack.addEventListener('click', () => {
+  if (_regPinStage === 'confirm') setRegPinStage('enter');
+  else setScreen('register');
+});
+
+document.querySelectorAll('#reg-pin-numpad .numpad-btn[data-digit]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (_regPinCurrent.length >= 6) return;
+    _regPinCurrent += btn.dataset.digit;
+    renderRegPinDisplay();
+  });
+});
+$('reg-pin-clear').addEventListener('click', () => { _regPinCurrent = ''; renderRegPinDisplay(); });
+$('reg-pin-backspace').addEventListener('click', () => { _regPinCurrent = _regPinCurrent.slice(0, -1); renderRegPinDisplay(); });
+
 regSave.addEventListener('click', async () => {
+  if (_regPinStage === 'enter') {
+    if (!isValidPin(_regPinCurrent)) { showWarn(regPinWarn, TEXT.errPinInvalid, true); shakeRegPinDisplay(); return; }
+    _regPinFirst = _regPinCurrent;
+    setRegPinStage('confirm');
+    return;
+  }
+  if (_regPinCurrent !== _regPinFirst) {
+    showWarn(regPinWarn, TEXT.errPinMismatch, true);
+    shakeRegPinDisplay();
+    _regPinCurrent = '';
+    setTimeout(renderRegPinDisplay, 400);
+    return;
+  }
+
   const name = regName.value.trim();
   const role = document.querySelector('input[name="reg-role"]:checked').value;
   const message = regMsg.value.trim();
-  if (!name) { showWarn(regWarn, TEXT.errEmptyName, true); return; }
 
-  showWarn(regWarn, TEXT.msgSaving);
+  showWarn(regPinWarn, TEXT.msgSaving);
   try {
-    const snap = await getDoc(docRef);
-    if (snap.exists()) data = Object.assign(defaultData(), snap.data());
-    if (findUserByName(name)) { showWarn(regWarn, TEXT.errDuplicate, true); return; }
-    if (isRandomized()) { showWarn(regWarn, TEXT.errLocked, true); return; }
-    const user = { id: newId(), name, role, message, createdAt: Date.now() };
-    data.users.push(user);
-    await save();
+    const pinHash = await hashPin(_regPinFirst);
+    const user = { id: newId(), name, role, message, pin: pinHash, createdAt: Date.now() };
+    const lname = name.toLowerCase();
+    await txnUpdate(curr => {
+      if (curr.randomizedAt) throw new TxnAbort(TEXT.errLocked);
+      if (curr.users.some(u => u.name.toLowerCase() === lname)) throw new TxnAbort(TEXT.errDuplicate);
+      curr.users.push(user);
+      return curr;
+    });
     currentUserId = user.id;
     setRememberedId(user.id);
     homeName.value = '';
+    _regPinFirst = '';
+    _regPinCurrent = '';
     setScreen('home');
     confetti();
     flash(TEXT.okRegistered(roleLabel(role), name));
   } catch (e) {
-    showWarn(regWarn, TEXT.errSaveFail(e.message), true);
+    showWarn(regPinWarn, e.uiAbort ? e.message : TEXT.errSaveFail(e.message), true);
   }
 });
 
-regCancel.addEventListener('click', () => { homeName.value = ''; setScreen('home'); });
+window.addEventListener('keydown', e => {
+  if (currentScreen !== 'registerPin') return;
+  if (/^\d$/.test(e.key)) { if (_regPinCurrent.length < 6) { _regPinCurrent += e.key; renderRegPinDisplay(); } }
+  else if (e.key === 'Backspace') { _regPinCurrent = _regPinCurrent.slice(0, -1); renderRegPinDisplay(); }
+  else if (e.key === 'Enter') regSave.click();
+});
 
 /* ── Edit ── */
 const editName = $('edit-name');
@@ -1168,38 +1439,147 @@ const openEdit = (u) => {
 };
 
 editSave.addEventListener('click', async () => {
+  const name = editName.value.trim();
+  if (!name) { showWarn(editWarn, TEXT.errEmptyName, true); return; }
+  const newMsg = editMsg.value.trim();
+  const lname = name.toLowerCase();
   showWarn(editWarn, TEXT.msgSaving);
   try {
-    const snap = await getDoc(docRef);
-    if (snap.exists()) data = Object.assign(defaultData(), snap.data());
-    const u = findUserById(currentUserId);
-    if (!u) { showWarn(editWarn, TEXT.errNotFound, true); return; }
-    if (isRandomized()) { showWarn(editWarn, TEXT.errEditLocked, true); return; }
-    const name = editName.value.trim();
-    if (!name) { showWarn(editWarn, TEXT.errEmptyName, true); return; }
-    const dup = findUserByName(name);
-    if (dup && dup.id !== u.id) { showWarn(editWarn, TEXT.errDuplicate, true); return; }
-    u.name = name;
-    u.message = editMsg.value.trim();
-    await save();
+    await txnUpdate(curr => {
+      if (curr.randomizedAt) throw new TxnAbort(TEXT.errEditLocked);
+      const u = curr.users.find(x => x.id === currentUserId);
+      if (!u) throw new TxnAbort(TEXT.errNotFound);
+      const dup = curr.users.find(x => x.name.toLowerCase() === lname);
+      if (dup && dup.id !== u.id) throw new TxnAbort(TEXT.errDuplicate);
+      u.name = name;
+      u.message = newMsg;
+      return curr;
+    });
     homeName.value = '';
     setScreen('home');
     flash(TEXT.okSaved);
-  } catch (e) { showWarn(editWarn, TEXT.errSaveFail(e.message), true); }
+  } catch (e) { showWarn(editWarn, e.uiAbort ? e.message : TEXT.errSaveFail(e.message), true); }
 });
 
 editBack.addEventListener('click', () => { homeName.value = ''; setScreen('home'); });
+
+/* ── Change PIN ── */
+const cpinDisplay = $('cpin-display');
+const cpinStageLabel = $('cpin-stage-label');
+const cpinNext = $('cpin-next');
+const cpinBack = $('cpin-back');
+const cpinWarn = $('cpin-warn');
+const editChangePinBtn = $('edit-change-pin');
+let _cpinStage = 'current';
+let _cpinNew = '';
+let _cpinCurrent = '';
+
+const renderCpinDisplay = () => {
+  const dots = cpinDisplay.querySelectorAll('.pin-dot');
+  dots.forEach((d, i) => d.classList.toggle('filled', i < _cpinCurrent.length));
+};
+
+const shakeCpinDisplay = () => {
+  cpinDisplay.classList.add('shake');
+  setTimeout(() => cpinDisplay.classList.remove('shake'), 400);
+};
+
+const setCpinStage = (stage) => {
+  _cpinStage = stage;
+  _cpinCurrent = '';
+  showWarn(cpinWarn, '');
+  if (stage === 'current') { cpinStageLabel.textContent = TEXT.changePinStageCurrent; cpinNext.textContent = TEXT.btnNext; }
+  else if (stage === 'new') { cpinStageLabel.textContent = TEXT.changePinStageNew; cpinNext.textContent = TEXT.btnNext; }
+  else { cpinStageLabel.textContent = TEXT.changePinStageConfirm; cpinNext.textContent = TEXT.btnSave; }
+  renderCpinDisplay();
+};
+
+const openChangePin = () => {
+  const u = findUserById(currentUserId);
+  if (!u) { flash(TEXT.errPinNoAccount, true); return; }
+  _cpinNew = '';
+  setCpinStage(u.pin ? 'current' : 'new');
+  setScreen('changePin');
+};
+
+editChangePinBtn.addEventListener('click', openChangePin);
+
+cpinBack.addEventListener('click', () => {
+  const u = findUserById(currentUserId);
+  if (_cpinStage === 'confirm') setCpinStage('new');
+  else if (_cpinStage === 'new' && u && u.pin) setCpinStage('current');
+  else setScreen('edit');
+});
+
+document.querySelectorAll('#cpin-numpad .numpad-btn[data-digit]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (_cpinCurrent.length >= 6) return;
+    _cpinCurrent += btn.dataset.digit;
+    renderCpinDisplay();
+  });
+});
+$('cpin-clear').addEventListener('click', () => { _cpinCurrent = ''; renderCpinDisplay(); });
+$('cpin-backspace').addEventListener('click', () => { _cpinCurrent = _cpinCurrent.slice(0, -1); renderCpinDisplay(); });
+
+cpinNext.addEventListener('click', async () => {
+  if (_cpinStage === 'current') {
+    const u = findUserById(currentUserId);
+    if (!u) { flash(TEXT.errPinNoAccount, true); setScreen('home'); return; }
+    const h = await hashPin(_cpinCurrent);
+    if (h !== u.pin) { showWarn(cpinWarn, TEXT.errPinWrong, true); shakeCpinDisplay(); _cpinCurrent = ''; setTimeout(renderCpinDisplay, 400); return; }
+    setCpinStage('new');
+    return;
+  }
+  if (_cpinStage === 'new') {
+    if (!isValidPin(_cpinCurrent)) { showWarn(cpinWarn, TEXT.errPinInvalid, true); shakeCpinDisplay(); return; }
+    _cpinNew = _cpinCurrent;
+    setCpinStage('confirm');
+    return;
+  }
+  if (_cpinCurrent !== _cpinNew) {
+    showWarn(cpinWarn, TEXT.errPinMismatch, true);
+    shakeCpinDisplay();
+    _cpinCurrent = '';
+    setTimeout(renderCpinDisplay, 400);
+    return;
+  }
+
+  showWarn(cpinWarn, TEXT.msgSaving);
+  try {
+    const newPinHash = await hashPin(_cpinNew);
+    await txnUpdate(curr => {
+      const u = curr.users.find(x => x.id === currentUserId);
+      if (!u) throw new TxnAbort(TEXT.errPinNoAccount);
+      u.pin = newPinHash;
+      return curr;
+    });
+    _cpinNew = '';
+    _cpinCurrent = '';
+    setScreen('edit');
+    flash(TEXT.okPinChanged);
+  } catch (e) { showWarn(cpinWarn, e.uiAbort ? e.message : TEXT.errPinChangeSaveFail(e.message), true); }
+});
+
+window.addEventListener('keydown', e => {
+  if (currentScreen !== 'changePin') return;
+  if (/^\d$/.test(e.key)) { if (_cpinCurrent.length < 6) { _cpinCurrent += e.key; renderCpinDisplay(); } }
+  else if (e.key === 'Backspace') { _cpinCurrent = _cpinCurrent.slice(0, -1); renderCpinDisplay(); }
+  else if (e.key === 'Enter') cpinNext.click();
+});
 
 const deleteAccount = (userId) => {
   const u = findUserById(userId);
   if (!u) return;
   confirmModal(TEXT.delConfirmTitle(u.name), TEXT.delConfirmText, async () => {
     try {
-      const snap = await getDoc(docRef);
-      if (snap.exists()) data = Object.assign(defaultData(), snap.data());
-      data.users = data.users.filter(x => x.id !== userId);
-      delete data.matches[userId];
-      await save();
+      await txnUpdate(curr => {
+        curr.users = curr.users.filter(x => x.id !== userId);
+        delete curr.matches[userId];
+        for (const k of Object.keys(curr.matches)) {
+          if (curr.matches[k] === userId) delete curr.matches[k];
+        }
+        return curr;
+      });
       clearRemembered();
       currentUserId = null;
       homeName.value = '';
@@ -1299,6 +1679,81 @@ const adminResetMatches = $('admin-reset-matches');
 const adminResetAll = $('admin-reset-all');
 const adminBack = $('admin-back');
 
+/* ── User PIN modal (numpad) ── */
+const pinModal = $('pin-modal');
+const pinDesc = $('pin-desc');
+const pinDisplay = $('pin-display');
+const pinGo = $('pin-go');
+const pinCancel = $('pin-cancel');
+const pinWarn = $('pin-warn');
+let _pinTargetUser = null;
+let _pinSuccessCb = null;
+let _pinCurrent = '';
+
+const renderPinDisplay = () => {
+  const dots = pinDisplay.querySelectorAll('.pin-dot');
+  dots.forEach((d, i) => d.classList.toggle('filled', i < _pinCurrent.length));
+};
+
+const shakePinDisplay = () => {
+  pinDisplay.classList.add('shake');
+  setTimeout(() => pinDisplay.classList.remove('shake'), 400);
+};
+
+const openPinModal = (user, onSuccess) => {
+  _pinTargetUser = user;
+  _pinSuccessCb = onSuccess;
+  _pinCurrent = '';
+  pinDesc.textContent = TEXT.pinModalDesc(user.name);
+  showWarn(pinWarn, '');
+  renderPinDisplay();
+  pinModal.classList.remove('hidden');
+};
+
+const closePinModal = () => {
+  pinModal.classList.add('hidden');
+  _pinTargetUser = null;
+  _pinSuccessCb = null;
+  _pinCurrent = '';
+};
+
+const submitPin = async () => {
+  if (!_pinTargetUser) return;
+  if (!_pinCurrent) { showWarn(pinWarn, TEXT.errPinRequired, true); shakePinDisplay(); return; }
+  const h = await hashPin(_pinCurrent);
+  if (h === _pinTargetUser.pin) {
+    const cb = _pinSuccessCb;
+    closePinModal();
+    if (cb) await cb();
+  } else {
+    showWarn(pinWarn, TEXT.errPinWrong, true);
+    shakePinDisplay();
+    _pinCurrent = '';
+    setTimeout(renderPinDisplay, 400);
+  }
+};
+
+document.querySelectorAll('#pin-numpad .numpad-btn[data-digit]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (_pinCurrent.length >= 6) return;
+    _pinCurrent += btn.dataset.digit;
+    renderPinDisplay();
+  });
+});
+$('pin-clear').addEventListener('click', () => { _pinCurrent = ''; renderPinDisplay(); });
+$('pin-backspace').addEventListener('click', () => { _pinCurrent = _pinCurrent.slice(0, -1); renderPinDisplay(); });
+
+pinGo.addEventListener('click', submitPin);
+pinCancel.addEventListener('click', closePinModal);
+
+window.addEventListener('keydown', e => {
+  if (pinModal.classList.contains('hidden')) return;
+  if (/^\d$/.test(e.key)) { if (_pinCurrent.length < 6) { _pinCurrent += e.key; renderPinDisplay(); } }
+  else if (e.key === 'Backspace') { _pinCurrent = _pinCurrent.slice(0, -1); renderPinDisplay(); }
+  else if (e.key === 'Enter') submitPin();
+  else if (e.key === 'Escape') closePinModal();
+});
+
 /* ── Admin auth ── */
 const AUTH_KEY = 'rahut-match-admin-auth';
 const authModal = $('auth-modal');
@@ -1369,14 +1824,16 @@ pwdSave.addEventListener('click', async () => {
   if (nw.length < 4) { showWarn(pwdWarn, TEXT.errPwdShort, true); return; }
   if (nw !== cf) { showWarn(pwdWarn, TEXT.errPwdMismatch, true); return; }
   try {
-    const snap = await getDoc(docRef);
-    if (snap.exists()) data = Object.assign(defaultData(), snap.data());
-    data.adminPassword = nw;
-    await save();
+    await txnUpdate(curr => {
+      const liveCorrect = curr.adminPassword || DEFAULT_ADMIN_PASSWORD;
+      if (cur !== liveCorrect) throw new TxnAbort(TEXT.errPwdWrong);
+      curr.adminPassword = nw;
+      return curr;
+    });
     pwdModal.classList.add('hidden');
     flash(TEXT.okPwdChanged);
   } catch (e) {
-    showWarn(pwdWarn, TEXT.errPwdSaveFail(e.message), true);
+    showWarn(pwdWarn, e.uiAbort ? e.message : TEXT.errPwdSaveFail(e.message), true);
   }
 });
 
@@ -1415,14 +1872,14 @@ const renderAdmin = () => {
       x.addEventListener('click', () => {
         confirmModal(TEXT.delChipConfirm(u.name), TEXT.delChipText, async () => {
           try {
-            const snap = await getDoc(docRef);
-            if (snap.exists()) data = Object.assign(defaultData(), snap.data());
-            data.users = data.users.filter(x => x.id !== u.id);
-            delete data.matches[u.id];
-            for (const k of Object.keys(data.matches)) {
-              if (data.matches[k] === u.id) delete data.matches[k];
-            }
-            await save();
+            await txnUpdate(curr => {
+              curr.users = curr.users.filter(x => x.id !== u.id);
+              delete curr.matches[u.id];
+              for (const k of Object.keys(curr.matches)) {
+                if (curr.matches[k] === u.id) delete curr.matches[k];
+              }
+              return curr;
+            });
           } catch (e) { flash(TEXT.errDelFail(e.message), true); }
         });
       });
@@ -1447,20 +1904,21 @@ adminRandomize.addEventListener('click', () => {
   }
   confirmModal(TEXT.randomizeConfirm(action), TEXT.randomizeConfirmText(Math.min(seniors.length, juniors.length), warn), async () => {
     try {
-      const snap = await getDoc(docRef);
-      if (snap.exists()) data = Object.assign(defaultData(), snap.data());
-      const sr = data.users.filter(u => u.role === 'senior');
-      const jr = shuffle(data.users.filter(u => u.role === 'junior'));
-      data.matches = {};
-      sr.forEach((s, i) => {
-        const j = jr[i];
-        if (j) { data.matches[s.id] = j.id; data.matches[j.id] = s.id; }
+      await txnUpdate(curr => {
+        const sr = curr.users.filter(u => u.role === 'senior');
+        const jr = shuffle(curr.users.filter(u => u.role === 'junior'));
+        if (sr.length === 0 || jr.length === 0) throw new TxnAbort(TEXT.errInsufficient);
+        curr.matches = {};
+        sr.forEach((s, i) => {
+          const j = jr[i];
+          if (j) { curr.matches[s.id] = j.id; curr.matches[j.id] = s.id; }
+        });
+        curr.randomizedAt = Date.now();
+        return curr;
       });
-      data.randomizedAt = Date.now();
-      await save();
       confetti(120);
       flash(TEXT.okRandomized);
-    } catch (e) { flash(TEXT.errRandomizeFail(e.message), true); }
+    } catch (e) { flash(e.uiAbort ? e.message : TEXT.errRandomizeFail(e.message), true); }
   });
 });
 
@@ -1468,9 +1926,7 @@ adminResetMatches.addEventListener('click', () => {
   if (!isRandomized()) { flash(TEXT.errNotRandomized, true); return; }
   confirmModal(TEXT.resetMatchesConfirm, TEXT.resetMatchesText, async () => {
     try {
-      data.matches = {};
-      data.randomizedAt = null;
-      await save();
+      await txnUpdate(curr => { curr.matches = {}; curr.randomizedAt = null; return curr; });
       flash(TEXT.okResetMatches);
     } catch (e) { flash(TEXT.errFail(e.message), true); }
   });
@@ -1479,8 +1935,11 @@ adminResetMatches.addEventListener('click', () => {
 adminResetAll.addEventListener('click', () => {
   confirmModal(TEXT.resetAllConfirm, TEXT.resetAllText, async () => {
     try {
-      data = defaultData();
-      await save();
+      await txnUpdate(curr => {
+        const fresh = defaultData();
+        fresh.adminPassword = curr.adminPassword || DEFAULT_ADMIN_PASSWORD;
+        return fresh;
+      });
       flash(TEXT.okResetAll);
     } catch (e) { flash(TEXT.errFail(e.message), true); }
   });
