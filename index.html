@@ -44,6 +44,8 @@
   .dust{position:absolute;width:1.5px;height:1.5px;background:rgba(255,255,255,.7);border-radius:50%;pointer-events:none;animation:dust-drift var(--t,40s) linear infinite;animation-delay:var(--d,0s);box-shadow:0 0 3px rgba(255,255,255,.4)}
   @keyframes dust-drift{0%{transform:translate(0,0);opacity:0}10%{opacity:.7}90%{opacity:.7}100%{transform:translate(var(--dx,-200px),var(--dy,80px));opacity:0}}
   .shooting-star{position:absolute;width:140px;height:1px;background:linear-gradient(to left,transparent,rgba(255,255,255,1),rgba(230,201,122,.7),transparent);border-radius:1px;pointer-events:none;transform-origin:left center;box-shadow:0 0 6px rgba(255,236,180,.6);animation:shoot 1.6s cubic-bezier(.55,.1,.85,.4) forwards}
+  .meteor{position:absolute;height:1.5px;background:linear-gradient(to left,transparent,rgba(255,255,255,1),rgba(230,201,122,.85),transparent);border-radius:1px;pointer-events:none;transform-origin:left center;box-shadow:0 0 8px rgba(255,236,180,.75);animation:meteor-fly var(--dur,1.4s) cubic-bezier(.55,.1,.85,.4) forwards;width:var(--len,160px)}
+  @keyframes meteor-fly{0%{opacity:0;transform:translate(0,0) rotate(var(--ang,-22deg)) scaleX(.15)}10%{opacity:1}100%{opacity:0;transform:translate(var(--dx,-380px),var(--dy,170px)) rotate(var(--ang,-22deg)) scaleX(1)}}
   @keyframes shoot{0%{opacity:0;transform:translate(0,0) rotate(-22deg) scaleX(.2)}10%{opacity:1}100%{opacity:0;transform:translate(-360px,160px) rotate(-22deg) scaleX(1)}}
   .comet{position:absolute;width:280px;height:2px;background:linear-gradient(to left,transparent 0%,rgba(255,255,255,1) 20%,rgba(230,201,122,.85) 50%,rgba(140,180,240,.5) 80%,transparent 100%);border-radius:2px;pointer-events:none;transform-origin:left center;box-shadow:0 0 10px rgba(255,236,180,.8),0 0 22px rgba(201,169,97,.4);animation:comet 3.2s cubic-bezier(.45,.1,.7,.35) forwards}
   @keyframes comet{0%{opacity:0;transform:translate(0,0) rotate(-20deg) scaleX(.15)}8%{opacity:1}100%{opacity:0;transform:translate(-820px,300px) rotate(-20deg) scaleX(1)}}
@@ -1043,6 +1045,30 @@ function spawnComet() {
   setTimeout(() => c.remove(), 3400);
 }
 if (!isLite) (function loop2(){ setTimeout(()=>{ spawnComet(); loop2(); }, 12000 + Math.random()*15000); })();
+
+function spawnMeteorShower() {
+  const count = 6 + Math.floor(Math.random() * 6);
+  const baseTop = Math.random() * 30;
+  const baseLeft = 60 + Math.random() * 30;
+  const baseAngle = -28 + Math.random() * 12;
+  for (let i = 0; i < count; i++) {
+    const delay = i * (60 + Math.random() * 90);
+    setTimeout(() => {
+      const m = document.createElement('div');
+      m.className = 'meteor';
+      m.style.top = (baseTop + Math.random() * 25 - 5).toFixed(1) + '%';
+      m.style.left = (baseLeft + Math.random() * 15 - 5).toFixed(1) + '%';
+      m.style.setProperty('--ang', (baseAngle + Math.random() * 6 - 3).toFixed(1) + 'deg');
+      m.style.setProperty('--dx', (-300 - Math.random() * 280).toFixed(0) + 'px');
+      m.style.setProperty('--dy', (140 + Math.random() * 140).toFixed(0) + 'px');
+      m.style.setProperty('--len', (120 + Math.random() * 90).toFixed(0) + 'px');
+      m.style.setProperty('--dur', (1.2 + Math.random() * 0.6).toFixed(2) + 's');
+      bg.appendChild(m);
+      setTimeout(() => m.remove(), 2200);
+    }, delay);
+  }
+}
+if (!isLite) (function loopShower(){ setTimeout(()=>{ spawnMeteorShower(); loopShower(); }, 5000 + Math.random() * 5000); })();
 
 /* ── Math glyph decorations ── */
 const mathLayer = $('math-layer');
