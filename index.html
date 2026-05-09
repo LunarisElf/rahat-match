@@ -1046,7 +1046,7 @@ if (!isLite) (function loop2(){ setTimeout(()=>{ spawnComet(); loop2(); }, 12000
 
 /* ── Math decorations (สูตร ม.4 สสวท) ── */
 const mathLayer = $('math-layer');
-const MATH_GLYPHS = ['A∪B','A∩B','A−B','A\'','A⊂B','∅','U','|x|','ⁿ√x','√x','f(x)','f⁻¹','f∘g','aₙ','Sₙ','S∞','n!','P(A)','nCr','nPr','∀x','∃x','p∧q','p∨q','p→q','p↔q','~p','≡','D(f)','R(f)'];
+const MATH_GLYPHS = ['A∪B','A∩B','A−B','A\'','A⊂B','∅','U','|x|','ⁿ√x','√x','f(x)','f⁻¹','f∘g','∀x','∃x','p∧q','p∨q','p→q','p↔q','~p','≡','D(f)','R(f)'];
 const MATH_EQUATIONS = [
   'n(A∪B)=n(A)+n(B)−n(A∩B)',
   'n(A\')=n(U)−n(A)',
@@ -1061,16 +1061,6 @@ const MATH_EQUATIONS = [
   'aᵐ/ⁿ=ⁿ√aᵐ',
   'a⁻ⁿ=1/aⁿ',
   '(a/b)ⁿ=aⁿ/bⁿ',
-  'aₙ=a₁+(n−1)d',
-  'Sₙ=n/2[2a₁+(n−1)d]',
-  'aₙ=a₁rⁿ⁻¹',
-  'Sₙ=a₁(rⁿ−1)/(r−1)',
-  'S∞=a₁/(1−r), |r|<1',
-  'P(A)=n(A)/n(S)',
-  'P(A∪B)=P(A)+P(B)−P(A∩B)',
-  'P(A\')=1−P(A)',
-  'nCr=n!/(r!(n−r)!)',
-  'nPr=n!/(n−r)!',
   '(f∘g)(x)=f(g(x))',
   'f(x)=ax+b',
   '|x|={x, x≥0; −x, x<0}',
