@@ -59,9 +59,9 @@
 
   .input-group{margin-bottom:14px}
   .input-group label{display:block;font-weight:700;margin-bottom:6px;color:var(--gold);font-size:.95rem;letter-spacing:.5px}
-  input[type="text"],input[type="password"],input[type="url"],textarea{width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:inherit;font-size:16px;background:rgba(10,19,34,.7);color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
+  input[type="text"],input[type="password"],input[type="url"],textarea{width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-family:inherit;font-size:1rem;background:rgba(10,19,34,.7);color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
   input[type="text"],input[type="url"]{font-size:1.1rem;font-family:'Mali',cursive}
-  input[type="password"]{font-family:monospace;font-size:16px}
+  input[type="password"]{font-family:monospace;font-size:.95rem}
   input[type="text"][readonly],input[type="url"][readonly]{background:rgba(10,19,34,.4);color:var(--gold-bright);cursor:default}
   textarea{min-height:130px;resize:vertical}
   input[type="text"]::placeholder,input[type="password"]::placeholder,input[type="url"]::placeholder,textarea::placeholder{color:#4a5a73}
@@ -395,31 +395,27 @@
   }
 
   /* ── Mobile / lite mode (cheap effects) ── */
-  body.lite .nebula{filter:blur(24px);opacity:.14}
-  body.lite .nebula.cyan,body.lite .nebula.rose{display:none}
+  body.lite .nebula{filter:blur(28px);opacity:.16}
+  body.lite .nebula.cyan{display:none}
   body.lite .starfield{animation:none}
   body.lite .star.pulse{animation:twinkle var(--t,4s) ease-in-out infinite}
   body.lite .star.bright::before,
   body.lite .star.bright::after{display:none}
   body.lite .dust{display:none}
-  body.lite .glass-panel,body.lite .panel{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(14,26,47,.95)}
-  body.lite .modal{backdrop-filter:none;-webkit-backdrop-filter:none}
-  body.lite .modal-bg{backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);background:rgba(2,5,12,.94)}
-  body.lite .admin-link,body.lite .sync-pill{backdrop-filter:none;-webkit-backdrop-filter:none}
+  body.lite .glass-panel{
+    backdrop-filter:none;-webkit-backdrop-filter:none;
+    background:rgba(14,26,47,.92);
+  }
+  body.lite .modal-bg{
+    backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
+    background:rgba(2,5,12,.92);
+  }
   body.lite .math-glyph{animation-duration:140s}
   body.lite .orbit-ring{display:none}
   body.lite .reveal-stage{box-shadow:0 4px 12px rgba(0,0,0,.4)}
   body.lite .wave-band{opacity:.35}
 
   .hidden{display:none !important}
-
-  /* Touch-target minimums + larger numpad on touch devices */
-  @media(pointer:coarse){
-    button{min-height:44px;touch-action:manipulation}
-    .numpad-btn{min-height:54px}
-    .link-btn{min-height:36px}
-    .user-chip{min-height:36px}
-  }
 
   @media(max-width:640px){
     .role-picker{flex-direction:column}
@@ -429,26 +425,9 @@
     .admin-link{bottom:8px;right:8px}
     .orbit-ring{width:240px;height:240px;top:-60px}
     .orbit-ring::before{transform-origin:0 123px}
-    .app{padding:20px 14px 80px}
-    header.site{margin-bottom:18px}
-    .glass-panel{padding:24px 20px 22px}
-    .hint-compose{flex-direction:column}
-    .hint-compose button{width:100%}
-    .welcome-secondary{flex-wrap:wrap;gap:6px}
-  }
-  @media(max-width:480px){
-    #math-layer{display:none}
-    .reveal-stage{padding:20px 14px;min-height:180px}
-    .glass-panel{padding:22px 16px 20px}
-    button.cta{font-size:1.1rem;padding:13px 26px}
-    .actions{gap:8px}
-    .numpad{max-width:260px;gap:8px}
-    .hint-compose{gap:8px}
-    .modal{padding:24px 18px;max-width:calc(100vw - 32px)}
   }
   @media(prefers-reduced-motion:reduce){
     .nebula,.star,.starfield,.dust,.math-glyph,.wave-band path,.orbit-ring::before{animation:none}
-    .notify-pulse,.pin-pop,.pin-glow,.hint-flash,.hint-in,.glyph-drift{animation:none !important}
   }
 </style>
 </head>
@@ -1064,7 +1043,7 @@ if (isLite) document.body.classList.add('lite');
 const bg = $('bg');
 const layerFar = $('layer-far'), layerMid = $('layer-mid'), layerNear = $('layer-near');
 const colorRoll = () => { const r = Math.random(); return r < 0.66 ? '' : r < 0.84 ? ' blue' : r < 0.95 ? ' gold' : ' red'; };
-const STAR_MULT = isLite ? 0.32 : 1;
+const STAR_MULT = isLite ? 0.5 : 1;
 const layerSpec = [
   { el: layerFar,  count: Math.round(380 * STAR_MULT), sMin: 0.6, sMax: 1.5, oMin: 0.4,  oMax: 0.85, tMin: 4, tMax: 9, brightChance: 0.01, pulseChance: 0.04 },
   { el: layerMid,  count: Math.round(220 * STAR_MULT), sMin: 1.1, sMax: 2.4, oMin: 0.55, oMax: 0.95, tMin: 3, tMax: 7, brightChance: 0.08, pulseChance: 0.12 },
@@ -1088,7 +1067,7 @@ for (const L of layerSpec) {
     L.el.appendChild(s);
   }
 }
-const DUST_COUNT = isLite ? 0 : 20;
+const DUST_COUNT = isLite ? 0 : 30;
 for (let i = 0; i < DUST_COUNT; i++) {
   const d = document.createElement('div');
   d.className = 'dust';
