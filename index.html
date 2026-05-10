@@ -655,6 +655,7 @@
       <div id="admin-users" class="user-list"></div>
       <div class="actions" style="justify-content:flex-start">
         <button id="admin-randomize" class="cta">สุ่มจับคู่</button>
+        <button id="admin-toggle-lock" class="ghost">ปิดการลงทะเบียน</button>
         <button id="admin-reset-matches" class="ghost" data-text="btnResetMatches">ล้างผลสุ่ม</button>
         <button id="admin-reset-all" class="danger" data-text="btnResetAll">ล้างข้อมูลทั้งหมด</button>
         <button id="admin-signout" class="ghost" data-text="btnAdminSignout">ออกจากระบบ</button>
@@ -814,6 +815,16 @@ const TEXT = {
   ],
   errEmptyName: 'กรอกชื่อก่อน',
   errCannotRegisterAfter: 'ไม่สามารถลงทะเบียนได้เพราะได้ทำการจับคู่ไปแแล้ว ติดต่อพี่ฟอร์ด 🥰🥰',
+  errRegistrationLocked: 'ปิดรับลงทะเบียนแล้ว — ติดต่อพี่ฟอร์ด 🥰',
+  btnLockReg: 'ปิดการลงทะเบียน',
+  btnUnlockReg: 'เปิดการลงทะเบียน',
+  lockRegConfirm: 'ปิดรับลงทะเบียน?',
+  lockRegText: 'ผู้ใช้ใหม่จะลงทะเบียนไม่ได้จนกว่าจะกดเปิดอีกครั้ง',
+  unlockRegConfirm: 'เปิดรับลงทะเบียนอีกครั้ง?',
+  unlockRegText: 'ผู้ใช้ใหม่จะลงทะเบียนได้ตามปกติ',
+  okRegLocked: 'ปิดรับลงทะเบียนแล้ว',
+  okRegUnlocked: 'เปิดรับลงทะเบียนแล้ว',
+  statusRegLocked: '🔒 ปิดรับลงทะเบียนชั่วคราว',
 
   // Register
   registerTitle: 'กรอกข้อมูล',
@@ -1296,7 +1307,7 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 /* ── Data + sync ── */
-const defaultData = () => ({ users: [], matches: {}, randomizedAt: null });
+const defaultData = () => ({ users: [], matches: {}, randomizedAt: null, registrationLocked: false });
 let data = defaultData();
 const syncPill = $('sync-pill');
 const syncTextEl = $('sync-text');
@@ -1382,6 +1393,7 @@ const hashPin = async (pin) => {
 const isValidPin = (pin) => /^\d{4,6}$/.test(pin);
 const roleLabel = r => r === 'senior' ? TEXT.roleSenior : TEXT.roleJunior;
 const isRandomized = () => !!data.randomizedAt;
+const isRegistrationLocked = () => data.registrationLocked === true || isRandomized();
 const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 /* ── Song / streaming-platform helpers ── */
@@ -1576,6 +1588,11 @@ const updateHomeStatus = () => {
   if (isRandomized()) {
     statusText.textContent = TEXT.statusRandomized;
     statusBanner.classList.add('live');
+  } else if (data.registrationLocked) {
+    const sCount = data.users.filter(u => u.role === 'senior').length;
+    const jCount = data.users.filter(u => u.role === 'junior').length;
+    statusText.textContent = `${TEXT.statusRegLocked} · พี่ ${sCount} · น้อง ${jCount}`;
+    statusBanner.classList.add('live');
   } else {
     const sCount = data.users.filter(u => u.role === 'senior').length;
     const jCount = data.users.filter(u => u.role === 'junior').length;
@@ -1650,6 +1667,7 @@ const handleHomeGo = () => {
     }
   } else {
     if (isRandomized()) { showWarn(homeWarn, TEXT.errCannotRegisterAfter, true); return; }
+    if (isRegistrationLocked()) { showWarn(homeWarn, TEXT.errRegistrationLocked, true); return; }
     $('reg-name').value = name;
     openRegister();
   }
@@ -1685,6 +1703,7 @@ regNext.addEventListener('click', () => {
   if (!name) { showWarn(regWarn, TEXT.errEmptyName, true); return; }
   if (findUserByName(name)) { showWarn(regWarn, TEXT.errDuplicate, true); return; }
   if (isRandomized()) { showWarn(regWarn, TEXT.errLocked, true); return; }
+  if (isRegistrationLocked()) { showWarn(regWarn, TEXT.errRegistrationLocked, true); return; }
   try { readSongFromForm('reg-song'); }
   catch (e) { if (e.uiAbort) { showWarn(regWarn, e.message, true); return; } throw e; }
   showWarn(regWarn, '');
@@ -1778,6 +1797,7 @@ regSave.addEventListener('click', async () => {
     const lname = name.toLowerCase();
     await txnUpdate(curr => {
       if (curr.randomizedAt) throw new TxnAbort(TEXT.errLocked);
+      if (curr.registrationLocked) throw new TxnAbort(TEXT.errRegistrationLocked);
       if (curr.users.some(u => u.name.toLowerCase() === lname)) throw new TxnAbort(TEXT.errDuplicate);
       curr.users.push(user);
       return curr;
@@ -2324,6 +2344,20 @@ $('admin-signout').addEventListener('click', async () => {
   setScreen('home');
 });
 
+$('admin-toggle-lock').addEventListener('click', () => {
+  const locking = !data.registrationLocked;
+  confirmModal(
+    locking ? TEXT.lockRegConfirm : TEXT.unlockRegConfirm,
+    locking ? TEXT.lockRegText : TEXT.unlockRegText,
+    async () => {
+      try {
+        await txnUpdate(curr => { curr.registrationLocked = locking; return curr; });
+        flash(locking ? TEXT.okRegLocked : TEXT.okRegUnlocked);
+      } catch (e) { flash(TEXT.errFail(e.message), true); }
+    }
+  );
+});
+
 const renderAdmin = () => {
   const seniors = data.users.filter(u => u.role === 'senior');
   const juniors = data.users.filter(u => u.role === 'junior');
@@ -2379,6 +2413,10 @@ const renderAdmin = () => {
   }
 
   adminRandomize.textContent = isRandomized() ? TEXT.btnRerandomize : TEXT.btnRandomize;
+
+  const lockBtn = $('admin-toggle-lock');
+  lockBtn.classList.toggle('hidden', isRandomized());
+  lockBtn.textContent = data.registrationLocked ? TEXT.btnUnlockReg : TEXT.btnLockReg;
 };
 
 /* ── User detail modal (admin) ── */
