@@ -13,17 +13,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#070d18;--bg-1:#0e1a2f;--bg-2:#172a48;--line:#243a5e;--gold:#c9a961;--gold-bright:#e6c97a;--text:#e8eef5;--muted:#8b9bb0;--danger:#e74c3c}
+  :root{--bg:#070d18;--bg-1:#0e1a2f;--bg-2:#172a48;--line:#243a5e;--gold:#c9a961;--gold-bright:#e6c97a;--rose:#d97f9c;--rose-soft:rgba(217,127,156,.55);--text:#e8eef5;--muted:#8b9bb0;--danger:#c0382b}
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{min-height:100vh;min-height:100dvh}
   body{font-family:'Sarabun',sans-serif;color:var(--text);background:var(--bg);overflow-x:hidden;display:flex;flex-direction:column}
 
   #bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;contain:layout paint size;background:radial-gradient(1600px 1100px at 20% 0%,#1a2c4a 0%,transparent 55%),radial-gradient(1400px 900px at 88% 100%,#11203b 0%,transparent 65%),radial-gradient(900px 700px at 60% 40%,#1c2754 0%,transparent 70%),radial-gradient(circle at 70% 90%,#0a1228 0%,#020510 95%),#020510}
   .nebula{position:absolute;width:60vw;height:60vw;max-width:1000px;max-height:1000px;border-radius:50%;filter:blur(50px);opacity:.55;mix-blend-mode:screen;animation:nebula-float 32s ease-in-out infinite alternate;contain:layout paint;will-change:transform}
-  .nebula.purple{background:radial-gradient(circle,rgba(155,90,220,.85) 0%,transparent 65%);top:-12%;left:-12%;animation-duration:36s}
-  .nebula.gold{background:radial-gradient(circle,rgba(220,180,110,.72) 0%,transparent 60%);bottom:-18%;right:-12%;animation-duration:28s;animation-delay:-12s}
-  .nebula.cyan{background:radial-gradient(circle,rgba(80,160,235,.78) 0%,transparent 65%);top:30%;left:28%;animation-duration:42s;animation-delay:-18s}
-  .nebula.pink{position:absolute;width:45vw;height:45vw;max-width:780px;max-height:780px;background:radial-gradient(circle,rgba(220,110,180,.65) 0%,transparent 60%);top:60%;left:60%;border-radius:50%;filter:blur(56px);opacity:.42;mix-blend-mode:screen;animation:nebula-float 38s ease-in-out infinite alternate;animation-delay:-22s;contain:layout paint;will-change:transform}
+  .nebula.purple,.nebula.pink{display:none}
+  .nebula.gold{background:radial-gradient(circle,rgba(220,180,110,.78) 0%,transparent 60%);top:-12%;left:-12%;animation-duration:28s}
+  .nebula.cyan{background:radial-gradient(circle,rgba(80,160,235,.7) 0%,transparent 65%);bottom:-15%;right:-10%;animation-duration:42s;animation-delay:-18s}
+  .nebula.rose{position:absolute;width:48vw;height:48vw;max-width:820px;max-height:820px;background:radial-gradient(circle,rgba(217,127,156,.55) 0%,transparent 60%);top:55%;left:35%;border-radius:50%;filter:blur(64px);opacity:.32;mix-blend-mode:screen;animation:nebula-float 38s ease-in-out infinite alternate;animation-delay:-22s;contain:layout paint;will-change:transform}
   @keyframes nebula-float{0%{transform:translate(0,0) scale(1) rotate(0deg);opacity:.32}50%{transform:translate(5%,-4%) scale(1.15) rotate(8deg);opacity:.5}100%{transform:translate(-4%,5%) scale(1.06) rotate(-7deg);opacity:.36}}
   .starfield{position:absolute;inset:-25%;width:150%;height:150%;transform-origin:50% 50%;contain:layout paint;will-change:transform}
   .starfield.far{animation:spin-cw 720s linear infinite}
@@ -95,6 +95,10 @@
   .pin-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);background:transparent;transition:all .2s}
   .pin-display.compact .pin-dot{width:14px;height:14px;border-width:2px}
   .pin-dot.filled{background:var(--gold);border-color:var(--gold);box-shadow:0 0 12px rgba(201,169,97,.55);transform:scale(1.05)}
+  .pin-dot.just-filled{animation:pin-pop .35s cubic-bezier(.34,1.56,.64,1)}
+  @keyframes pin-pop{0%{transform:scale(.6);box-shadow:0 0 0 rgba(201,169,97,0)}55%{transform:scale(1.35);box-shadow:0 0 24px rgba(230,201,122,.9)}100%{transform:scale(1.05);box-shadow:0 0 12px rgba(201,169,97,.55)}}
+  .pin-display.complete .pin-dot.filled{animation:pin-glow 1.6s ease-in-out infinite}
+  @keyframes pin-glow{0%,100%{box-shadow:0 0 12px rgba(201,169,97,.55)}50%{box-shadow:0 0 22px rgba(230,201,122,.85)}}
   .pin-dot.shake{animation:pin-shake .4s ease}
   @keyframes pin-shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
   .numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 auto 8px;max-width:280px}
@@ -113,7 +117,9 @@
   @keyframes pulse-dot{0%,100%{opacity:.5}50%{opacity:1}}
 
   .panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
-  .panel-head h2{font-family:'Mali',cursive;font-size:1.4rem;color:var(--gold)}
+  .panel-head h2{font-family:'Mali',cursive;font-size:1.55rem;color:var(--gold-bright);text-shadow:0 0 10px rgba(230,201,122,.25)}
+  .section-heading{font-family:'Sarabun',sans-serif;font-weight:700;font-size:.95rem;color:var(--gold-bright);letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+  .section-heading::before{content:'';width:24px;height:1px;background:var(--gold);flex-shrink:0}
   .panel-meta{color:var(--muted);font-size:.95rem}
 
   .user-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
@@ -160,7 +166,10 @@
   .hints-title{font-family:'Sarabun',sans-serif;font-weight:700;font-size:.72rem;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
   .hints-list{margin:0;padding-left:24px;color:var(--text);font-family:'Mali',cursive;line-height:1.7}
   .hints-list li{margin-bottom:4px;position:relative;padding-right:32px;animation:hint-in .3s ease both}
+  .hints-list li::marker{color:var(--rose)}
+  .hints-list li.hint-new{animation:hint-flash 1.4s ease-out both}
   @keyframes hint-in{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+  @keyframes hint-flash{0%{background:rgba(217,127,156,.4);box-shadow:0 0 0 4px rgba(217,127,156,.3);transform:translateX(-6px);opacity:0}15%{opacity:1;transform:translateX(0)}100%{background:transparent;box-shadow:0 0 0 0 rgba(217,127,156,0)}}
   .hints-empty{color:var(--muted);font-style:italic;font-size:.95rem;font-family:'Mali',cursive}
   .hint-del{position:absolute;right:0;top:2px;background:transparent;border:none;color:var(--muted);font-size:.85rem;cursor:pointer;padding:2px 6px;border-radius:6px;width:auto;height:auto;line-height:1}
   .hint-del:hover{color:#ffb4ad;background:rgba(231,76,60,.1)}
@@ -168,9 +177,15 @@
   .hint-compose input{flex:1}
   .hint-compose button{flex-shrink:0;padding:0 16px;font-size:.95rem;width:auto;height:auto;white-space:nowrap}
 
-  .welcome-notify{display:inline-block;padding:8px 14px;border-radius:999px;background:rgba(201,169,97,.12);border:1px solid var(--gold);color:var(--gold-bright);font-size:.9rem;font-family:'Mali',cursive;margin-bottom:14px;animation:notify-pulse 1.6s ease-in-out infinite}
-  @keyframes notify-pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,169,97,.45)}50%{box-shadow:0 0 0 6px rgba(201,169,97,0)}}
-  #welcome-action-badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 7px;margin-left:8px;border-radius:999px;background:#fff;color:#0a1322;font-family:'Sarabun',sans-serif;font-weight:700;font-size:.8rem;vertical-align:middle}
+  .welcome-notify{display:inline-block;padding:8px 14px;border-radius:999px;background:rgba(217,127,156,.12);border:1px solid var(--rose);color:#fbb8cd;font-size:.9rem;font-family:'Mali',cursive;margin-bottom:14px;animation:notify-pulse 1.6s ease-in-out infinite}
+  @keyframes notify-pulse{0%,100%{box-shadow:0 0 0 0 rgba(217,127,156,.5)}50%{box-shadow:0 0 0 6px rgba(217,127,156,0)}}
+  #welcome-action-badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 7px;margin-left:8px;border-radius:999px;background:var(--rose);color:#fff;font-family:'Sarabun',sans-serif;font-weight:700;font-size:.8rem;vertical-align:middle}
+
+  .welcome-secondary{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:14px}
+  .welcome-divider{color:var(--muted);opacity:.5}
+  .link-btn{background:none;border:none;color:var(--muted);font-family:'Sarabun',sans-serif;font-size:.85rem;font-weight:500;letter-spacing:.3px;padding:4px 6px;cursor:pointer;border-radius:4px;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:3px;transition:color .15s,text-decoration-color .15s;box-shadow:none;height:auto}
+  .link-btn:hover:not(:disabled){background:transparent;color:var(--gold-bright);text-decoration-color:var(--gold);transform:none;box-shadow:none}
+  .link-btn.link-danger:hover:not(:disabled){color:#ffb4ad;text-decoration-color:var(--danger)}
   .song-info{flex:1;min-width:0}
   .song-title{font-family:'Mali',cursive;font-weight:700;color:var(--gold-bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:1rem}
   .song-artist{font-size:.85rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -418,10 +433,9 @@
 </head>
 <body>
   <div id="bg">
-    <div class="nebula purple"></div>
-    <div class="nebula cyan"></div>
     <div class="nebula gold"></div>
-    <div class="nebula pink"></div>
+    <div class="nebula cyan"></div>
+    <div class="nebula rose"></div>
     <div class="starfield far"  id="layer-far"></div>
     <div class="starfield mid"  id="layer-mid"></div>
     <div class="starfield near" id="layer-near"></div>
@@ -471,10 +485,13 @@
         <p style="color:var(--muted);margin-bottom:14px;font-size:.95rem;letter-spacing:.5px" data-text="welcomeBack">ยินดีต้อนรับกลับ</p>
         <div id="welcome-name" style="font-family:'Mali',cursive;font-size:1.7rem;color:var(--gold-bright);margin-top:6px;margin-bottom:14px;line-height:1.2;text-shadow:0 0 14px rgba(230,201,122,.3)">—</div>
         <div id="welcome-notify" class="welcome-notify hidden"></div>
-        <div class="actions" style="margin-top:8px">
+        <div class="actions" style="margin-top:8px;justify-content:center">
           <button id="welcome-action" class="cta"><span id="welcome-action-label">แก้ไขข้อมูล</span><span id="welcome-action-badge" class="hidden">0</span></button>
-          <button id="welcome-switch" class="ghost" data-text="btnSwitchUser">เปลี่ยนผู้ใช้</button>
-          <button id="welcome-delete" class="danger" data-text="btnDelete">ลบบัญชี</button>
+        </div>
+        <div class="welcome-secondary">
+          <button id="welcome-switch" class="link-btn" data-text="btnSwitchUser">เปลี่ยนผู้ใช้</button>
+          <span class="welcome-divider">·</span>
+          <button id="welcome-delete" class="link-btn link-danger" data-text="btnDelete">ลบบัญชี</button>
         </div>
       </div>
 
@@ -771,8 +788,9 @@ const TEXT = {
 
   // Status banner
   statusLoading: 'กำลังโหลด...',
-  statusRandomized: 'สุ่มแล้ว',
-  statusNotRandomized: (n, s, j) => `ยังไม่ได้เริ่มการจับคู่ — ลงทะเบียนแล้ว ${n} คน (พี่ ${s} · น้อง ${j})`,
+  statusRandomized: '🔒 จับคู่เรียบร้อย',
+  statusEmpty: 'เริ่มต้นได้เลย ☆',
+  statusNotRandomized: (n, s, j) => n === 0 ? '☆ ยังไม่มีใครลงทะเบียน — เป็นคนแรกได้เลย' : `✨ มี ${n} คนพร้อมแล้ว · พี่ ${s} · น้อง ${j}`,
 
   // Welcome panel
   welcomeBack: 'ยินดีต้อนรับ',
@@ -1114,7 +1132,9 @@ for (let i = 0; i < MATH_COUNT; i++) {
   const colorCls = MATH_COLOR_CLASSES[Math.floor(Math.random() * MATH_COLOR_CLASSES.length)];
   g.className = 'math-glyph' + (colorCls ? ' ' + colorCls : '');
   g.textContent = text;
-  g.style.left = (Math.random() * 100).toFixed(1) + '%';
+  // Bias position to outer 26% on each side so center stays clear for forms
+  const leftPct = Math.random() < 0.5 ? Math.random() * 26 : 74 + Math.random() * 26;
+  g.style.left = leftPct.toFixed(1) + '%';
   g.style.top = (Math.random() * 100).toFixed(1) + '%';
   const size = isEqn ? (0.85 + Math.random() * 0.5) : (1.2 + Math.random() * 1.8);
   g.style.fontSize = size.toFixed(2) + 'rem';
@@ -1683,9 +1703,17 @@ let _regPinStage = 'enter';
 let _regPinFirst = '';
 let _regPinCurrent = '';
 
+let _regPinPrevLen = 0;
 const renderRegPinDisplay = () => {
   const dots = regPinDisplay.querySelectorAll('.pin-dot');
-  dots.forEach((d, i) => d.classList.toggle('filled', i < _regPinCurrent.length));
+  const len = _regPinCurrent.length;
+  const justAdded = len > _regPinPrevLen ? len - 1 : -1;
+  dots.forEach((d, i) => {
+    d.classList.toggle('filled', i < len);
+    d.classList.toggle('just-filled', i === justAdded);
+  });
+  regPinDisplay.classList.toggle('complete', len >= 4);
+  _regPinPrevLen = len;
 };
 
 const shakeRegPinDisplay = () => {
@@ -1839,9 +1867,17 @@ let _cpinStage = 'current';
 let _cpinNew = '';
 let _cpinCurrent = '';
 
+let _cpinPrevLen = 0;
 const renderCpinDisplay = () => {
   const dots = cpinDisplay.querySelectorAll('.pin-dot');
-  dots.forEach((d, i) => d.classList.toggle('filled', i < _cpinCurrent.length));
+  const len = _cpinCurrent.length;
+  const justAdded = len > _cpinPrevLen ? len - 1 : -1;
+  dots.forEach((d, i) => {
+    d.classList.toggle('filled', i < len);
+    d.classList.toggle('just-filled', i === justAdded);
+  });
+  cpinDisplay.classList.toggle('complete', len >= 4);
+  _cpinPrevLen = len;
 };
 
 const shakeCpinDisplay = () => {
@@ -2021,11 +2057,13 @@ const openReveal = (u) => {
   revealStage.innerHTML = html;
 
   if (u.role === 'junior') setHintsSeenFor(u.id, (partner.hints || []).length);
+  _hintsLastSeenLen = -1;
   renderHintsPanel();
   setScreen('reveal');
   runScan();
 };
 
+let _hintsLastSeenLen = -1;
 const renderHintsPanel = () => {
   if (!currentUserId) { hintsPanel.classList.add('hidden'); return; }
   const me = findUserById(currentUserId);
@@ -2037,6 +2075,8 @@ const renderHintsPanel = () => {
   const isAuthor = me.role === 'senior';
   const sourceUser = isAuthor ? me : partner;
   const hints = sourceUser.hints || [];
+  const grew = _hintsLastSeenLen >= 0 && hints.length > _hintsLastSeenLen;
+  _hintsLastSeenLen = hints.length;
   if (!isAuthor) setHintsSeenFor(me.id, hints.length);
 
   const prevInput = $('hint-input');
@@ -2049,7 +2089,8 @@ const renderHintsPanel = () => {
   if (hints.length > 0) {
     html += '<ol class="hints-list">';
     hints.forEach((h, i) => {
-      html += `<li>${escapeHtml(h)}${isAuthor ? `<button class="hint-del" data-idx="${i}" type="button" aria-label="ลบคำใบ้">✕</button>` : ''}</li>`;
+      const flashCls = (grew && i === hints.length - 1) ? ' hint-new' : '';
+      html += `<li class="${flashCls.trim()}">${escapeHtml(h)}${isAuthor ? `<button class="hint-del" data-idx="${i}" type="button" aria-label="ลบคำใบ้">✕</button>` : ''}</li>`;
     });
     html += '</ol>';
   } else {
@@ -2061,6 +2102,12 @@ const renderHintsPanel = () => {
 
   hintsPanel.innerHTML = html;
   hintsPanel.classList.remove('hidden');
+  if (grew) {
+    const newest = hintsPanel.querySelector('.hint-new');
+    if (newest) {
+      requestAnimationFrame(() => newest.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+    }
+  }
 
   if (isAuthor) {
     const input = $('hint-input');
@@ -2144,9 +2191,17 @@ let _pinTargetUser = null;
 let _pinSuccessCb = null;
 let _pinCurrent = '';
 
+let _pinPrevLen = 0;
 const renderPinDisplay = () => {
   const dots = pinDisplay.querySelectorAll('.pin-dot');
-  dots.forEach((d, i) => d.classList.toggle('filled', i < _pinCurrent.length));
+  const len = _pinCurrent.length;
+  const justAdded = len > _pinPrevLen ? len - 1 : -1;
+  dots.forEach((d, i) => {
+    d.classList.toggle('filled', i < len);
+    d.classList.toggle('just-filled', i === justAdded);
+  });
+  pinDisplay.classList.toggle('complete', len >= 4);
+  _pinPrevLen = len;
 };
 
 const shakePinDisplay = () => {
