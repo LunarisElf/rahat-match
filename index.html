@@ -163,6 +163,11 @@
   .platform-icon.thumb img{width:100%;height:100%;object-fit:cover;display:block}
 
   .hints-panel{margin-top:14px;padding:14px 16px;background:rgba(20,35,60,.4);border:1px solid var(--line);border-radius:14px;text-align:left}
+  .hint-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+  .hint-tab{background:rgba(14,26,47,.6);border:1px solid var(--line);color:var(--muted);padding:5px 12px;border-radius:999px;font-family:'Sarabun',sans-serif;font-size:.78rem;cursor:pointer;width:auto;height:auto;line-height:1.3;transition:all .15s}
+  .hint-tab:hover{color:var(--text);border-color:var(--gold)}
+  .hint-tab.active{background:var(--gold);color:#0a1322;border-color:var(--gold);font-weight:700}
+  .partner-divider{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:18px 0 14px}
   .hints-title{font-family:'Sarabun',sans-serif;font-weight:700;font-size:.72rem;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
   .hints-list{margin:0;padding-left:24px;color:var(--text);font-family:'Mali',cursive;line-height:1.7}
   .hints-list li{margin-bottom:4px;position:relative;padding-right:32px;animation:hint-in .3s ease both}
@@ -904,6 +909,7 @@ const TEXT = {
   // Reveal
   revealDefaultTitle: 'คู่ของคุณ',
   revealSeniorTitle: 'น้องของคุณคือ',
+  revealSeniorTitleMulti: (n) => `น้องของคุณ ${n} คน`,
   revealJuniorTitle: 'ข้อความจากพี่รหัส',
   revealNoPairTitle: 'ผลลัพธ์',
   revealMysteryName: '???',
@@ -916,6 +922,7 @@ const TEXT = {
 
   // Hints
   hintsTitleAuthor: 'คำใบ้ที่ให้น้อง',
+  hintsTitleAuthorFor: (name) => `คำใบ้ที่ให้ ${name}`,
   hintsTitleViewer: 'คำใบ้จากพี่',
   hintsEmptyAuthor: 'ยังไม่ได้ให้คำใบ้น้อง — เพิ่มได้เลย',
   hintsEmptyViewer: 'พี่ยังไม่ให้คำใบ้',
@@ -939,8 +946,16 @@ const TEXT = {
   btnResetAll: 'ล้างข้อมูลทั้งหมด',
   errInsufficient: 'ต้องมีทั้งพี่และน้องอย่างน้อย 1 คน',
   randomizeConfirm: (act) => `${act}?`,
-  randomizeConfirmText: (n, w) => `จะสุ่ม ${n} คู่${w}`,
-  randomizeWarn: (s, j) => `\n(พี่ ${s} vs น้อง ${j} — จะมีคนไม่ได้คู่)`,
+  randomizeConfirmText: (n, w) => `จะจับคู่ ${n} น้อง${w}`,
+  randomizeWarn: (s, j, unmatched) => {
+    const head = `\n(พี่ ${s} vs น้อง ${j}`;
+    if (j > s) {
+      const extra = Math.min(j, s * 2) - s;
+      const tail = unmatched > 0 ? ` — น้องเหลือ ${unmatched} คนไม่ได้พี่)` : `)`;
+      return `${head} — พี่ ${extra} คนจะได้น้อง 2 คน${tail}`;
+    }
+    return `${head} — พี่ ${unmatched} คนจะไม่ได้น้อง)`;
+  },
   okRandomized: 'สุ่มการจับคู่แล้ว',
   errRandomizeFail: (m) => 'สุ่มล้มเหลว: ' + m,
   resetMatchesConfirm: 'ล้างผลการจับคู่ไหม?',
@@ -1383,6 +1398,24 @@ const findUserByName = name => {
   return data.users.find(u => u.name.toLowerCase() === n);
 };
 const findUserById = id => data.users.find(u => u.id === id);
+const getPartnerIds = id => {
+  const v = data.matches[id];
+  if (v == null) return [];
+  return Array.isArray(v) ? v.slice() : [v];
+};
+const getPartnerIdsFrom = (matches, id) => {
+  const v = matches[id];
+  if (v == null) return [];
+  return Array.isArray(v) ? v.slice() : [v];
+};
+const getHintsForJunior = (senior, juniorId) => {
+  if (!senior) return [];
+  const byJ = senior.hintsByJunior;
+  if (byJ && Array.isArray(byJ[juniorId])) return byJ[juniorId];
+  const partners = getPartnerIds(senior.id);
+  if (partners.length <= 1 && Array.isArray(senior.hints)) return senior.hints;
+  return [];
+};
 const newId = () => 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
 const PIN_SALT = 'rahut-match-2569';
 const hashPin = async (pin) => {
@@ -1614,7 +1647,7 @@ const updateHomeStatus = () => {
       const partnerId = data.matches[me.id];
       const partner = partnerId ? findUserById(partnerId) : null;
       if (partner) {
-        const total = (partner.hints || []).length;
+        const total = getHintsForJunior(partner, me.id).length;
         const seen = getHintsSeenFor(me.id);
         unread = Math.max(0, total - seen);
       }
@@ -2041,14 +2074,14 @@ const openReveal = (u) => {
   currentUserId = u.id;
   revealSelfLabel.textContent = '';
   revealSelfLabel.style.display = 'none';
-  const partnerId = data.matches[u.id];
-  const partner = partnerId ? findUserById(partnerId) : null;
+  const partnerIds = getPartnerIds(u.id);
+  const partners = partnerIds.map(findUserById).filter(Boolean);
 
   revealStage.classList.remove('done', 'no-partner');
   revealStage.style.removeProperty('--scan');
   revealHint.textContent = TEXT.revealScanning;
 
-  if (!partner) {
+  if (partners.length === 0) {
     revealTitle.textContent = TEXT.revealNoPairTitle;
     revealStage.classList.add('no-partner');
     revealStage.innerHTML = `<div class="no-partner-msg">${escapeHtml(TEXT.revealNoPairMsg)}<br><span style="font-size:.95rem;color:var(--muted);font-style:italic">${escapeHtml(TEXT.revealNoPairHint)}</span></div>`;
@@ -2058,43 +2091,70 @@ const openReveal = (u) => {
     return;
   }
 
-  const fromTag = `<div class="from-tag">${escapeHtml(TEXT.revealFromTag(roleLabel(partner.role)))}</div>`;
-  const msgClass = partner.message ? '' : ' empty';
-  const msgText = partner.message || TEXT.revealNoMessage;
-  const songHtml = songCardHtml(partner.song);
   let html = '<div class="content">';
   if (u.role === 'senior') {
-    revealTitle.textContent = TEXT.revealSeniorTitle;
-    html += `<div class="partner-name">${escapeHtml(partner.name)}</div>`;
-    html += fromTag + `<div class="partner-message${msgClass}">${escapeHtml(msgText)}</div>`;
+    revealTitle.textContent = partners.length > 1 ? TEXT.revealSeniorTitleMulti(partners.length) : TEXT.revealSeniorTitle;
+    partners.forEach((p, idx) => {
+      const msgClass = p.message ? '' : ' empty';
+      const msgText = p.message || TEXT.revealNoMessage;
+      const fromTag = `<div class="from-tag">${escapeHtml(TEXT.revealFromTag(roleLabel(p.role)))}</div>`;
+      if (idx > 0) html += `<div class="partner-divider"></div>`;
+      html += `<div class="partner-name">${escapeHtml(p.name)}</div>`;
+      html += fromTag + `<div class="partner-message${msgClass}">${escapeHtml(msgText)}</div>`;
+      html += songCardHtml(p.song);
+    });
   } else {
+    const partner = partners[0];
+    const msgClass = partner.message ? '' : ' empty';
+    const msgText = partner.message || TEXT.revealNoMessage;
+    const fromTag = `<div class="from-tag">${escapeHtml(TEXT.revealFromTag(roleLabel(partner.role)))}</div>`;
     revealTitle.textContent = TEXT.revealJuniorTitle;
     html += `<div class="partner-name" style="color:var(--muted);font-size:1.4rem;font-style:italic">${escapeHtml(TEXT.revealMysteryName)}</div>`;
     html += fromTag + `<div class="partner-message${msgClass}">${escapeHtml(msgText)}</div>`;
+    html += songCardHtml(partner.song);
   }
-  html += songHtml;
   html += '</div><div class="beam"></div>';
   revealStage.innerHTML = html;
 
-  if (u.role === 'junior') setHintsSeenFor(u.id, (partner.hints || []).length);
+  if (u.role === 'junior') {
+    const senior = partners[0];
+    setHintsSeenFor(u.id, getHintsForJunior(senior, u.id).length);
+  }
   _hintsLastSeenLen = -1;
+  if (u.role === 'senior' && partners.length > 0) {
+    if (!partners.find(p => p.id === _seniorActiveJuniorId)) {
+      _seniorActiveJuniorId = partners[0].id;
+    }
+  }
   renderHintsPanel();
   setScreen('reveal');
   runScan();
 };
 
 let _hintsLastSeenLen = -1;
+let _seniorActiveJuniorId = null;
 const renderHintsPanel = () => {
   if (!currentUserId) { hintsPanel.classList.add('hidden'); return; }
   const me = findUserById(currentUserId);
   if (!me) { hintsPanel.classList.add('hidden'); return; }
-  const partnerId = data.matches[me.id];
-  const partner = partnerId ? findUserById(partnerId) : null;
-  if (!partner) { hintsPanel.classList.add('hidden'); return; }
-
   const isAuthor = me.role === 'senior';
-  const sourceUser = isAuthor ? me : partner;
-  const hints = sourceUser.hints || [];
+  const partnerIds = getPartnerIds(me.id);
+  const partners = partnerIds.map(findUserById).filter(Boolean);
+  if (partners.length === 0) { hintsPanel.classList.add('hidden'); return; }
+
+  let activeJuniorId, senior, hints;
+  if (isAuthor) {
+    if (!partners.find(p => p.id === _seniorActiveJuniorId)) {
+      _seniorActiveJuniorId = partners[0].id;
+    }
+    activeJuniorId = _seniorActiveJuniorId;
+    senior = me;
+    hints = getHintsForJunior(me, activeJuniorId);
+  } else {
+    senior = partners[0];
+    activeJuniorId = me.id;
+    hints = getHintsForJunior(senior, me.id);
+  }
   const grew = _hintsLastSeenLen >= 0 && hints.length > _hintsLastSeenLen;
   _hintsLastSeenLen = hints.length;
   if (!isAuthor) setHintsSeenFor(me.id, hints.length);
@@ -2105,7 +2165,21 @@ const renderHintsPanel = () => {
   const prevSelStart = prevFocused ? prevInput.selectionStart : null;
   const prevSelEnd = prevFocused ? prevInput.selectionEnd : null;
 
-  let html = `<div class="hints-title">${escapeHtml(isAuthor ? TEXT.hintsTitleAuthor : TEXT.hintsTitleViewer)}</div>`;
+  let html = '';
+  if (isAuthor && partners.length > 1) {
+    html += '<div class="hint-tabs">';
+    partners.forEach(p => {
+      const cls = p.id === activeJuniorId ? 'active' : '';
+      html += `<button type="button" class="hint-tab ${cls}" data-jid="${escapeHtml(p.id)}">${escapeHtml(p.name)}</button>`;
+    });
+    html += '</div>';
+  }
+  const titleText = isAuthor
+    ? (partners.length > 1
+        ? TEXT.hintsTitleAuthorFor((partners.find(p => p.id === activeJuniorId) || partners[0]).name)
+        : TEXT.hintsTitleAuthor)
+    : TEXT.hintsTitleViewer;
+  html += `<div class="hints-title">${escapeHtml(titleText)}</div>`;
   if (hints.length > 0) {
     html += '<ol class="hints-list">';
     hints.forEach((h, i) => {
@@ -2129,6 +2203,16 @@ const renderHintsPanel = () => {
     }
   }
 
+  if (isAuthor && partners.length > 1) {
+    hintsPanel.querySelectorAll('.hint-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        _seniorActiveJuniorId = btn.dataset.jid;
+        _hintsLastSeenLen = -1;
+        renderHintsPanel();
+      });
+    });
+  }
+
   if (isAuthor) {
     const input = $('hint-input');
     const addBtn = $('hint-add');
@@ -2137,6 +2221,7 @@ const renderHintsPanel = () => {
       input.focus();
       try { input.setSelectionRange(prevSelStart, prevSelEnd); } catch {}
     }
+    const targetJuniorId = activeJuniorId;
     const submit = async () => {
       const text = input.value.trim();
       if (!text) { flash(TEXT.errHintEmpty, true); return; }
@@ -2145,7 +2230,13 @@ const renderHintsPanel = () => {
           const u = curr.users.find(x => x.id === currentUserId);
           if (!u) throw new TxnAbort(TEXT.errNotFound);
           if (u.role !== 'senior') throw new TxnAbort(TEXT.errNotFound);
-          u.hints = (u.hints || []).concat([text]);
+          const partnersNow = getPartnerIdsFrom(curr.matches, u.id);
+          if (!partnersNow.includes(targetJuniorId)) throw new TxnAbort(TEXT.errNotFound);
+          if (!u.hintsByJunior) u.hintsByJunior = {};
+          if (!Array.isArray(u.hintsByJunior[targetJuniorId])) {
+            u.hintsByJunior[targetJuniorId] = (partnersNow.length === 1 && Array.isArray(u.hints)) ? u.hints.slice() : [];
+          }
+          u.hintsByJunior[targetJuniorId] = u.hintsByJunior[targetJuniorId].concat([text]);
           return curr;
         });
         input.value = '';
@@ -2160,8 +2251,14 @@ const renderHintsPanel = () => {
         try {
           await txnUpdate(curr => {
             const u = curr.users.find(x => x.id === currentUserId);
-            if (!u || !Array.isArray(u.hints)) throw new TxnAbort(TEXT.errNotFound);
-            u.hints.splice(idx, 1);
+            if (!u) throw new TxnAbort(TEXT.errNotFound);
+            if (!u.hintsByJunior) u.hintsByJunior = {};
+            if (!Array.isArray(u.hintsByJunior[targetJuniorId])) {
+              const partnersNow = getPartnerIdsFrom(curr.matches, u.id);
+              u.hintsByJunior[targetJuniorId] = (partnersNow.length === 1 && Array.isArray(u.hints)) ? u.hints.slice() : [];
+            }
+            if (idx < 0 || idx >= u.hintsByJunior[targetJuniorId].length) throw new TxnAbort(TEXT.errNotFound);
+            u.hintsByJunior[targetJuniorId].splice(idx, 1);
             return curr;
           });
         } catch (e) { flash(e.uiAbort ? e.message : TEXT.errSaveFail(e.message), true); }
@@ -2438,17 +2535,19 @@ const renderUserBlock = (u, sectionLabel) => {
 const showUserDetail = (userId) => {
   const u = findUserById(userId);
   if (!u) return;
-  const partnerId = data.matches[u.id];
-  const partner = partnerId ? findUserById(partnerId) : null;
+  const partners = getPartnerIds(u.id).map(findUserById).filter(Boolean);
 
   let html = renderUserBlock(u, TEXT.udSectionUser);
   html += `<div class="ud-divider">↓ ${escapeHtml(TEXT.udPartnerArrow)} ↓</div>`;
   if (!isRandomized()) {
     html += `<div class="ud-block"><div class="ud-empty">${escapeHtml(TEXT.udNotRandomized)}</div></div>`;
-  } else if (!partner) {
+  } else if (partners.length === 0) {
     html += `<div class="ud-block"><div class="ud-empty">${escapeHtml(TEXT.udNoPartner)}</div></div>`;
   } else {
-    html += renderUserBlock(partner, TEXT.udSectionPartner);
+    partners.forEach((p, i) => {
+      const label = partners.length > 1 ? `${TEXT.udSectionPartner} ${i + 1}` : TEXT.udSectionPartner;
+      html += renderUserBlock(p, label);
+    });
   }
   udContent.innerHTML = html;
   userDetailModal.classList.remove('hidden');
@@ -2464,20 +2563,34 @@ adminRandomize.addEventListener('click', () => {
   const juniors = data.users.filter(u => u.role === 'junior');
   if (seniors.length === 0 || juniors.length === 0) { flash(TEXT.errInsufficient, true); return; }
   const action = isRandomized() ? TEXT.btnRerandomize : TEXT.btnRandomize;
+  const cap = 2;
+  const pairable = Math.min(juniors.length, seniors.length * cap);
+  const unmatched = (juniors.length > seniors.length * cap) ? (juniors.length - seniors.length * cap) : (seniors.length > juniors.length ? (seniors.length - juniors.length) : 0);
   let warn = '';
   if (seniors.length !== juniors.length) {
-    warn = TEXT.randomizeWarn(seniors.length, juniors.length);
+    warn = TEXT.randomizeWarn(seniors.length, juniors.length, unmatched);
   }
-  confirmModal(TEXT.randomizeConfirm(action), TEXT.randomizeConfirmText(Math.min(seniors.length, juniors.length), warn), async () => {
+  confirmModal(TEXT.randomizeConfirm(action), TEXT.randomizeConfirmText(pairable, warn), async () => {
     try {
       await txnUpdate(curr => {
         const sr = curr.users.filter(u => u.role === 'senior');
         const jr = shuffle(curr.users.filter(u => u.role === 'junior'));
         if (sr.length === 0 || jr.length === 0) throw new TxnAbort(TEXT.errInsufficient);
         curr.matches = {};
-        sr.forEach((s, i) => {
-          const j = jr[i];
-          if (j) { curr.matches[s.id] = j.id; curr.matches[j.id] = s.id; }
+        const assign = {};
+        sr.forEach(s => { assign[s.id] = []; });
+        const limit = Math.min(jr.length, sr.length * cap);
+        for (let i = 0; i < limit; i++) {
+          const s = sr[i % sr.length];
+          assign[s.id].push(jr[i].id);
+        }
+        sr.forEach(s => {
+          const js = assign[s.id];
+          if (js.length === 1) curr.matches[s.id] = js[0];
+          else if (js.length > 1) curr.matches[s.id] = js;
+          js.forEach(jid => { curr.matches[jid] = s.id; });
+          const u = curr.users.find(x => x.id === s.id);
+          if (u) u.hintsByJunior = {};
         });
         curr.randomizedAt = Date.now();
         return curr;
